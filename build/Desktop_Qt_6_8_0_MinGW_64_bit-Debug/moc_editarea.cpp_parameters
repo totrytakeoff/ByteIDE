@@ -1,0 +1,4 @@
+-DWIN32
+-o
+D:/mycppfiles/QT/MyIDE/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/moc_editarea.cpp
+D:/mycppfiles/QT/MyIDE/editarea.h
