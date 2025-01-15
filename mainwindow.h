@@ -41,9 +41,10 @@ public:
     void CreatToolBar();
     void CreatMenuBar();
     void CreatEdit();
-    void AddSpaceWidget(int n);
 
 
+
+    void SetStyles();
 
 private:
     Ui::MainWindow *ui;
@@ -66,6 +67,11 @@ private:
 
     QDockWidget *FileTree;
     QDockWidget *TerminalView;
+
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *viewMenu;
+    QMenu *helpMenu;
 
 
 };

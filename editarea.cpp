@@ -23,8 +23,6 @@ EditArea::EditArea() {
     InitTextEdit();
 
 
-
-
     // 连接光标位置变化信号到自定义槽函数
 
     if (this->LineTagIsOpen) {
