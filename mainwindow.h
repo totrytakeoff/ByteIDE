@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 
+class QHBoxLayout;
 
 
 QT_BEGIN_NAMESPACE
@@ -16,9 +17,33 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+
+private slots:
+
+
+    // void openFile();
+    // void saveFile();
+    // void openFolder();
+    // void createNewFile();
+    // void onFileTreeClicked(const QModelIndex &index);
+    // void onTabClose(int index);
+    // void toggleFileExplorer(bool show);
+    // void toggleTerminal(bool show);
+    // void about();
+    // void runCode();
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+
+    void CreatAction();
+    void CreatToolBar();
+    void CreatMenuBar();
+    void CreatEdit();
+    void AddSpaceWidget(int n);
+
+
 
 private:
     Ui::MainWindow *ui;
@@ -30,8 +55,18 @@ private:
     QAction* openFolderAct;
     QAction* exitAct;
     QAction* aboutAct;
+
     QAction* showFileExplorerAct;
     QAction* showTerminalAct;
+
+    QAction* runAct;
+
+    QTabWidget *codeTabWidget;
+    QToolBar *mainToolBar;
+
+    QDockWidget *FileTree;
+    QDockWidget *TerminalView;
+
 
 };
 #endif // MAINWINDOW_H

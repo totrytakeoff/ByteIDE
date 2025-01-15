@@ -198,6 +198,12 @@ void EditArea::ResortDefault()
 void EditArea::CloseLineTag(bool flag)
 {
     this->LineTagIsOpen=flag;
+    if(flag){
+        connect(textEdit, &QsciScintilla::cursorPositionChanged, this, &EditArea::highlightCurrentLine);
+    }else{
+        disconnect(textEdit, &QsciScintilla::cursorPositionChanged, this, &EditArea::highlightCurrentLine);
+    }
+
 }
 
 void EditArea::modifyLineTagColor(QColor &col)
