@@ -31,6 +31,7 @@
 #include <QTextEdit>
 #include <QDockWidget>
 
+#include "newfile.h"
 #include "resourcemanager.h"
 #include "editarea.h"
 
@@ -53,8 +54,8 @@ pubilc:
     // editarea=new EditArea();
 
     codeTabWidget=new QTabWidget(this);
-    codeTabWidget->clear();
-    codeTabWidget->setTabsClosable(true);
+    codeTabWidget->clear();///清空tabwidget内Tab
+    codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
 
     connect(codeTabWidget,&QTabWidget::tabCloseRequested,this,&MainWindow::onTabClose);
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
@@ -218,10 +219,10 @@ void MainWindow::setCurrentFile(const QString fileName)
 {
 
     qDebug()<<"cur1:"<<curFilePath;
-    curFilePath=fileName;
+    curFilePath=fileName;///记录当前所在文件
     qDebug()<<"cur2:"<<curFilePath;
-    curEditArea->textEdit->setModified(false);
-    // codeTabWidget->currentWidget()->setWindowModified(false);
+
+
     setWindowModified(false);
 
     QString shownName;
@@ -229,12 +230,13 @@ void MainWindow::setCurrentFile(const QString fileName)
         shownName = "untitled.txt";
     }
     else{
+        curEditArea->textEdit->setModified(false);//将modify标记设为false,为后序退出时保存弹窗做准备
         QFileInfo fileInfo(fileName);
         shownName=fileInfo.fileName();
 
     }
     qDebug()<<"curfile:"<<fileName;
-    setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
+    setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));///将窗口标题设为当前打开Tab
 
 }
 
@@ -294,32 +296,36 @@ void MainWindow::SetStyles()
             color:white
         }
 
-        /* 特定于 runAct 的样式 */
-
-
-
-    )";
-
-    /*
-        QStatusBar {
-            background-color: rgb(60, 60, 60);
-            color: rgb(240, 240, 240);
+       QDialog{
+            background-color: rgb(36, 36, 36);
+            color:white;
+        }
+        NewFile{
+            color:white;
+        }
+        QTabBar{
+            background-color: rgb(80, 80, 80);
         }
         QTabBar::tab {
             background-color: rgb(60, 60, 60);
             color: rgb(240, 240, 240);
             padding: 5px;
-            border: 1px solid rgb(80, 80, 80);
+            border: 1px solid black;
         }
         QTabBar::tab:selected {
             background-color: rgb(80, 80, 80);
         }
-        QTabBar::close-button {
-            image: url(close.png);
-        }
+        // QTabBar::close-button {
+        //     image: url(close.png);
+        // }
         QTabBar::close-button:hover {
             background: rgb(100, 100, 100);
         }
+        QStatusBar {
+            background-color: rgb(60, 60, 60);
+            color: rgb(240, 240, 240);
+        }
+
         QDockWidget {
             titlebar-close-icon: url(close.png);
             titlebar-normal-icon: url(float.png);
@@ -338,6 +344,12 @@ void MainWindow::SetStyles()
         }
 
 
+
+    )";
+
+    /*
+
+
 */
 
 
@@ -349,8 +361,8 @@ void MainWindow::loadFormFile(QString path)
 {
     qDebug()<<"is loading:"<<path ;
     EditArea* editor=new EditArea(codeTabWidget);
-    editor->curEditFile=path;
-    curEditArea=editor;
+    editor->curEditFile=path;///记录打开文件路径
+    curEditArea=editor;///记录当前Tab所对应的EditArea,注意curEditArea空指针访问问题
 
     QFile file(path);
 
@@ -359,24 +371,22 @@ void MainWindow::loadFormFile(QString path)
         QTextStream fileStream(&file);
         editor->textEdit->clear();///清空Textedit
 
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        qDebug()<<"loadfile";
+        QApplication::setOverrideCursor(Qt::WaitCursor);///鼠标转圈圈
         editor->textEdit->setText(file.readAll());
-        // editor->textEdit->parent();
-        QApplication::restoreOverrideCursor();
+        QApplication::restoreOverrideCursor();///鼠标恢复
         file.close();
 
 
-        codeTabWidget->addTab(editor,QFileInfo(file).fileName());
-        qDebug()<<"?:"<<codeTabWidget->count();
+        codeTabWidget->addTab(editor,QFileInfo(file).fileName());///添加Tab页面
+        qDebug()<<"Tab_count:"<<codeTabWidget->count();
 
 
         qDebug()<<"path::"<<path;
-        setCurrentFile(path);
+        setCurrentFile(path);///更新当前Tab对应文件
     }
     else {
         QMessageBox::warning(this, tr("Application"),
-                             tr("Cannot read file %1:\n%2.")
+                             tr("不能读取文件 %1:\n%2.")
                                  .arg(path)
                                  .arg(file.errorString()));
         return;
@@ -406,11 +416,11 @@ void MainWindow::saveCurFile()
 
 void MainWindow::saveFile(QString fileName)
 {
-    // QString fileName(curFilePath);
+    ///判断文件路径是否为空，若为空则先调用保存文件框
     if(fileName.isEmpty()){
-        fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
+        fileName = QFileDialog::getSaveFileName(this, tr("另存为..."),
                                                         "",
-                                                        tr("Text files (*.txt);;All files (*)"));
+                                                        tr("所有文件(*.*);;C/C++(*.cpp *.c *.h);;python(*.py);;文本文件(*.txt)"));
 
     }
     if (fileName.isEmpty()) {
@@ -431,7 +441,7 @@ void MainWindow::saveFile(QString fileName)
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
-    statusBar()->showMessage(tr("File saved"), 2000);
+    statusBar()->showMessage(tr("File saved"), 2000);///设置状态栏保存成功
     qDebug()<<"have save the file";
 
 }
@@ -443,6 +453,22 @@ void MainWindow::openFolder()
 
 void MainWindow::createNewFile()
 {
+    qDebug()<<"creat";
+
+    QString Dir=QDir::currentPath();
+    NewFile* newFile=new NewFile(this,Dir);
+    if(newFile->exec()==QDialog::Accepted){
+        QString filePath=newFile->GetNewFile();
+        if(filePath.isEmpty()){
+            qDebug()<<"newfile is empty";
+            return;
+        }
+        loadFormFile(filePath);
+
+
+    }
+
+
 
 }
 
@@ -458,7 +484,9 @@ void MainWindow::onTabClose(int index)
         return;
 
     saveFile(curEditArea->curEditFile);
+    qDebug()<<"is close tab:"<<idx;
     codeTabWidget->removeTab(idx);
+    qDebug()<<"Tab closed";
 
 }
 
@@ -487,10 +515,29 @@ void MainWindow::runCode()
 
 void MainWindow::onTabChange()
 {
-    curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
-    QString path=curEditArea->curEditFile;
-    qDebug()<<path;
+    QString path;
+
+    ///注意处理空指针情况
+    if(codeTabWidget->count()>0){
+        curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
+        path=curEditArea->curEditFile;
+
+    }else{
+        curEditArea=nullptr;
+        path="";
+    }
+
+    qDebug()<<"tabChange->curPath:"<<path;
     setCurrentFile(path);
 
-
+    qDebug()<<"tabchange->count:"<<codeTabWidget->count();
 }
+
+
+
+
+
+
+
+
+

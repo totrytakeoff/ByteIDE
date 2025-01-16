@@ -146,8 +146,10 @@ MyIDE_autogen/timestamp: \
 	D:/QT/6.8.0/mingw_64/include/QtGui/qtransform.h \
 	D:/QT/6.8.0/mingw_64/include/QtGui/qwindowdefs.h \
 	D:/QT/6.8.0/mingw_64/include/QtGui/qwindowdefs_win.h \
+	D:/QT/6.8.0/mingw_64/include/QtWidgets/QDialog \
 	D:/QT/6.8.0/mingw_64/include/QtWidgets/QMainWindow \
 	D:/QT/6.8.0/mingw_64/include/QtWidgets/QWidget \
+	D:/QT/6.8.0/mingw_64/include/QtWidgets/qdialog.h \
 	D:/QT/6.8.0/mingw_64/include/QtWidgets/qmainwindow.h \
 	D:/QT/6.8.0/mingw_64/include/QtWidgets/qsizepolicy.h \
 	D:/QT/6.8.0/mingw_64/include/QtWidgets/qtabwidget.h \
@@ -542,6 +544,8 @@ MyIDE_autogen/timestamp: \
 	D:/mycppfiles/QT/MyIDE/main.cpp \
 	D:/mycppfiles/QT/MyIDE/mainwindow.cpp \
 	D:/mycppfiles/QT/MyIDE/mainwindow.h \
+	D:/mycppfiles/QT/MyIDE/newfile.cpp \
+	D:/mycppfiles/QT/MyIDE/newfile.h \
 	D:/mycppfiles/QT/MyIDE/resourcemanager.cpp \
 	D:/mycppfiles/QT/MyIDE/resourcemanager.h \
 	D:/mycppfiles/QT/MyIDE/mainwindow.ui \

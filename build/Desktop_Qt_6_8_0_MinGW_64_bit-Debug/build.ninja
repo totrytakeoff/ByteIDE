@@ -89,6 +89,14 @@ build CMakeFiles/MyIDE.dir/editarea.cpp.obj: CXX_COMPILER__MyIDE_unscanned_Debug
   OBJECT_DIR = CMakeFiles\MyIDE.dir
   OBJECT_FILE_DIR = CMakeFiles\MyIDE.dir
 
+build CMakeFiles/MyIDE.dir/newfile.cpp.obj: CXX_COMPILER__MyIDE_unscanned_Debug D$:/mycppfiles/QT/MyIDE/newfile.cpp || cmake_object_order_depends_target_MyIDE
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
+  DEP_FILE = CMakeFiles\MyIDE.dir\newfile.cpp.obj.d
+  FLAGS = -g -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -ID:/mycppfiles/QT/MyIDE/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/MyIDE_autogen/include -isystem D:/QT/6.8.0/mingw_64/include/QtCore -isystem D:/QT/6.8.0/mingw_64/include -isystem D:/QT/6.8.0/mingw_64/mkspecs/win32-g++ -isystem D:/QT/6.8.0/mingw_64/include/QtWidgets -isystem D:/QT/6.8.0/mingw_64/include/QtGui
+  OBJECT_DIR = CMakeFiles\MyIDE.dir
+  OBJECT_FILE_DIR = CMakeFiles\MyIDE.dir
+
 build CMakeFiles/MyIDE.dir/qscintilla/Qsci/moc_qsciscintilla.cpp.obj: CXX_COMPILER__MyIDE_unscanned_Debug D$:/mycppfiles/QT/MyIDE/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/qscintilla/Qsci/moc_qsciscintilla.cpp || cmake_object_order_depends_target_MyIDE
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
   DEP_FILE = CMakeFiles\MyIDE.dir\qscintilla\Qsci\moc_qsciscintilla.cpp.obj.d
@@ -105,7 +113,7 @@ build CMakeFiles/MyIDE.dir/qscintilla/Qsci/moc_qsciscintilla.cpp.obj: CXX_COMPIL
 #############################################
 # Link the executable MyIDE.exe
 
-build MyIDE.exe: CXX_EXECUTABLE_LINKER__MyIDE_Debug CMakeFiles/MyIDE.dir/MyIDE_autogen/mocs_compilation.cpp.obj CMakeFiles/MyIDE.dir/main.cpp.obj CMakeFiles/MyIDE.dir/mainwindow.cpp.obj CMakeFiles/MyIDE.dir/resourcemanager.cpp.obj CMakeFiles/MyIDE.dir/editarea.cpp.obj CMakeFiles/MyIDE.dir/qscintilla/Qsci/moc_qsciscintilla.cpp.obj | D$:/QT/6.8.0/mingw_64/lib/libQt6Widgets.a D$:/mycppfiles/QT/MyIDE/qscintilla/libqscintilla2_qt6d.a D$:/QT/6.8.0/mingw_64/lib/libQt6Gui.a D$:/QT/6.8.0/mingw_64/lib/libQt6Core.a D$:/QT/6.8.0/mingw_64/lib/libQt6EntryPoint.a || MyIDE_autogen MyIDE_autogen_timestamp_deps
+build MyIDE.exe: CXX_EXECUTABLE_LINKER__MyIDE_Debug CMakeFiles/MyIDE.dir/MyIDE_autogen/mocs_compilation.cpp.obj CMakeFiles/MyIDE.dir/main.cpp.obj CMakeFiles/MyIDE.dir/mainwindow.cpp.obj CMakeFiles/MyIDE.dir/resourcemanager.cpp.obj CMakeFiles/MyIDE.dir/editarea.cpp.obj CMakeFiles/MyIDE.dir/newfile.cpp.obj CMakeFiles/MyIDE.dir/qscintilla/Qsci/moc_qsciscintilla.cpp.obj | D$:/QT/6.8.0/mingw_64/lib/libQt6Widgets.a D$:/mycppfiles/QT/MyIDE/qscintilla/libqscintilla2_qt6d.a D$:/QT/6.8.0/mingw_64/lib/libQt6Gui.a D$:/QT/6.8.0/mingw_64/lib/libQt6Core.a D$:/QT/6.8.0/mingw_64/lib/libQt6EntryPoint.a || MyIDE_autogen MyIDE_autogen_timestamp_deps
   FLAGS = -g
   LINK_FLAGS = -mwindows
   LINK_LIBRARIES = D:/QT/6.8.0/mingw_64/lib/libQt6Widgets.a  D:/mycppfiles/QT/MyIDE/qscintilla/libqscintilla2_qt6d.a  D:/QT/6.8.0/mingw_64/lib/libQt6Gui.a  D:/QT/6.8.0/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -lmingw32  D:/QT/6.8.0/mingw_64/lib/libQt6EntryPoint.a  -lshell32  -ld3d11  -ldxgi  -ldxguid  -ld3d12  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

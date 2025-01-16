@@ -278,6 +278,12 @@
 			null
 		],
 		[
+			"D:/mycppfiles/QT/MyIDE/newfile.h",
+			"MU",
+			"EWIEGA46WW/moc_newfile.cpp",
+			null
+		],
+		[
 			"D:/mycppfiles/QT/MyIDE/resourcemanager.h",
 			"MU",
 			"EWIEGA46WW/moc_resourcemanager.cpp",
@@ -362,6 +368,7 @@
 		[ "D:/mycppfiles/QT/MyIDE/editarea.cpp", "MU", null ],
 		[ "D:/mycppfiles/QT/MyIDE/main.cpp", "MU", null ],
 		[ "D:/mycppfiles/QT/MyIDE/mainwindow.cpp", "MU", null ],
+		[ "D:/mycppfiles/QT/MyIDE/newfile.cpp", "MU", null ],
 		[ "D:/mycppfiles/QT/MyIDE/resourcemanager.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
