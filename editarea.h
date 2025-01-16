@@ -1,7 +1,7 @@
 #ifndef EDITAREA_H
 #define EDITAREA_H
 #include<QMap>
-#include<QObject>
+#include<QWidget>
 #include<QColor>
 
 class QsciScintilla;
@@ -10,11 +10,11 @@ class QTabWidget;
 class QColor;
 // class QMap;
 
-class EditArea : public QObject
+class EditArea : public QWidget
 {
     Q_OBJECT
 public:
-    EditArea();
+    EditArea(QWidget *parent=nullptr);
     ~EditArea();
 
     void InitLexer();
@@ -33,6 +33,7 @@ public:
     void modifyFontDefaultColor(QColor &col);
     void modifyEditorDefaultBackgroundColor(QColor &col);
 
+
     QMap<int,QColor> createDefaultColorMap();
 
 
@@ -43,7 +44,7 @@ public:
     QsciScintilla *textEdit;
     QsciLexerCPP *CppLexer;
     QTabWidget* tabwidget;
-
+    QString curEditFile;
 
 public slots:
     void highlightCurrentLine(int line,int index);
@@ -74,6 +75,8 @@ private:
 
     QColor FontDefaultColor=QColor(214, 207, 154);
     QColor EditorDefaultBackgroundColor= QColor(35, 35, 35);
+
+
 };
 
 #endif // EDITAREA_H

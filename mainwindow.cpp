@@ -29,9 +29,12 @@
 #include <QPalette>
 #include <QToolButton>
 #include <QTextEdit>
+#include <QDockWidget>
+
+#include "resourcemanager.h"
+#include "editarea.h"
 
 
-#include"editarea.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -44,16 +47,18 @@ pubilc:
     CreatAction();
     CreatToolBar();
     CreatMenuBar();
+    CreatDock();
     SetStyles();
 
-    EditArea* editarea=new EditArea();
+    // editarea=new EditArea();
 
-    QPalette palette = mainToolBar->palette();
-    palette.setColor(QPalette::Window, QColor("lightblue"));
-    mainToolBar->setPalette(palette);
-    mainToolBar->setAutoFillBackground(true); // 确保背景颜色被填充
+    codeTabWidget=new QTabWidget(this);
+    codeTabWidget->clear();
+    codeTabWidget->setTabsClosable(true);
 
-    setCentralWidget(editarea->textEdit);
+    connect(codeTabWidget,&QTabWidget::tabCloseRequested,this,&MainWindow::onTabClose);
+    connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
+    setCentralWidget(codeTabWidget);
 
 
 
@@ -75,19 +80,20 @@ void MainWindow::CreatAction()
     newFileAct->setStatusTip("创建一个新文件");
     newFileAct->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
     newFileAct->setShortcut(QKeySequence::New);
-    // connect(newFileAct, &QAction::triggered, this, &MainWindow::createNewFile);
+    connect(newFileAct, &QAction::triggered, this, &MainWindow::createNewFile);
 
     openFileAct = new QAction("&打开文件", this);
     openFileAct->setStatusTip("打开一个已经存在的文件");
     openFileAct->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
     openFileAct->setShortcut(QKeySequence::Open);
-    // connect(openFileAct, &QAction::triggered, this, &MainWindow::openFile);
+    connect(openFileAct, &QAction::triggered, this, &MainWindow::openFile);
 
     saveFileAct = new QAction("&保存", this);
     saveFileAct->setStatusTip("保存当前文件");
     saveFileAct->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
     saveFileAct->setShortcut(QKeySequence::Save);
-    // connect(saveFileAct, &QAction::triggered, this, &MainWindow::saveFile);
+
+    connect(saveFileAct, &QAction::triggered, this, &MainWindow::saveCurFile);
 
     openFolderAct = new QAction("&打开文件夹", this);
     openFolderAct->setStatusTip("打开一个文件夹并在文件管理器中显示");
@@ -183,6 +189,48 @@ void MainWindow::CreatMenuBar()
     // Help Menu
     helpMenu = menuBar()->addMenu("&帮助");
     helpMenu->addAction(aboutAct);
+
+}
+
+void MainWindow::CreatDock()
+{
+    ///creat a file dock
+    fileDock=new QDockWidget("File Explorer",this);
+    fileDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    ///creat a resourceManager and set fileDock'widget with fileExolorer->treeView
+    fileExplorer=new ResourceManager(fileDock);
+    addDockWidget(Qt::LeftDockWidgetArea, fileDock);
+
+
+
+    // // Terminal dock
+    // terminalDock = new QDockWidget("Terminal", this);
+    // terminalDock->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+
+    // terminal = new Terminal(this);
+    // terminalDock->setWidget(terminal);
+    // addDockWidget(Qt::BottomDockWidgetArea, terminalDock);
+
+}
+
+void MainWindow::setCurrentFile(const QString fileName)
+{
+    curFilePath=fileName;
+    curEditArea->textEdit->setModified(false);
+    // codeTabWidget->currentWidget()->setWindowModified(false);
+    setWindowModified(false);
+
+    QString shownName;
+    if (fileName.isEmpty())
+        shownName = "untitled.txt";
+    else{
+        QFileInfo fileInfo(fileName);
+        shownName=fileInfo.fileName();
+
+    }
+    qDebug()<<"curfile:"<<fileName;
+    setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Application")));
 
 }
 
@@ -291,4 +339,146 @@ void MainWindow::SetStyles()
 
 
     setStyleSheet(styleSheet);
+}
+
+void MainWindow::loadFormFile(QString path)
+{
+    qDebug()<<"is loading:"<<path ;
+    EditArea* editor=new EditArea(codeTabWidget);
+    QFile file(path);
+
+
+    if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
+        QTextStream fileStream(&file);
+        editor->textEdit->clear();///清空Textedit
+
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        qDebug()<<"loadfile";
+        editor->textEdit->setText(file.readAll());
+        // editor->textEdit->parent();
+        QApplication::restoreOverrideCursor();
+        file.close();
+        // QFileInfo(file).fileName();
+
+        codeTabWidget->addTab(editor,"tab");
+        qDebug()<<"?:"<<codeTabWidget->count();
+
+        setCurrentFile(path);
+    }
+    else {
+        QMessageBox::warning(this, tr("Application"),
+                             tr("Cannot read file %1:\n%2.")
+                                 .arg(path)
+                                 .arg(file.errorString()));
+        return;
+    }
+
+}
+
+void MainWindow::openFile()
+{
+    QString path=QFileDialog::getOpenFileName(this,"打开一个文件",
+                                                QDir::currentPath(),
+                                                "C/C++(*.cpp *.c *.h);;python(*.py);;文本文件(*.txt);;所有文件(*.*)");
+
+    if(path.isEmpty()){
+        qDebug()<<"path is empty";
+        return ;
+    }
+
+    loadFormFile(path);
+
+}
+
+void MainWindow::saveCurFile()
+{
+    saveFile(curFilePath);
+}
+
+void MainWindow::saveFile(QString fileName)
+{
+    // QString fileName(curFilePath);
+    if(fileName.isEmpty()){
+        fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
+                                                        "",
+                                                        tr("Text files (*.txt);;All files (*)"));
+
+    }
+    if (fileName.isEmpty()) {
+        return; // 用户取消了对话框
+    }
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly)) {
+        QMessageBox::warning(this, tr("Application"),
+                             tr("Cannot write file %1:\n%2.")
+                                 .arg(fileName)
+                                 .arg(file.errorString()));
+    }
+
+    QTextStream out(&file);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    out << curEditArea->textEdit->text();
+    QApplication::restoreOverrideCursor();
+
+    setCurrentFile(fileName);
+    statusBar()->showMessage(tr("File saved"), 2000);
+    qDebug()<<"have save the file";
+
+}
+
+void MainWindow::openFolder()
+{
+
+}
+
+void MainWindow::createNewFile()
+{
+
+}
+
+void MainWindow::onFileTreeClicked(const QModelIndex &index)
+{
+
+}
+
+void MainWindow::onTabClose(int index)
+{
+    int idx=codeTabWidget->currentIndex();
+    if (idx<0)
+        return;
+
+    saveFile(curEditArea->curEditFile);
+    codeTabWidget->removeTab(idx);
+
+}
+
+void MainWindow::toggleFileExplorer(bool show)
+{
+
+}
+
+void MainWindow::toggleTerminal(bool show)
+{
+
+}
+
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About Application"),
+                       tr("The <b>Application</b> example demonstrates how to "
+                          "write modern GUI applications using Qt, with a menu bar, "
+                          "toolbars, and a status bar."));
+}
+
+void MainWindow::runCode()
+{
+
+}
+
+void MainWindow::onTabChange()
+{
+    // curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
+    setCurrentFile(curEditArea->curEditFile);
+
 }

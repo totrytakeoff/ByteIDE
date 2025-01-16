@@ -5,18 +5,19 @@
 // #include <QFileSystemModel>
 class QTreeView;
 class QFileSystemModel;
+class QDockWidget;
 
 class ResourceManager
 {
 public:
-    ResourceManager();
+    ResourceManager(QDockWidget* Dock);
 
 
 
 
 private:
-    QTreeView* treeview;
-    QFileSystemModel* filemodel;
+    QTreeView* treeView;
+    QFileSystemModel* fileModel;
 
 
 };

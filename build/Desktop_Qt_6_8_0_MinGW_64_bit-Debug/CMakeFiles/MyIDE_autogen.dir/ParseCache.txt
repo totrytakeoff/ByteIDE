@@ -365,10 +365,11 @@ D:/mycppfiles/QT/MyIDE/mainwindow.h
 D:/mycppfiles/QT/MyIDE/editarea.h
  mmc:Q_OBJECT
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/QMap
- mdp:D:/QT/6.8.0/mingw_64/include/QtCore/QObject
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/q20functional.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/q20iterator.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/q20memory.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/q20type_traits.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/q23utility.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qalgorithms.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qanystringview.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qarraydata.h
@@ -393,8 +394,11 @@ D:/mycppfiles/QT/MyIDE/editarea.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qcontainerfwd.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qcontainerinfo.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qcontainertools_impl.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qcontiguouscache.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qdarwinhelpers.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qdatastream.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qdebug.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qendian.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qexceptionhandling.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qflags.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qfloat16.h
@@ -404,15 +408,18 @@ D:/mycppfiles/QT/MyIDE/editarea.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qgenericatomic.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qglobal.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qglobalstatic.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qhash.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qhashfunctions.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qiodevicebase.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qiterable.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qiterator.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qlatin1stringview.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qline.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qlist.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qlogging.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qmalloc.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qmap.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qmargins.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qmath.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qmetacontainer.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qmetatype.h
@@ -425,12 +432,19 @@ D:/mycppfiles/QT/MyIDE/editarea.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qobjectdefs_impl.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qoverload.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qpair.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qpoint.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qprocessordetection.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qrect.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qrefcount.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qscopedpointer.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qscopeguard.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qset.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qshareddata.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qshareddata_impl.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qsharedpointer.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qsharedpointer_impl.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qsize.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qspan.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qstring.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qstringalgorithms.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qstringbuilder.h
@@ -454,6 +468,7 @@ D:/mycppfiles/QT/MyIDE/editarea.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtdeprecationdefinitions.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtdeprecationmarkers.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtenvironmentvariables.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtextstream.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtmetamacros.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtnoop.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtpreprocessorsupport.h
@@ -465,16 +480,43 @@ D:/mycppfiles/QT/MyIDE/editarea.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtypeinfo.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qtypes.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qutf8stringview.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qvariant.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qvarlengtharray.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qversiontagging.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qxptype_traits.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtCore/qyieldcpu.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/QColor
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qaction.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qbitmap.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qbrush.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qcolor.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qcursor.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qfont.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qfontinfo.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qfontmetrics.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qicon.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qimage.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qkeysequence.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qpaintdevice.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qpalette.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qpixelformat.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qpixmap.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qpolygon.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qregion.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qrgb.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qrgba64.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qtgui-config.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qtguiexports.h
  mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qtguiglobal.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qtransform.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qwindowdefs.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtGui/qwindowdefs_win.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtWidgets/QWidget
+ mdp:D:/QT/6.8.0/mingw_64/include/QtWidgets/qsizepolicy.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtWidgets/qtwidgets-config.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtWidgets/qtwidgetsexports.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h
+ mdp:D:/QT/6.8.0/mingw_64/include/QtWidgets/qwidget.h
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/algorithm
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/array
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/atomic
@@ -565,9 +607,11 @@ D:/mycppfiles/QT/MyIDE/editarea.h
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/uses_allocator_args.h
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/utility.h
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/vector.tcc
+ mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cassert
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cctype
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cerrno
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/chrono
+ mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/climits
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/clocale
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cmath
  mdp:D:/QT/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/compare

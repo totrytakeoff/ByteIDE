@@ -5,7 +5,9 @@
 
 
 class QHBoxLayout;
-
+class ResourceManager;
+class EditArea;
+class QFile;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,19 +20,6 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 
-private slots:
-
-
-    // void openFile();
-    // void saveFile();
-    // void openFolder();
-    // void createNewFile();
-    // void onFileTreeClicked(const QModelIndex &index);
-    // void onTabClose(int index);
-    // void toggleFileExplorer(bool show);
-    // void toggleTerminal(bool show);
-    // void about();
-    // void runCode();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -41,14 +30,37 @@ public:
     void CreatToolBar();
     void CreatMenuBar();
     void CreatEdit();
+    void CreatDock();
+    void setCurrentFile(const QString fileName);
 
-
+    void saveFile(QString fileName);
 
     void SetStyles();
+
+private slots:
+
+    void loadFormFile(QString path);
+    void openFile();
+
+    void saveCurFile();
+
+    void openFolder();
+    void createNewFile();
+    void onFileTreeClicked(const QModelIndex &index);
+    void onTabClose(int index);
+    void toggleFileExplorer(bool show);
+    void toggleTerminal(bool show);
+    void about();
+    void runCode();
+
+    void onTabChange();
+
+
 
 private:
     Ui::MainWindow *ui;
 
+    EditArea* curEditArea;
 
     QAction* newFileAct;
     QAction* openFileAct;
@@ -65,13 +77,15 @@ private:
     QTabWidget *codeTabWidget;
     QToolBar *mainToolBar;
 
-    QDockWidget *FileTree;
-    QDockWidget *TerminalView;
+    QDockWidget *fileDock;
+    QDockWidget *terminalViewDock;
 
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *viewMenu;
     QMenu *helpMenu;
+    ResourceManager * fileExplorer;
+    QString curFilePath;
 
 
 };

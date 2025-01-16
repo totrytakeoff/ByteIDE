@@ -11,11 +11,13 @@
 
 
 
-EditArea::EditArea() {
+EditArea::EditArea(QWidget* parent)
+    :QWidget(parent)
+{
 
 
     tabwidget=new QTabWidget();
-    textEdit=new QsciScintilla();
+    textEdit=new QsciScintilla(this);
     CppLexer=new QsciLexerCPP();
     Lexer_Color=createDefaultColorMap();
 
