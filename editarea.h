@@ -9,6 +9,7 @@ class QsciLexerCPP;
 class QTabWidget;
 class QColor;
 // class QMap;
+///world
 
 class EditArea : public QWidget
 {

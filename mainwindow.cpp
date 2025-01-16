@@ -216,14 +216,18 @@ void MainWindow::CreatDock()
 
 void MainWindow::setCurrentFile(const QString fileName)
 {
+
+    qDebug()<<"cur1:"<<curFilePath;
     curFilePath=fileName;
+    qDebug()<<"cur2:"<<curFilePath;
     curEditArea->textEdit->setModified(false);
     // codeTabWidget->currentWidget()->setWindowModified(false);
     setWindowModified(false);
 
     QString shownName;
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()){
         shownName = "untitled.txt";
+    }
     else{
         QFileInfo fileInfo(fileName);
         shownName=fileInfo.fileName();
@@ -345,6 +349,9 @@ void MainWindow::loadFormFile(QString path)
 {
     qDebug()<<"is loading:"<<path ;
     EditArea* editor=new EditArea(codeTabWidget);
+    editor->curEditFile=path;
+    curEditArea=editor;
+
     QFile file(path);
 
 
@@ -358,11 +365,13 @@ void MainWindow::loadFormFile(QString path)
         // editor->textEdit->parent();
         QApplication::restoreOverrideCursor();
         file.close();
-        // QFileInfo(file).fileName();
 
-        codeTabWidget->addTab(editor,"tab");
+
+        codeTabWidget->addTab(editor,QFileInfo(file).fileName());
         qDebug()<<"?:"<<codeTabWidget->count();
 
+
+        qDebug()<<"path::"<<path;
         setCurrentFile(path);
     }
     else {
@@ -478,7 +487,10 @@ void MainWindow::runCode()
 
 void MainWindow::onTabChange()
 {
-    // curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
-    setCurrentFile(curEditArea->curEditFile);
+    curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
+    QString path=curEditArea->curEditFile;
+    qDebug()<<path;
+    setCurrentFile(path);
+
 
 }

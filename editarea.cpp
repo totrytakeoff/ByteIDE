@@ -5,6 +5,7 @@
 #include<QDebug>
 #include<QMetaMethod>
 #include<QString>
+#include<QVBoxLayout>
 
 #include<Qsci/qscistyledtext.h>
 #include<Qsci/qsciapis.h>
@@ -15,7 +16,7 @@ EditArea::EditArea(QWidget* parent)
     :QWidget(parent)
 {
 
-
+    // this->setSizePolicy()
     tabwidget=new QTabWidget();
     textEdit=new QsciScintilla(this);
     CppLexer=new QsciLexerCPP();
@@ -34,6 +35,10 @@ EditArea::EditArea(QWidget* parent)
         qDebug() << "Line tag has close";
     }
 
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(textEdit);
+    layout->setContentsMargins(0, 0, 0, 0); // 可选：移除布局的边距
+    setLayout(layout);
 
 }
 
