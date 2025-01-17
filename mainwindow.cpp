@@ -45,24 +45,25 @@ MainWindow::MainWindow(QWidget *parent)
 pubilc:
 
     ui->setupUi(this);
+
+    codeTabWidget=new QTabWidget(this);
+    codeTabWidget->clear();///清空tabwidget内Tab
+    codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
+
     CreatAction();
     CreatToolBar();
     CreatMenuBar();
     CreatDock();
     SetStyles();
 
-    // editarea=new EditArea();
 
-    codeTabWidget=new QTabWidget(this);
-    codeTabWidget->clear();///清空tabwidget内Tab
-    codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
 
     connect(codeTabWidget,&QTabWidget::tabCloseRequested,this,&MainWindow::onTabClose);
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
+
+    connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
+
     setCentralWidget(codeTabWidget);
-
-
-
 
 
 }
@@ -100,7 +101,7 @@ void MainWindow::CreatAction()
     openFolderAct->setStatusTip("打开一个文件夹并在文件管理器中显示");
     openFolderAct->setIcon(style()->standardIcon(QStyle::SP_DirIcon));
     // openFolderAct->setShortcut()
-    // connect(openFolderAct, &QAction::triggered, this, &MainWindow::openFolder);
+    connect(openFolderAct, &QAction::triggered, this, &MainWindow::openFolder);
 
     runAct = new QAction("&运行", this);
     runAct->setStatusTip("保存并运行当前文件");
@@ -201,6 +202,7 @@ void MainWindow::CreatDock()
 
     ///creat a resourceManager and set fileDock'widget with fileExolorer->treeView
     fileExplorer=new ResourceManager(fileDock);
+
     addDockWidget(Qt::LeftDockWidgetArea, fileDock);
 
 
@@ -357,6 +359,12 @@ void MainWindow::SetStyles()
     setStyleSheet(styleSheet);
 }
 
+void MainWindow::ShowFileDock()
+{
+    fileExplorer->SetCurPath(curFolderPath);
+
+}
+
 void MainWindow::loadFormFile(QString path)
 {
     qDebug()<<"is loading:"<<path ;
@@ -378,10 +386,10 @@ void MainWindow::loadFormFile(QString path)
 
 
         codeTabWidget->addTab(editor,QFileInfo(file).fileName());///添加Tab页面
-        qDebug()<<"Tab_count:"<<codeTabWidget->count();
+        // qDebug()<<"Tab_count:"<<codeTabWidget->count();
+        codeTabWidget->setCurrentIndex(codeTabWidget->count()-1);
 
-
-        qDebug()<<"path::"<<path;
+        // qDebug()<<"path::"<<path;
         setCurrentFile(path);///更新当前Tab对应文件
     }
     else {
@@ -448,6 +456,13 @@ void MainWindow::saveFile(QString fileName)
 
 void MainWindow::openFolder()
 {
+    QString path=QFileDialog::getExistingDirectory(this,"打开文件夹",QDir::currentPath());
+    if(path.isEmpty()){
+        qDebug()<<"the folder path is empty";
+        return;
+    }
+    curFolderPath=path;
+    ShowFileDock();
 
 }
 
@@ -472,8 +487,17 @@ void MainWindow::createNewFile()
 
 }
 
-void MainWindow::onFileTreeClicked(const QModelIndex &index)
+void MainWindow::onFileTreeClicked(const QString FileName)
 {
+
+    if(FileName==curFilePath){
+
+        qDebug()<<"clicked exist file tab";
+        // codeTabWidget->setCurrentIndex(0);
+        return ;
+    }
+    qDebug()<<"onfileTreeClicked:"<<FileName;
+    loadFormFile(FileName);
 
 }
 
@@ -484,9 +508,7 @@ void MainWindow::onTabClose(int index)
         return;
 
     saveFile(curEditArea->curEditFile);
-    qDebug()<<"is close tab:"<<idx;
     codeTabWidget->removeTab(idx);
-    qDebug()<<"Tab closed";
 
 }
 
@@ -527,10 +549,8 @@ void MainWindow::onTabChange()
         path="";
     }
 
-    qDebug()<<"tabChange->curPath:"<<path;
     setCurrentFile(path);
 
-    qDebug()<<"tabchange->count:"<<codeTabWidget->count();
 }
 
 

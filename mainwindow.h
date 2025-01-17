@@ -35,7 +35,9 @@ public:
 
     void saveFile(QString fileName);
 
+
     void SetStyles();
+    void ShowFileDock();
 
 private slots:
 
@@ -46,7 +48,7 @@ private slots:
 
     void openFolder();
     void createNewFile();
-    void onFileTreeClicked(const QModelIndex &index);
+    void onFileTreeClicked(const QString FileName);
     void onTabClose(int index);
     void toggleFileExplorer(bool show);
     void toggleTerminal(bool show);
@@ -86,6 +88,8 @@ private:
     QMenu *helpMenu;
     ResourceManager * fileExplorer;
     QString curFilePath;
+    QString curFolderPath;
+
 
 
 };

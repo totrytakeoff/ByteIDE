@@ -44,9 +44,9 @@ constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::string
     "openFolder",
     "createNewFile",
     "onFileTreeClicked",
-    "QModelIndex",
-    "index",
+    "FileName",
     "onTabClose",
+    "index",
     "toggleFileExplorer",
     "show",
     "toggleTerminal",
@@ -79,7 +79,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
        6,    0,   91,    2, 0x08,    5 /* Private */,
        7,    0,   92,    2, 0x08,    6 /* Private */,
        8,    1,   93,    2, 0x08,    7 /* Private */,
-      11,    1,   96,    2, 0x08,    9 /* Private */,
+      10,    1,   96,    2, 0x08,    9 /* Private */,
       12,    1,   99,    2, 0x08,   11 /* Private */,
       14,    1,  102,    2, 0x08,   13 /* Private */,
       15,    0,  105,    2, 0x08,   15 /* Private */,
@@ -92,8 +92,8 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 9,   10,
-    QMetaType::Void, QMetaType::Int,   10,
+    QMetaType::Void, QMetaType::QString,    9,
+    QMetaType::Void, QMetaType::Int,   11,
     QMetaType::Void, QMetaType::Bool,   13,
     QMetaType::Void, QMetaType::Bool,   13,
     QMetaType::Void,
@@ -125,7 +125,7 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'onFileTreeClicked'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QModelIndex &, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString, std::false_type>,
         // method 'onTabClose'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
@@ -156,7 +156,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 2: _t->saveCurFile(); break;
         case 3: _t->openFolder(); break;
         case 4: _t->createNewFile(); break;
-        case 5: _t->onFileTreeClicked((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
+        case 5: _t->onFileTreeClicked((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
         case 6: _t->onTabClose((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 7: _t->toggleFileExplorer((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         case 8: _t->toggleTerminal((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
