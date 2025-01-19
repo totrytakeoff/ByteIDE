@@ -8,6 +8,7 @@ class QHBoxLayout;
 class ResourceManager;
 class EditArea;
 class QFile;
+class QSplitter;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -90,7 +91,7 @@ private:
     QString curFilePath;
     QString curFolderPath;
 
-
+    QSplitter* mainSplitter;
 
 };
 #endif // MAINWINDOW_H

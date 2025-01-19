@@ -27,12 +27,67 @@ ResourceManager::ResourceManager(QDockWidget* Dock) {
     Dock->setWidget(treeView);
 
     treeViewStyleSheet=R"(
-            background-color: rgb(31, 31, 31);
-            color: rgb(240, 240, 240);
+        QTreeView{background-color: rgb(31, 31, 31);
+            color: rgb(214, 214, 214);
+        }
+
+        /* 基本项样式 */
+        QTreeView::item {
+            padding: 1px;
+        }
+
+        /* 悬停时的样式 */
+        QTreeView::item:hover {
+            background-color:rgb(80,80,80);
+            color: white;
+        }
+
+        /* 选中时的样式 */
+        QTreeView::item:selected {
+            background-color: rgb(34, 91, 149);
+            color: white;
+        }
+
+        /* 非活动窗口中选中的项 */
+        QTreeView::item:selected:!active {
+            background-color: #c8e6c9;
+        }
+
+        /* 展开箭头样式 */
+        QTreeView::branch:has-children:!adjoins-item {
+            color: white;
+        }
+
+        QTreeView::branch:has-children:adjoins-item {
+            color: white;
+        }
+
+        QTreeView::branch:!has-children {
+            color: white;
+        }
+
+        /* 展开/折叠状态 */
+        QTreeView::branch:open:has-children {
+            color: white;
+        }
+
+        QTreeView::branch:closed:has-children {
+            color: white;
+        }
+
 
     )";
+    //border-image: url(:/icons/branch-closed.png) 0;
+
+    // Dock->setStyleSheet(R"(
+
+    //         color:rgb(214,214,214);
+    //         boder: 10px solid white;
+
+    //     )");
 
     treeView->setStyleSheet(treeViewStyleSheet);
+
 
     connect(treeView,&QTreeView::clicked,this,&ResourceManager::on_FileClick);
     connect(treeView,&QTreeView::doubleClicked,this,&ResourceManager::on_FileDoubleClick);

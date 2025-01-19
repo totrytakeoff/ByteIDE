@@ -30,6 +30,10 @@
 #include <QToolButton>
 #include <QTextEdit>
 #include <QDockWidget>
+#include <QSplitter>
+#include <QLayout>
+#include <QGridLayout>
+#include <QVBoxLayout>
 
 #include "newfile.h"
 #include "resourcemanager.h"
@@ -50,22 +54,22 @@ pubilc:
     codeTabWidget->clear();///清空tabwidget内Tab
     codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
 
+
     CreatAction();
     CreatToolBar();
     CreatMenuBar();
     CreatDock();
     SetStyles();
 
-
-
     connect(codeTabWidget,&QTabWidget::tabCloseRequested,this,&MainWindow::onTabClose);
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
 
+
     setCentralWidget(codeTabWidget);
 
-
+    qDebug()<<"sheet"<<fileDock->styleSheet();
 }
 
 MainWindow::~MainWindow()
@@ -114,19 +118,19 @@ void MainWindow::CreatAction()
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
 
     showFileExplorerAct = new QAction("文件资源管理器", this);
-    showFileExplorerAct->setCheckable(true);
-    showFileExplorerAct->setChecked(true);
-    // connect(showFileExplorerAct, &QAction::triggered, this, &MainWindow::toggleFileExplorer);
+    // showFileExplorerAct->setCheckable(true);
+    // showFileExplorerAct->setChecked(true);
+    connect(showFileExplorerAct, &QAction::triggered, this, &MainWindow::toggleFileExplorer);
 
 
     showTerminalAct = new QAction("Terminal(终端)", this);
-    showTerminalAct->setCheckable(true);
-    showTerminalAct->setChecked(true);
-    // connect(showTerminalAct, &QAction::triggered, this, &MainWindow::toggleTerminal);
+    // showTerminalAct->setCheckable(true);
+    // showTerminalAct->setChecked(true);
+    connect(showTerminalAct, &QAction::triggered, this, &MainWindow::toggleTerminal);
 
 
     aboutAct = new QAction("&关于", this);
-    // connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+    connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
 }
 
@@ -196,24 +200,28 @@ void MainWindow::CreatMenuBar()
 
 void MainWindow::CreatDock()
 {
+    setDockNestingEnabled(true);
     ///creat a file dock
     fileDock=new QDockWidget("File Explorer",this);
     fileDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
+
     ///creat a resourceManager and set fileDock'widget with fileExolorer->treeView
     fileExplorer=new ResourceManager(fileDock);
+
 
     addDockWidget(Qt::LeftDockWidgetArea, fileDock);
 
 
 
     // // Terminal dock
-    // terminalDock = new QDockWidget("Terminal", this);
-    // terminalDock->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+    terminalViewDock= new QDockWidget("Terminal", this);
+    terminalViewDock->setAllowedAreas(Qt::BottomDockWidgetArea);
 
     // terminal = new Terminal(this);
     // terminalDock->setWidget(terminal);
-    // addDockWidget(Qt::BottomDockWidgetArea, terminalDock);
+
+    addDockWidget(Qt::BottomDockWidgetArea,terminalViewDock);
 
 }
 
@@ -317,9 +325,7 @@ void MainWindow::SetStyles()
         QTabBar::tab:selected {
             background-color: rgb(80, 80, 80);
         }
-        // QTabBar::close-button {
-        //     image: url(close.png);
-        // }
+
         QTabBar::close-button:hover {
             background: rgb(100, 100, 100);
         }
@@ -327,24 +333,29 @@ void MainWindow::SetStyles()
             background-color: rgb(60, 60, 60);
             color: rgb(240, 240, 240);
         }
-
         QDockWidget {
-            titlebar-close-icon: url(close.png);
-            titlebar-normal-icon: url(float.png);
+            color:rgb(214,214,214);
+
+
         }
         QDockWidget::title {
+
             background-color: rgb(60, 60, 60);
-            color: rgb(240, 240, 240);
             padding-left: 5px;
+            border-top: 1px solid rgb(160,160,160);
+
         }
         QDockWidget::close-button, QDockWidget::float-button {
-            background: rgb(80, 80, 80);
+            background: rgb(100, 100, 100);
             padding: 2px;
+
         }
         QDockWidget::close-button:hover, QDockWidget::float-button:hover {
             background: rgb(100, 100, 100);
         }
-
+        QMessageBox QLabel{
+            color:white;
+        }
 
 
     )";
@@ -514,20 +525,31 @@ void MainWindow::onTabClose(int index)
 
 void MainWindow::toggleFileExplorer(bool show)
 {
+    fileDock->show();
+    qDebug()<<"show file dock";
+
 
 }
 
 void MainWindow::toggleTerminal(bool show)
 {
+    terminalViewDock->show();
+    qDebug()<<"show terminal dock";
 
 }
 
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Application"),
-                       tr("The <b>Application</b> example demonstrates how to "
+                       tr("<h3>App Name</h3>"
+                          "<spin>"
+                          "<div>This <b>Application</b> example demonstrates how to "
                           "write modern GUI applications using Qt, with a menu bar, "
-                          "toolbars, and a status bar."));
+                          "toolbars, and a status bar.</div>"
+                          "<div><h2>nihaoya</h2></div>"
+                          "</spin>"
+
+                          ));
 }
 
 void MainWindow::runCode()
