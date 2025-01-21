@@ -12,11 +12,15 @@
 Terminal::Terminal(QWidget *parent)
     : QPlainTextEdit(parent)
     , process(new QProcess(this))
-    , prompt(getCurrentWorkingDir() + "> ")  // 设置初始提示符
+    // , workingDirectory(QDir::currentPath())// 设置初始工作目录
+    // , prompt(getCurrentWorkingDir() + "> ")  // 设置初始提示符
     , promptPosition(0)
-    , workingDirectory(QDir::currentPath())  // 设置初始工作目录
     , historyPosition(-1)
 {
+    ///初始化不按顺序？
+    workingDirectory=QDir::currentPath();
+    prompt=getCurrentWorkingDir()+"> ";
+
     // 设置终端外观
     setFont(QFont("Consolas", 10));  // 使用等宽字体
     
@@ -119,6 +123,25 @@ void Terminal::keyPressEvent(QKeyEvent *e)
     }
     default:
         QPlainTextEdit::keyPressEvent(e);
+
+
+
+        QString common=getCurrentCommand();
+        QTextCursor cursor = textCursor();
+
+
+        // 设置用户输入的颜色
+        QTextCharFormat userInputFormat;
+        userInputFormat.setForeground(Qt::yellow);
+
+        cursor.setPosition(promptPosition);///将cursor移动到prompt位置
+        cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
+        cursor.removeSelectedText();///删除这段文本
+        cursor.setCharFormat(userInputFormat);///设置字体格式
+        cursor.insertText(common);///插入格式化后的字体
+        setTextCursor(cursor);
+
+        break;
     }
 }
 
@@ -130,6 +153,11 @@ void Terminal::executeCommand(const QString &command)
 {
     if (command.isEmpty()) {
         insertPrompt();
+        return;
+    }
+
+
+    if (handleInternalCommand(command)) {
         return;
     }
 
@@ -146,6 +174,37 @@ void Terminal::executeCommand(const QString &command)
         process->start("bash", QStringList() << "-c" << command);
     #endif
 }
+
+
+
+
+
+bool Terminal::handleInternalCommand(const QString &command)
+{
+    QStringList args = command.split(" ", Qt::SkipEmptyParts);///以空格为分隔符，将命令分割为参数列表
+    if (args.isEmpty()) return false;
+
+    QString cmd = args[0].toLower();
+    args.removeFirst();  // 移除命令名，保留参数
+
+    // if (cmd == "ls") {
+    //     handleLsCommand(args);
+    //     return true;
+    // }
+    // else if (cmd == "pwd") {
+    //     handlePwdCommand();
+    //     return true;
+    // }
+    // else if (cmd == "clear") {
+    //     handleClearCommand();
+    //     return true;
+    // }
+
+    return false;
+
+}
+
+
 
 /**
  * @brief 处理cd命令
@@ -166,6 +225,8 @@ void Terminal::handleCdCommand(const QString &dir)
         workingDirectory = newDir.absolutePath();
         process->setWorkingDirectory(workingDirectory);
         prompt = getCurrentWorkingDir() + "> ";
+        qDebug()<<" cd->prompt:"<<prompt;
+
         insertPrompt();
     } else {
         appendPlainText("Directory does not exist: " + newPath);
@@ -179,6 +240,7 @@ void Terminal::handleCdCommand(const QString &dir)
  */
 QString Terminal::getCurrentWorkingDir() const
 {
+    qDebug()<<"getcurrentWorkingDir:"<<workingDirectory;
     return QDir(workingDirectory).dirName();
 }
 
@@ -188,8 +250,18 @@ QString Terminal::getCurrentWorkingDir() const
 void Terminal::handleProcessOutput()
 {
     QByteArray output = process->readAllStandardOutput();
-    insertPlainText(QString::fromLocal8Bit(output));
+
+    QTextCharFormat outputFormat;
+    outputFormat.setForeground(Qt::blue);
+
+
+    // insertPlainText(QString::fromLocal8Bit(output));
     
+    QTextCursor cursor = textCursor();
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertText(QString::fromLocal8Bit(output), outputFormat);
+    setTextCursor(cursor);
+
     // 滚动到底部
     QScrollBar *bar = verticalScrollBar();
     bar->setValue(bar->maximum());
@@ -198,11 +270,22 @@ void Terminal::handleProcessOutput()
 /**
  * @brief 处理进程错误输出
  */
+
 void Terminal::handleProcessError()
 {
     QByteArray error = process->readAllStandardError();
-    insertPlainText(QString::fromLocal8Bit(error));
-    
+    QString errorString = QString::fromLocal8Bit(error);
+
+    // 设置错误信息的颜色（例如红色）
+    QTextCharFormat errorFormat;
+    errorFormat.setForeground(Qt::red);  // 设置字体颜色为红色
+
+    // 插入带有格式的错误信息
+    QTextCursor cursor = textCursor();
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertText(errorString, errorFormat);
+    setTextCursor(cursor);
+
     // 滚动到底部
     QScrollBar *bar = verticalScrollBar();
     bar->setValue(bar->maximum());
@@ -225,7 +308,14 @@ void Terminal::insertPrompt()
 {
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::End);
-    cursor.insertText(prompt);
+
+    QTextCharFormat FontFormat;
+    FontFormat.setForeground(Qt::white);
+
+    // cursor.insertText("\n");
+
+    qDebug()<<"currentPrompt:"<<prompt;
+    cursor.insertText(prompt,FontFormat);
     promptPosition = cursor.position();
     setTextCursor(cursor);
 }
@@ -241,11 +331,12 @@ QString Terminal::getCurrentCommand() const
     cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
     QString line = cursor.selectedText();
     return line.mid(prompt.length());
+
 }
 
 /**
  * @brief 设置进程环境变量
- * @param environment 环境变量设置
+ * @param environment 环境变量设置,调用解释器/编译器运行文件时要用
  */
 void Terminal::setProcessEnvironment(const QProcessEnvironment &environment)
 {

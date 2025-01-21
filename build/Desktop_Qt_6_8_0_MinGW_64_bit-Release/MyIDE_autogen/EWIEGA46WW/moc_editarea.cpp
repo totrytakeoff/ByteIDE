@@ -78,7 +78,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSEditAreaENDCLASS[] = {
 };
 
 Q_CONSTINIT const QMetaObject EditArea::staticMetaObject = { {
-    QMetaObject::SuperData::link<QObject::staticMetaObject>(),
+    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
     qt_meta_stringdata_CLASSEditAreaENDCLASS.offsetsAndSizes,
     qt_meta_data_CLASSEditAreaENDCLASS,
     qt_static_metacall,
@@ -130,12 +130,12 @@ void *EditArea::qt_metacast(const char *_clname)
     if (!_clname) return nullptr;
     if (!strcmp(_clname, qt_meta_stringdata_CLASSEditAreaENDCLASS.stringdata0))
         return static_cast<void*>(this);
-    return QObject::qt_metacast(_clname);
+    return QWidget::qt_metacast(_clname);
 }
 
 int EditArea::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QObject::qt_metacall(_c, _id, _a);
+    _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {

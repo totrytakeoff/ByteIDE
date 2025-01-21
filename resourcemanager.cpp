@@ -1,6 +1,7 @@
 #include "resourcemanager.h"
 #include <QTreeView>
 #include <QFileSystemModel>
+#include <QModelIndex>
 #include <QDockWidget>
 #include <QPushButton>
 
@@ -130,7 +131,16 @@ void ResourceManager::on_FileClick(const QModelIndex &index)
 
 void ResourceManager::on_FileDoubleClick(const QModelIndex &index)
 {
+
     QString filename=fileModel->filePath(index);
+
+    if(index.isValid()&&fileModel->isDir(index))
+    {
+        qDebug()<<filename<<"dir has been doubleClick";
+        return;
+    }
+
+
     emit(fileDoubleClick(filename));
     qDebug()<<"emit doubleClick,filename:"<<filename;
     qDebug()<<"filePath:"<<fileModel->filePath(index);

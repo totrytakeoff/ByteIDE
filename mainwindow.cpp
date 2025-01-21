@@ -38,8 +38,8 @@
 #include "newfile.h"
 #include "resourcemanager.h"
 #include "editarea.h"
-
-
+#include "terminal.h"
+#include "coderunner.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -49,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent)
 pubilc:
 
     ui->setupUi(this);
+
+    CodeRunner* runner=new CodeRunner(this);
+    runner->searchRunner();
+
 
     codeTabWidget=new QTabWidget(this);
     codeTabWidget->clear();///清空tabwidget内Tab
@@ -215,11 +219,11 @@ void MainWindow::CreatDock()
 
 
     // // Terminal dock
+    terminal=new Terminal(this);
     terminalViewDock= new QDockWidget("Terminal", this);
     terminalViewDock->setAllowedAreas(Qt::BottomDockWidgetArea);
 
-    // terminal = new Terminal(this);
-    // terminalDock->setWidget(terminal);
+    terminalViewDock->setWidget(terminal);
 
     addDockWidget(Qt::BottomDockWidgetArea,terminalViewDock);
 
@@ -374,6 +378,13 @@ void MainWindow::ShowFileDock()
 {
     fileExplorer->SetCurPath(curFolderPath);
 
+}
+
+QString MainWindow::GetCurFileType()
+{
+
+    QFileInfo FileInfo(curFilePath);
+    return FileInfo.suffix();
 }
 
 void MainWindow::loadFormFile(QString path)

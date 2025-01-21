@@ -46,6 +46,8 @@ public:
      */
     void setProcessEnvironment(const QProcessEnvironment &environment);
 
+
+
 protected:
     /**
      * @brief 键盘事件处理函数
@@ -82,6 +84,8 @@ private slots:
      */
     void handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
+
+
 private:
     /**
      * @brief 插入命令提示符
@@ -113,6 +117,9 @@ private:
      * 获取当前工作目录的名称，用于显示在提示符中
      */
     QString getCurrentWorkingDir() const;
+
+
+    bool handleInternalCommand(const QString &command);
     
     // 成员变量
     QProcess *process;          ///< 用于执行命令的进程对象

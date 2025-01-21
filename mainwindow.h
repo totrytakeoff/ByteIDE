@@ -7,8 +7,10 @@
 class QHBoxLayout;
 class ResourceManager;
 class EditArea;
+class Terminal;
 class QFile;
 class QSplitter;
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -39,6 +41,7 @@ public:
 
     void SetStyles();
     void ShowFileDock();
+    QString GetCurFileType();
 
 private slots:
 
@@ -64,6 +67,7 @@ private:
     Ui::MainWindow *ui;
 
     EditArea* curEditArea;
+    Terminal * terminal;
 
     QAction* newFileAct;
     QAction* openFileAct;
@@ -92,6 +96,7 @@ private:
     QString curFolderPath;
 
     QSplitter* mainSplitter;
+
 
 };
 #endif // MAINWINDOW_H

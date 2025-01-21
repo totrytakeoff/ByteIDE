@@ -266,6 +266,12 @@
 	"HEADERS" : 
 	[
 		[
+			"D:/mycppfiles/QT/MyIDE/coderunner.h",
+			"MU",
+			"EWIEGA46WW/moc_coderunner.cpp",
+			null
+		],
+		[
 			"D:/mycppfiles/QT/MyIDE/editarea.h",
 			"MU",
 			"EWIEGA46WW/moc_editarea.cpp",
@@ -371,6 +377,7 @@
 	"SETTINGS_FILE" : "D:/mycppfiles/QT/MyIDE/build/Desktop_Qt_6_8_0_MinGW_64_bit-Debug/CMakeFiles/MyIDE_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "D:/mycppfiles/QT/MyIDE/coderunner.cpp", "MU", null ],
 		[ "D:/mycppfiles/QT/MyIDE/editarea.cpp", "MU", null ],
 		[ "D:/mycppfiles/QT/MyIDE/main.cpp", "MU", null ],
 		[ "D:/mycppfiles/QT/MyIDE/mainwindow.cpp", "MU", null ],

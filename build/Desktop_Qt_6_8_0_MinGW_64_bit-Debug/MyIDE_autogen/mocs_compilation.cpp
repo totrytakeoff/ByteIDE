@@ -3,3 +3,4 @@
 #include "EWIEGA46WW/moc_mainwindow.cpp"
 #include "EWIEGA46WW/moc_newfile.cpp"
 #include "EWIEGA46WW/moc_resourcemanager.cpp"
+#include "EWIEGA46WW/moc_terminal.cpp"

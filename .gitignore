@@ -1,0 +1,34 @@
+# 忽略所有 build 文件夹
+/build/
+_build/
+
+# 忽略 Visual Studio 生成的文件
+*.sln
+*.suo
+*.user
+*.vcxproj*
+*.filters
+
+# 忽略 CMake 生成的文件
+CMakeLists.txt.user
+CMakeCache.txt
+cmake_install.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+
+# 忽略 Qt Creator 生成的文件
+*.pro.user
+
+# 忽略编译产生的目标文件和可执行文件
+*.o
+*.a
+*.so
+*.dll
+*.exe
+
+# 忽略调试符号文件
+*.pdb
+
+# 其他可能需要忽略的文件类型
+*.log
+*.tmp
