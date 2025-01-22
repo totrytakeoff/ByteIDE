@@ -78,6 +78,8 @@ void Terminal::keyPressEvent(QKeyEvent *e)
     switch (e->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter: {
+
+
         // 获取并执行命令
         QString command = getCurrentCommand();
         if (!command.isEmpty()) {
@@ -252,14 +254,14 @@ void Terminal::handleProcessOutput()
     QByteArray output = process->readAllStandardOutput();
 
     QTextCharFormat outputFormat;
-    outputFormat.setForeground(Qt::blue);
+    outputFormat.setForeground(QColor(116, 185, 255));
 
 
     // insertPlainText(QString::fromLocal8Bit(output));
     
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::End);
-    cursor.insertText(QString::fromLocal8Bit(output), outputFormat);
+    cursor.insertText("\n"+QString::fromLocal8Bit(output), outputFormat);
     setTextCursor(cursor);
 
     // 滚动到底部

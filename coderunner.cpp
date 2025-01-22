@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
+#include <QProcess>
 
 #include "terminal.h"
 
@@ -11,6 +12,13 @@
 CodeRunner::CodeRunner(QWidget* parent)
     :QWidget(parent)
 {
+
+    searchRunner();
+    // runFile<<"C:\\Users\\myself\\Desktop\\py.py";
+    runFile="C:\\Users\\myself\\Desktop\\py.py";
+
+
+
 
 
 }
@@ -27,6 +35,13 @@ void CodeRunner::setMode(QString &fileType)
     if(fileType==".cpp")
         RunMode=Mode::Cpp;
 
+}
+
+QString CodeRunner::runPythonCode()
+{
+
+    QString command=PythonRunner+" "+runFile;
+    return command;
 }
 
 
@@ -66,6 +81,11 @@ void CodeRunner::searchRunner()
 
 }
 
+void CodeRunner::setRunFile(QString &file)
+{
+    runFile=file;
+}
+
 
 QString CodeRunner::searchFiles(const QString &dirPath, const QString &searchPattern) {
     QDir dir(dirPath);
@@ -92,5 +112,57 @@ QString CodeRunner::searchFiles(const QString &dirPath, const QString &searchPat
     }
     return "";
 }
+
+
+
+
+/*
+// void CodeRunner::initProcess()
+// {
+//     process=new QProcess(this);
+
+//     process->setProgram(PythonRunner);
+//     process->setArguments(runFile);
+
+//     connect(process,&QProcess::readyReadStandardOutput,this,&CodeRunner::handleProcessOutput);
+//     connect(process,&QProcess::readyReadStandardError,this,&CodeRunner::handleProcessError);
+//     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+//             this, &CodeRunner::handleProcessFinish);
+
+// }
+
+// void CodeRunner::handleProcessOutput()
+// {
+//     qDebug()<<QString::fromLocal8Bit(process->readAllStandardOutput());
+// }
+
+// void CodeRunner::handleProcessError()
+// {
+//     qDebug()<<QString::fromLocal8Bit(process->readAllStandardError());
+// }
+
+// void CodeRunner::handleProcessFinish(int exitCode, QProcess::ExitStatus exitstatus)
+// {
+//     // // 等待进程结束（可以选择同步或异步等待）
+//     // if (!process->waitForFinished()) {
+//     //     qDebug() << "Process did not finish.";
+//     // }
+
+//     // 检查退出状态
+//     if (process->exitStatus() == QProcess::NormalExit && process->exitCode() == 0) {
+//         qDebug() << "Python script executed successfully.";
+//     } else {
+//         qDebug() << "Python script failed with exit code" << process->exitCode();
+//     }
+// }
+
+// void CodeRunner::handleProcessInput()
+// {
+
+
+
+// }
+
+*/
 
 

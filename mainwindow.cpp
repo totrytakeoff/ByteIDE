@@ -50,8 +50,8 @@ pubilc:
 
     ui->setupUi(this);
 
-    CodeRunner* runner=new CodeRunner(this);
-    runner->searchRunner();
+    runner=new CodeRunner(this);
+
 
 
     codeTabWidget=new QTabWidget(this);
@@ -111,11 +111,12 @@ void MainWindow::CreatAction()
     // openFolderAct->setShortcut()
     connect(openFolderAct, &QAction::triggered, this, &MainWindow::openFolder);
 
+
     runAct = new QAction("&运行", this);
     runAct->setStatusTip("保存并运行当前文件");
     runAct->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     runAct->setShortcut(QKeySequence("Ctrl+F5"));
-    // connect(runAct, &QAction::triggered, this, &MainWindow::runCode);
+    connect(runAct, &QAction::triggered, this, &MainWindow::runCode);
 
     exitAct = new QAction("&退出", this);
     exitAct->setStatusTip("退出应用程序");
@@ -135,6 +136,7 @@ void MainWindow::CreatAction()
 
     aboutAct = new QAction("&关于", this);
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+
 
 }
 
@@ -565,6 +567,10 @@ void MainWindow::about()
 
 void MainWindow::runCode()
 {
+
+    QString command=runner->runPythonCode();
+    terminal->executeCommand(command);
+
 
 }
 

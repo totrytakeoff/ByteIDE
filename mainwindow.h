@@ -8,6 +8,7 @@ class QHBoxLayout;
 class ResourceManager;
 class EditArea;
 class Terminal;
+class CodeRunner;
 class QFile;
 class QSplitter;
 
@@ -68,6 +69,7 @@ private:
 
     EditArea* curEditArea;
     Terminal * terminal;
+    CodeRunner* runner;
 
     QAction* newFileAct;
     QAction* openFileAct;
