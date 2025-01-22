@@ -47,6 +47,7 @@ public:
     void setProcessEnvironment(const QProcessEnvironment &environment);
 
 
+    void setIsRunning(bool flag);
 
 protected:
     /**
@@ -128,6 +129,8 @@ private:
     QString workingDirectory;  ///< 当前工作目录路径
     QStringList commandHistory; ///< 命令历史记录列表
     int historyPosition;       ///< 当前历史记录的位置索引
+
+    bool isrunning=false;
 };
 
 #endif // TERMINAL_H 

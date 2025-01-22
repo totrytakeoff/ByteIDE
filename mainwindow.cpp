@@ -569,8 +569,8 @@ void MainWindow::runCode()
 {
 
     QString command=runner->runPythonCode();
+    terminal->setIsRunning(true);
     terminal->executeCommand(command);
-
 
 }
 

@@ -38,12 +38,17 @@ Terminal::Terminal(QWidget *parent)
     connect(process, &QProcess::readyReadStandardError, this, &Terminal::handleProcessError);
     connect(process, &QProcess::finished, this, &Terminal::handleProcessFinished);
 
+    // connect(process,&QProc)
+
     // 显示初始提示符
     insertPrompt();
     
     // 配置终端显示
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);  // 禁用水平滚动条
     setLineWrapMode(QPlainTextEdit::WidgetWidth);         // 启用自动换行
+
+    process->start("cmd.exe");
+
 }
 
 /**
@@ -65,6 +70,60 @@ Terminal::~Terminal()
  */
 void Terminal::keyPressEvent(QKeyEvent *e)
 {
+
+    // qDebug()<<"status while keypress "<<process->exitStatus();
+    // qDebug()<<"exitCode while keypress "<<process->exitCode();
+
+
+    if(isrunning){
+        qDebug()<<"isrunning input...";
+        switch(e->key()){
+        case Qt::Key_Return:
+        case Qt::Key_Enter: {
+
+
+            // 获取并执行命令
+            QString command = getCurrentCommand();
+            qDebug()<<"process->write::"<<command;
+
+            // if (!command.isEmpty()) {
+            //     commandHistory.append(command);  // 添加到历史记录
+            //     historyPosition = commandHistory.size();
+            // }
+            // appendPlainText("");  // 换行
+            // executeCommand(command);
+            process->write(command.toUtf8() + "\n");
+            process->waitForBytesWritten();
+
+            break;
+        }
+        default:
+            QPlainTextEdit::keyPressEvent(e);
+
+
+            QString common=getCurrentCommand();
+            QTextCursor cursor = textCursor();
+
+
+            // 设置用户输入的颜色
+            QTextCharFormat userInputFormat;
+            userInputFormat.setForeground(Qt::yellow);
+
+            cursor.setPosition(promptPosition);///将cursor移动到prompt位置
+            cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
+            cursor.removeSelectedText();///删除这段文本
+            cursor.setCharFormat(userInputFormat);///设置字体格式
+            cursor.insertText(common);///插入格式化后的字体
+            setTextCursor(cursor);
+
+
+        }
+
+
+        return;
+    }
+
+
     // 获取光标位置
     QTextCursor cursor = textCursor();
     
@@ -154,14 +213,14 @@ void Terminal::keyPressEvent(QKeyEvent *e)
 void Terminal::executeCommand(const QString &command)
 {
     if (command.isEmpty()) {
-        insertPrompt();
+        // insertPrompt();
         return;
     }
 
 
-    if (handleInternalCommand(command)) {
-        return;
-    }
+    // if (handleInternalCommand(command)) {
+    //     return;
+    // }
 
     // 特殊处理cd命令
     if (command.startsWith("cd ")) {
@@ -171,7 +230,14 @@ void Terminal::executeCommand(const QString &command)
 
     // 执行其他命令
     #ifdef Q_OS_WIN
-        process->start("cmd.exe", QStringList() << "/c" << command);
+
+    qDebug()<<"execommand::"<<command;
+
+        process->write((command + "\n").toUtf8());
+        process->waitForBytesWritten();
+
+        // process->write(QString("666").toUtf8() + "\n");
+        // insertPrompt();
     #else
         process->start("bash", QStringList() << "-c" << command);
     #endif
@@ -183,6 +249,7 @@ void Terminal::executeCommand(const QString &command)
 
 bool Terminal::handleInternalCommand(const QString &command)
 {
+
     QStringList args = command.split(" ", Qt::SkipEmptyParts);///以空格为分隔符，将命令分割为参数列表
     if (args.isEmpty()) return false;
 
@@ -264,6 +331,7 @@ void Terminal::handleProcessOutput()
     cursor.insertText("\n"+QString::fromLocal8Bit(output), outputFormat);
     setTextCursor(cursor);
 
+
     // 滚动到底部
     QScrollBar *bar = verticalScrollBar();
     bar->setValue(bar->maximum());
@@ -298,9 +366,11 @@ void Terminal::handleProcessError()
  */
 void Terminal::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    Q_UNUSED(exitCode);
-    Q_UNUSED(exitStatus);
-    insertPrompt();  // 显示新的提示符
+    qDebug()<<"process:"<<process->processId()<<"have finish";
+    qDebug()<<"exitcode:"<<exitCode;
+    qDebug()<<"exitstatus:"<<exitStatus;
+    isrunning=false;
+    // insertPrompt();  // 显示新的提示符
 }
 
 /**
@@ -314,7 +384,7 @@ void Terminal::insertPrompt()
     QTextCharFormat FontFormat;
     FontFormat.setForeground(Qt::white);
 
-    // cursor.insertText("\n");
+    cursor.insertText("\n");
 
     qDebug()<<"currentPrompt:"<<prompt;
     cursor.insertText(prompt,FontFormat);
@@ -343,4 +413,9 @@ QString Terminal::getCurrentCommand() const
 void Terminal::setProcessEnvironment(const QProcessEnvironment &environment)
 {
     process->setProcessEnvironment(environment);
-} 
+}
+
+void Terminal::setIsRunning(bool flag)
+{
+    isrunning=flag;
+}

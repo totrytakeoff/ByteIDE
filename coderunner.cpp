@@ -100,7 +100,7 @@ QString CodeRunner::searchFiles(const QString &dirPath, const QString &searchPat
 
     foreach (const QFileInfo &entry, entries) {
 
-        qDebug()<<"Seaching File:"<<entry.fileName();
+        // qDebug()<<"Seaching File:"<<entry.fileName();
         if (entry.isDir()) {
             // 递归搜索子目录
             searchFiles(entry.absoluteFilePath(), searchPattern);
