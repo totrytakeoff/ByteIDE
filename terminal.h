@@ -126,6 +126,7 @@ private:
     QProcess *process;          ///< 用于执行命令的进程对象
     QString prompt;            ///< 命令提示符文本
     int promptPosition;        ///< 提示符在文本中的位置
+    int cursorLinePos;
     QString workingDirectory;  ///< 当前工作目录路径
     QStringList commandHistory; ///< 命令历史记录列表
     int historyPosition;       ///< 当前历史记录的位置索引

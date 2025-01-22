@@ -14,12 +14,6 @@ CodeRunner::CodeRunner(QWidget* parent)
 {
 
     searchRunner();
-    // runFile<<"C:\\Users\\myself\\Desktop\\py.py";
-    runFile="C:\\Users\\myself\\Desktop\\py.py";
-
-
-
-
 
 }
 
@@ -30,16 +24,37 @@ CodeRunner::~CodeRunner()
 
 void CodeRunner::setMode(QString &fileType)
 {
-    if(fileType==".py")
+    qDebug()<<"setmode:"<<fileType;
+    if(fileType=="py")
         RunMode=Mode::Python;
-    if(fileType==".cpp")
+    else if(fileType=="cpp")
         RunMode=Mode::Cpp;
+    else RunMode=Mode::UnKown;
 
+}
+
+QString CodeRunner::runCode()
+{
+
+    if(RunMode==Mode::Python){
+        QString command=runPythonCode();
+        qDebug()<<command;
+        return command;
+    }else if(RunMode==Mode::Cpp){
+        return runCppCode();
+    }else {
+        QMessageBox::warning(this,"运行错误","该文件不能被直接运行");
+        return "";
+    }
+}
+
+QString CodeRunner::runCppCode()
+{
+    return "";
 }
 
 QString CodeRunner::runPythonCode()
 {
-
     QString command=PythonRunner+" "+runFile;
     return command;
 }

@@ -47,6 +47,11 @@ public:
     QTabWidget* tabwidget;
     QString curEditFile;
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+    //void keyPressEvent(QKeyEvent *event) override;
+    //基类不是qsciscintilla，不能直接重写keyPressEvent，可通过事件过滤器来实现类似效果
+
 public slots:
     void highlightCurrentLine(int line,int index);
 
@@ -76,6 +81,10 @@ private:
 
     QColor FontDefaultColor=QColor(214, 207, 154);
     QColor EditorDefaultBackgroundColor= QColor(35, 35, 35);
+
+    QColor MatchedBraceBackgroundColor=QColor(255, 107, 129);
+    QColor MatchedBraceForegroundColor=QColor(241, 196, 15);
+
 
 
 };

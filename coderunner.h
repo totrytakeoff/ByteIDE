@@ -16,15 +16,16 @@ public:
     ~CodeRunner();
 
     enum class Mode{
+        UnKown,
         Cpp,
         Python
     };
 
     void setMode(QString &fileType);
 
-    // QString runCode();
+    QString runCode();
 
-    // QString runCppCode();
+    QString runCppCode();
 
     QString runPythonCode();
 
@@ -49,7 +50,7 @@ private:
     QString runFile;
     QStringList runFileList;
 
-    Mode RunMode;
+    Mode RunMode=Mode::UnKown;
 
     QString PythonRunner;
     QString CppRunner;

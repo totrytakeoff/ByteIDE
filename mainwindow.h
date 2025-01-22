@@ -78,6 +78,19 @@ private:
     QAction* exitAct;
     QAction* aboutAct;
 
+    QAction* redo;//重做
+    QAction* undo;//撤销
+    QAction* cut;
+    QAction* copy;
+    QAction* paste;
+    QAction* seletAll;
+    QAction* cancelSelect;
+    QAction* foldAll;
+    QAction* openAll;
+    // QAction* ;
+    // QAction* ;
+    // QAction* ;
+
     QAction* showFileExplorerAct;
     QAction* showTerminalAct;
 

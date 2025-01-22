@@ -47,7 +47,7 @@ Terminal::Terminal(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);  // 禁用水平滚动条
     setLineWrapMode(QPlainTextEdit::WidgetWidth);         // 启用自动换行
 
-    process->start("cmd.exe");
+    // process->start("cmd.exe");
 
 }
 
@@ -74,16 +74,28 @@ void Terminal::keyPressEvent(QKeyEvent *e)
     // qDebug()<<"status while keypress "<<process->exitStatus();
     // qDebug()<<"exitCode while keypress "<<process->exitCode();
 
+    // 获取光标位置
+    QTextCursor cursor = textCursor();
+    // 防止修改历史命令输出
+    if (cursor.position() < promptPosition && e->key() != Qt::Key_Control) {
+        cursor.movePosition(QTextCursor::End);
+        setTextCursor(cursor);
+    }
 
     if(isrunning){
+
         qDebug()<<"isrunning input...";
         switch(e->key()){
         case Qt::Key_Return:
         case Qt::Key_Enter: {
 
+            QTextCursor cursor = textCursor();
+            cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
 
-            // 获取并执行命令
-            QString command = getCurrentCommand();
+            cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
+
+            // write input
+            QString command = cursor.selectedText();
             qDebug()<<"process->write::"<<command;
 
             // if (!command.isEmpty()) {
@@ -98,22 +110,26 @@ void Terminal::keyPressEvent(QKeyEvent *e)
             break;
         }
         default:
-            QPlainTextEdit::keyPressEvent(e);
 
-
-            QString common=getCurrentCommand();
             QTextCursor cursor = textCursor();
 
+            // cursorLinePos=cursor.position();
+
+            QPlainTextEdit::keyPressEvent(e);
 
             // 设置用户输入的颜色
             QTextCharFormat userInputFormat;
             userInputFormat.setForeground(Qt::yellow);
+            // promptPosition
+            cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
 
-            cursor.setPosition(promptPosition);///将cursor移动到prompt位置
             cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
+            QString input=cursor.selectedText();
+            // qDebug()<<"cursor select::"<<cursor.selectedText();
+
             cursor.removeSelectedText();///删除这段文本
             cursor.setCharFormat(userInputFormat);///设置字体格式
-            cursor.insertText(common);///插入格式化后的字体
+            cursor.insertText(input);///插入格式化后的字体
             setTextCursor(cursor);
 
 
@@ -124,14 +140,9 @@ void Terminal::keyPressEvent(QKeyEvent *e)
     }
 
 
-    // 获取光标位置
-    QTextCursor cursor = textCursor();
+
     
-    // 防止修改历史命令输出
-    if (cursor.position() < promptPosition && e->key() != Qt::Key_Control) {
-        cursor.movePosition(QTextCursor::End);
-        setTextCursor(cursor);
-    }
+
 
     // 处理不同的按键事件
     switch (e->key()) {
@@ -140,7 +151,7 @@ void Terminal::keyPressEvent(QKeyEvent *e)
 
 
         // 获取并执行命令
-        QString command = getCurrentCommand();
+        QString command = getCurrentCommand().mid(prompt.length());
         if (!command.isEmpty()) {
             commandHistory.append(command);  // 添加到历史记录
             historyPosition = commandHistory.size();
@@ -187,7 +198,7 @@ void Terminal::keyPressEvent(QKeyEvent *e)
 
 
 
-        QString common=getCurrentCommand();
+        QString common=getCurrentCommand().mid(prompt.length());
         QTextCursor cursor = textCursor();
 
 
@@ -213,7 +224,7 @@ void Terminal::keyPressEvent(QKeyEvent *e)
 void Terminal::executeCommand(const QString &command)
 {
     if (command.isEmpty()) {
-        // insertPrompt();
+        insertPrompt();
         return;
     }
 
@@ -231,13 +242,12 @@ void Terminal::executeCommand(const QString &command)
     // 执行其他命令
     #ifdef Q_OS_WIN
 
-    qDebug()<<"execommand::"<<command;
+        qDebug()<<"execommand::"<<command;
+        process->start("cmd.exe",QStringList()<<"/c"<<command);
+        // process->write((command + "\n").toUtf8());
+        // process->waitForBytesWritten();
 
-        process->write((command + "\n").toUtf8());
-        process->waitForBytesWritten();
 
-        // process->write(QString("666").toUtf8() + "\n");
-        // insertPrompt();
     #else
         process->start("bash", QStringList() << "-c" << command);
     #endif
@@ -309,7 +319,7 @@ void Terminal::handleCdCommand(const QString &dir)
  */
 QString Terminal::getCurrentWorkingDir() const
 {
-    qDebug()<<"getcurrentWorkingDir:"<<workingDirectory;
+    // qDebug()<<"getcurrentWorkingDir:"<<workingDirectory;
     return QDir(workingDirectory).dirName();
 }
 
@@ -326,10 +336,13 @@ void Terminal::handleProcessOutput()
 
     // insertPlainText(QString::fromLocal8Bit(output));
     
+
+    qDebug()<<"output::"<<QString::fromLocal8Bit(output);
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::End);
     cursor.insertText("\n"+QString::fromLocal8Bit(output), outputFormat);
     setTextCursor(cursor);
+    cursorLinePos=cursor.position();
 
 
     // 滚动到底部
@@ -353,7 +366,7 @@ void Terminal::handleProcessError()
     // 插入带有格式的错误信息
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::End);
-    cursor.insertText(errorString, errorFormat);
+    cursor.insertText("\n"+errorString, errorFormat);
     setTextCursor(cursor);
 
     // 滚动到底部
@@ -366,11 +379,11 @@ void Terminal::handleProcessError()
  */
 void Terminal::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qDebug()<<"process:"<<process->processId()<<"have finish";
-    qDebug()<<"exitcode:"<<exitCode;
-    qDebug()<<"exitstatus:"<<exitStatus;
+    // qDebug()<<"process:"<<process->processId()<<"have finish";
+    // qDebug()<<"exitcode:"<<exitCode;
+    // qDebug()<<"exitstatus:"<<exitStatus;
     isrunning=false;
-    // insertPrompt();  // 显示新的提示符
+    insertPrompt();  // 显示新的提示符
 }
 
 /**
@@ -386,7 +399,7 @@ void Terminal::insertPrompt()
 
     cursor.insertText("\n");
 
-    qDebug()<<"currentPrompt:"<<prompt;
+    // qDebug()<<"currentPrompt:"<<prompt;
     cursor.insertText(prompt,FontFormat);
     promptPosition = cursor.position();
     setTextCursor(cursor);
@@ -401,8 +414,14 @@ QString Terminal::getCurrentCommand() const
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::End);
     cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
-    QString line = cursor.selectedText();
-    return line.mid(prompt.length());
+
+    // qDebug()<<"curcmd:"<<line;
+    // qDebug()<<"prompt:"<<prompt;
+    // qDebug()<<"promptlen::"<<prompt.length();
+
+///获取当前命令（带prompt）
+/// .mid(prompt.length())去prompt
+    return cursor.selectedText();
 
 }
 

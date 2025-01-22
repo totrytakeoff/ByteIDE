@@ -6,7 +6,8 @@
 #include<QMetaMethod>
 #include<QString>
 #include<QVBoxLayout>
-
+// #include<QEvent>
+#include<QKeyEvent>
 #include<Qsci/qscistyledtext.h>
 #include<Qsci/qsciapis.h>
 
@@ -40,6 +41,8 @@ EditArea::EditArea(QWidget* parent)
     layout->setContentsMargins(0, 0, 0, 0); // 可选：移除布局的边距
     setLayout(layout);
 
+    // 安装事件过滤器
+    textEdit->installEventFilter(this);
 }
 
 EditArea::~EditArea()
@@ -113,6 +116,8 @@ void EditArea::InitLexer()
     CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::InactiveRawString), QsciLexerCPP::InactiveRawString);
 
 
+
+
     textEdit->setAutoCompletionSource(QsciScintilla::AcsAll);
     textEdit->setAutoCompletionThreshold(1); // 当用户输入至少一个字符后触发自动完成
     textEdit->setAutoCompletionReplaceWord(true); // 自动替换当前词
@@ -142,7 +147,12 @@ void EditArea::InitTextEdit()
 {
     textEdit->setLexer(CppLexer);
     textEdit->setTabWidth(4);///设置Tab长度为4空格
+    textEdit->setBraceMatching(QsciScintilla::SloppyBraceMatch);///启用括号匹配
+    textEdit->setMatchedBraceBackgroundColor(MatchedBraceBackgroundColor);
+    textEdit->setMatchedBraceForegroundColor(MatchedBraceForegroundColor);
 
+
+    textEdit->setCallTipsStyle(QsciScintilla::CallTipsNoAutoCompletionContext);///调用提示
     ///无需设置TextEdit的背景色，直接设置lexer即可，会被lexer覆盖
 
     textEdit->setIndentationGuides(true);///启动缩进提示
@@ -181,6 +191,7 @@ void EditArea::InitTextEdit()
     int  LineTag= 0;
     textEdit->markerDefine(QsciScintilla::VerticalLine , LineTag);
     textEdit->setMarkerBackgroundColor(currentLineTagColor, LineTag);
+
 
 
 }
@@ -321,6 +332,49 @@ QMap<int, QColor> EditArea::createDefaultColorMap()
     colorMap.insert(QsciLexerCPP::InactiveRawString, QColor(218, 218, 218));
 
     return colorMap;
+}
+
+bool EditArea::eventFilter(QObject *obj, QEvent *event)
+{
+
+    if (obj == textEdit && event->type() == QEvent::KeyPress) {
+
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+
+        // 获取当前光标位置
+        int line, index;
+        textEdit->getCursorPosition(&line, &index);
+
+        // 获取输入的字符
+        QString text = keyEvent->text();
+
+
+        // 检查是否输入了左括号
+        if (text == "(" || text == "{" || text == "["||text=="\""||text=="'") {
+            // 阻止默认行为（插入左括号）防止插入右括号覆盖自动插入的左括号
+            event->accept();
+
+            // 插入对应的右括号
+            QString closingBracket;
+            if (text == "(") closingBracket = ")";
+            else if (text == "{") closingBracket = "}";
+            else if (text == "[") closingBracket = "]";
+            else if (text == "\"") closingBracket = "\"";
+            else if (text == "'") closingBracket = "'";
+
+            textEdit->insertAt(text,line,index);//手动插入左括号
+            textEdit->insertAt(closingBracket, line, index + 1);//手动插入右括号
+
+            // 将光标移动到括号内
+            textEdit->setCursorPosition(line, index + 1);
+
+            return true;  // 事件已处理
+        }
+    }
+
+    // 调用基类的事件过滤器
+    return QWidget::eventFilter(obj, event);
+
 }
 
 

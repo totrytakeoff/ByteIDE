@@ -35,6 +35,8 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 
+#include <Qsci/qsciscintilla.h>
+
 #include "newfile.h"
 #include "resourcemanager.h"
 #include "editarea.h"
@@ -136,6 +138,8 @@ void MainWindow::CreatAction()
 
     aboutAct = new QAction("&关于", this);
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+
+    // curEditArea->textEdit->redo();
 
 
 }
@@ -384,7 +388,6 @@ void MainWindow::ShowFileDock()
 
 QString MainWindow::GetCurFileType()
 {
-
     QFileInfo FileInfo(curFilePath);
     return FileInfo.suffix();
 }
@@ -417,7 +420,7 @@ void MainWindow::loadFormFile(QString path)
         setCurrentFile(path);///更新当前Tab对应文件
     }
     else {
-        QMessageBox::warning(this, tr("Application"),
+        QMessageBox::warning(this, tr("error"),
                              tr("不能读取文件 %1:\n%2.")
                                  .arg(path)
                                  .arg(file.errorString()));
@@ -430,7 +433,7 @@ void MainWindow::openFile()
 {
     QString path=QFileDialog::getOpenFileName(this,"打开一个文件",
                                                 QDir::currentPath(),
-                                                "C/C++(*.cpp *.c *.h);;python(*.py);;文本文件(*.txt);;所有文件(*.*)");
+                                                "所有文件(*.*);;C/C++(*.cpp *.c *.h);;python(*.py);;文本文件(*.txt)");
 
     if(path.isEmpty()){
         qDebug()<<"path is empty";
@@ -461,8 +464,8 @@ void MainWindow::saveFile(QString fileName)
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly)) {
-        QMessageBox::warning(this, tr("Application"),
-                             tr("Cannot write file %1:\n%2.")
+        QMessageBox::warning(this, tr("error"),
+                             tr("无法写入文件 %1:\n%2.")
                                  .arg(fileName)
                                  .arg(file.errorString()));
     }
@@ -473,7 +476,7 @@ void MainWindow::saveFile(QString fileName)
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
-    statusBar()->showMessage(tr("File saved"), 2000);///设置状态栏保存成功
+    statusBar()->showMessage(tr("文件已保存"), 2000);///设置状态栏保存成功
     qDebug()<<"have save the file";
 
 }
@@ -492,7 +495,7 @@ void MainWindow::openFolder()
 
 void MainWindow::createNewFile()
 {
-    qDebug()<<"creat";
+
 
     QString Dir=QDir::currentPath();
     NewFile* newFile=new NewFile(this,Dir);
@@ -568,9 +571,22 @@ void MainWindow::about()
 void MainWindow::runCode()
 {
 
-    QString command=runner->runPythonCode();
-    terminal->setIsRunning(true);
-    terminal->executeCommand(command);
+    saveCurFile();
+    QString filetype=GetCurFileType();
+
+    qDebug()<<"the curfile with file type :"<<curFilePath<<" "<<filetype;
+
+    runner->setRunFile(curFilePath);
+    runner->setMode(filetype);
+
+
+    QString command=runner->runCode();
+    qDebug()<<command;
+    if(!command.isEmpty()){
+        qDebug()<<"runcode:"<<command;
+        terminal->setIsRunning(true);
+        terminal->executeCommand(command);
+    }
 
 }
 
