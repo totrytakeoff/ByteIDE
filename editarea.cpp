@@ -3,10 +3,8 @@
 #include<Qsci/qsciscintilla.h>
 #include<QTabWidget>
 #include<QDebug>
-#include<QMetaMethod>
 #include<QString>
 #include<QVBoxLayout>
-// #include<QEvent>
 #include<QKeyEvent>
 #include<Qsci/qscistyledtext.h>
 #include<Qsci/qsciapis.h>
@@ -41,8 +39,9 @@ EditArea::EditArea(QWidget* parent)
     layout->setContentsMargins(0, 0, 0, 0); // 可选：移除布局的边距
     setLayout(layout);
 
-    // 安装事件过滤器
+    // 安装事件过滤器,模拟keyEvent
     textEdit->installEventFilter(this);
+
 }
 
 EditArea::~EditArea()
@@ -183,6 +182,9 @@ void EditArea::InitTextEdit()
     textEdit->setMarginWidth(EditArea::SymMargin3,20);
 
     textEdit->setFolding(QsciScintilla::BoxedTreeFoldStyle,FoldMargin);///折叠代码块栏
+    // textEdit->setFoldMarker(QsciScintilla::SC_MARKNUM_FOLDEROPEN, QsciScintilla::SC_MARK_ARROWDOWN);
+    // textEdit->setFoldMarker(QsciScintilla::SC_MARKNUM_FOLDER, QsciScintilla::SC_MARK_ARROW);
+
 
     textEdit->setMarginWidth(EditArea::FoldMargin,20);
     textEdit->setFoldMarginColors(FoldingColor,FoldingColor);
@@ -195,8 +197,6 @@ void EditArea::InitTextEdit()
 
 
 }
-
-
 
 
 void EditArea::ModifyLexerColor(int WordType,QColor &col)

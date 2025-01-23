@@ -58,10 +58,25 @@ private slots:
     void toggleFileExplorer(bool show);
     void toggleTerminal(bool show);
     void about();
+
+    void redoAction();          // 重做
+    void undoAction();          // 撤销
+    void cutAction();           // 剪切
+    void copyAction();          // 复制
+    void pasteAction();         // 粘贴
+    void selectAllAction();     // 全选
+    void cancelSelectAction();  // 取消选择
+    void foldAllAction();       // 折叠全部
+    void openAllAction();       // 展开全部
+
     void runCode();
+
 
     void onTabChange();
 
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 
 private:
@@ -78,15 +93,15 @@ private:
     QAction* exitAct;
     QAction* aboutAct;
 
-    QAction* redo;//重做
-    QAction* undo;//撤销
-    QAction* cut;
-    QAction* copy;
-    QAction* paste;
-    QAction* seletAll;
-    QAction* cancelSelect;
-    QAction* foldAll;
-    QAction* openAll;
+    QAction* redoAct;//重做
+    QAction* undoAct;//撤销
+    QAction* cutAct;
+    QAction* copyAct;
+    QAction* pasteAct;
+    QAction* selectAllAct;
+    QAction* cancelSelectAct;
+    QAction* foldAllAct;
+    QAction* openAllAct;
     // QAction* ;
     // QAction* ;
     // QAction* ;
@@ -109,6 +124,8 @@ private:
     ResourceManager * fileExplorer;
     QString curFilePath;
     QString curFolderPath;
+
+    bool isModified=false;
 
     QSplitter* mainSplitter;
 

@@ -56,7 +56,6 @@ public slots:
     void highlightCurrentLine(int line,int index);
 
 signals:
-    void test(int a,int b);
 
 
 private:

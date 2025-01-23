@@ -125,14 +125,10 @@ void MainWindow::CreatAction()
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
 
     showFileExplorerAct = new QAction("文件资源管理器", this);
-    // showFileExplorerAct->setCheckable(true);
-    // showFileExplorerAct->setChecked(true);
     connect(showFileExplorerAct, &QAction::triggered, this, &MainWindow::toggleFileExplorer);
 
 
     showTerminalAct = new QAction("Terminal(终端)", this);
-    // showTerminalAct->setCheckable(true);
-    // showTerminalAct->setChecked(true);
     connect(showTerminalAct, &QAction::triggered, this, &MainWindow::toggleTerminal);
 
 
@@ -140,6 +136,46 @@ void MainWindow::CreatAction()
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
     // curEditArea->textEdit->redo();
+
+
+    redoAct = new QAction("重做", this);
+    redoAct->setShortcut(QKeySequence::Redo);  // 快捷键：Ctrl + Y 或 Ctrl + Shift + Z
+
+    undoAct = new QAction("撤销", this);
+    undoAct->setShortcut(QKeySequence::Undo);  // 快捷键：Ctrl + Z
+
+    cutAct = new QAction("剪切", this);
+    cutAct->setShortcut(QKeySequence::Cut);  // 快捷键：Ctrl + X
+
+    copyAct = new QAction("复制", this);
+    copyAct->setShortcut(QKeySequence::Copy);  // 快捷键：Ctrl + C
+
+    pasteAct = new QAction("粘贴", this);
+    pasteAct->setShortcut(QKeySequence::Paste);  // 快捷键：Ctrl + V
+
+    selectAllAct = new QAction("全选", this);
+    selectAllAct->setShortcut(QKeySequence::SelectAll);  // 快捷键：Ctrl + A
+
+    cancelSelectAct = new QAction("取消选择", this);
+    cancelSelectAct->setShortcut(Qt::Key_Escape);  // 快捷键：Esc
+
+    foldAllAct = new QAction("折叠全部", this);
+    foldAllAct->setShortcut(QKeySequence("Ctrl+Shift+["));  // 自定义快捷键：Ctrl + Shift + [
+
+    openAllAct = new QAction("展开全部", this);
+    openAllAct->setShortcut(QKeySequence("Ctrl+Shift+]"));  // 自定义快捷键：Ctrl + Shift + ]
+
+    // 连接槽函数
+    connect(redoAct, &QAction::triggered, this, &MainWindow::redoAction);
+    connect(undoAct, &QAction::triggered, this, &MainWindow::undoAction);
+    connect(cutAct, &QAction::triggered, this, &MainWindow::cutAction);
+    connect(copyAct, &QAction::triggered, this, &MainWindow::copyAction);
+    connect(pasteAct, &QAction::triggered, this, &MainWindow::pasteAction);
+    connect(selectAllAct, &QAction::triggered, this, &MainWindow::selectAllAction);
+    connect(cancelSelectAct, &QAction::triggered, this, &MainWindow::cancelSelectAction);
+    connect(foldAllAct, &QAction::triggered, this, &MainWindow::foldAllAction);
+    connect(openAllAct, &QAction::triggered, this, &MainWindow::openAllAction);
+
 
 
 }
@@ -191,11 +227,17 @@ void MainWindow::CreatMenuBar()
     // Edit Menu
     editMenu = menuBar()->addMenu("&编辑");
 
-    editMenu->addAction("剪切");
-    editMenu->addAction("复制");
-    editMenu->addAction("粘贴");
-    editMenu->addAction("撤销");
-    editMenu->addAction("重做");
+    editMenu->addAction(redoAct);
+    editMenu->addAction(undoAct);
+    editMenu->addAction(cutAct);
+    editMenu->addAction(copyAct);
+    editMenu->addAction(pasteAct);
+    editMenu->addAction(selectAllAct);
+    editMenu->addAction(cancelSelectAct);
+    editMenu->addAction(foldAllAct);
+    editMenu->addAction(openAllAct);
+    // editMenu->addAction();
+
 
     // View Menu
     viewMenu = menuBar()->addMenu("&视图");
@@ -568,6 +610,63 @@ void MainWindow::about()
                           ));
 }
 
+void MainWindow::redoAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->redo();
+}
+
+void MainWindow::undoAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->undo();
+}
+
+void MainWindow::cutAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->cut();
+}
+
+void MainWindow::copyAction()
+{
+    qDebug()<<"??";
+    if(curEditArea)
+        curEditArea->textEdit->copy();
+}
+
+void MainWindow::pasteAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->paste();
+}
+
+void MainWindow::selectAllAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->selectAll(true);
+}
+
+void MainWindow::cancelSelectAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->selectAll(false);
+}
+
+void MainWindow::foldAllAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->foldAll(true);
+}
+
+void MainWindow::openAllAction()
+{
+    if(curEditArea)
+        curEditArea->textEdit->foldAll(false);
+}
+
+
+
 void MainWindow::runCode()
 {
 
@@ -599,12 +698,44 @@ void MainWindow::onTabChange()
         curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
         path=curEditArea->curEditFile;
 
+        //获取文件修改状态
+        connect(curEditArea->textEdit,&QsciScintilla::textChanged,this,[this](){
+            isModified=true;
+        });
+
     }else{
         curEditArea=nullptr;
         path="";
     }
 
+
     setCurrentFile(path);
+
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // 如果文件已修改，弹出保存提示
+    if (isModified) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "保存文件", "文件已修改，是否保存？",
+                                      QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Save) {
+            // 保存文件
+            saveCurFile();
+            event->accept();  // 关闭窗口
+        } else if (reply == QMessageBox::Discard) {
+            // 不保存，直接关闭窗口
+            event->accept();
+        } else {
+            // 取消关闭操作
+            event->ignore();
+        }
+    } else {
+        // 文件未修改，直接关闭窗口
+        event->accept();
+    }
 
 }
 
