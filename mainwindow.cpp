@@ -310,10 +310,12 @@ void MainWindow::SetStyles()
     QString styleSheet = R"(
 
 
-        #runAct{
-             background-color: red;
-             color: blue;
-            padding: 30px;
+        QListView {
+            background-color: rgb(30,30,30);
+            color: rgb(220,220,220);
+            border: 1px solid gray;
+            selection-background-color: blue;
+            selection-color: white;
         }
 
         QMainWindow{
@@ -460,6 +462,9 @@ void MainWindow::loadFormFile(QString path)
 
         // qDebug()<<"path::"<<path;
         setCurrentFile(path);///更新当前Tab对应文件
+        //更新当前文件类型，更改textEdit的Lexer
+        curFileType=GetCurFileType();
+        curEditArea->setCurLexer(curFileType);
     }
     else {
         QMessageBox::warning(this, tr("error"),
@@ -630,7 +635,7 @@ void MainWindow::cutAction()
 
 void MainWindow::copyAction()
 {
-    qDebug()<<"??";
+
     if(curEditArea)
         curEditArea->textEdit->copy();
 }
@@ -673,7 +678,7 @@ void MainWindow::runCode()
     saveCurFile();
     QString filetype=GetCurFileType();
 
-    qDebug()<<"the curfile with file type :"<<curFilePath<<" "<<filetype;
+    // qDebug()<<"the curfile with file type :"<<curFilePath<<" "<<filetype;
 
     runner->setRunFile(curFilePath);
     runner->setMode(filetype);
@@ -682,7 +687,7 @@ void MainWindow::runCode()
     QString command=runner->runCode();
     qDebug()<<command;
     if(!command.isEmpty()){
-        qDebug()<<"runcode:"<<command;
+        // qDebug()<<"runcode:"<<command;
         terminal->setIsRunning(true);
         terminal->executeCommand(command);
     }
@@ -703,7 +708,14 @@ void MainWindow::onTabChange()
             isModified=true;
         });
 
+        //更新当前文件类型，更改textEdit的Lexer
+
+        QString type=QFileInfo(path).suffix();
+
+        curEditArea->setCurLexer(type);
+
     }else{
+        ///当Tab=0时无现存curEditArea，将curEditArea置空
         curEditArea=nullptr;
         path="";
     }

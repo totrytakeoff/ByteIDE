@@ -8,6 +8,9 @@ class QsciScintilla;
 class QsciLexerCPP;
 class QTabWidget;
 class QColor;
+class QsciLexerPython;
+class QsciLexerD;
+
 // class QMap;
 ///world
 
@@ -24,6 +27,8 @@ public:
     void ResortDefault();
     void CloseLineTag(bool flag);
 
+    void setCurLexer(QString &type);
+
     void modifyLineTagColor(QColor &col);
     void modifyFoldingColor(QColor &col);
     void modifyMarginBackColor(QColor &col);
@@ -35,16 +40,20 @@ public:
     void modifyEditorDefaultBackgroundColor(QColor &col);
 
 
-    QMap<int,QColor> createDefaultColorMap();
 
 
 
 
 
 
+
+
+    // QTabWidget* tabwidget;
     QsciScintilla *textEdit;
+    QsciLexerPython *PythonLexer;
     QsciLexerCPP *CppLexer;
-    QTabWidget* tabwidget;
+    QsciLexerD *DefaultLexer;
+
     QString curEditFile;
 
 protected:
@@ -57,6 +66,8 @@ public slots:
 
 signals:
 
+private:
+    QMap<int,QColor> createDefaultColorMap();
 
 private:
     enum{

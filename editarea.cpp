@@ -1,24 +1,27 @@
 #include "editarea.h"
 #include<Qsci/qscilexercpp.h>
 #include<Qsci/qsciscintilla.h>
+#include<Qsci/qscilexerpython.h>
+#include<Qsci/qscilexerd.h>
+#include<Qsci/qscistyledtext.h>
+#include<Qsci/qsciapis.h>
 #include<QTabWidget>
 #include<QDebug>
 #include<QString>
 #include<QVBoxLayout>
 #include<QKeyEvent>
-#include<Qsci/qscistyledtext.h>
-#include<Qsci/qsciapis.h>
 
-
+#include<QDir>
 
 EditArea::EditArea(QWidget* parent)
     :QWidget(parent)
 {
 
-    // this->setSizePolicy()
-    tabwidget=new QTabWidget();
+
     textEdit=new QsciScintilla(this);
-    CppLexer=new QsciLexerCPP();
+    CppLexer=new QsciLexerCPP(this);
+    PythonLexer=new QsciLexerPython(this);
+    DefaultLexer=new QsciLexerD(this);
     Lexer_Color=createDefaultColorMap();
 
     InitLexer();
@@ -52,6 +55,7 @@ EditArea::~EditArea()
 void EditArea::InitLexer()
 {
 
+/******************************set cppLexer*********************************************/
     CppLexer->setDefaultColor(FontDefaultColor);///默认字体颜色
     CppLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
     CppLexer->setFont(QFont("Consolas",14));///默认字体
@@ -64,7 +68,8 @@ void EditArea::InitLexer()
     //.................................................................
 
 
-    CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::Keyword),QsciLexerCPP::Keyword);//设置关键字高亮颜色
+    CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::Default),QsciLexerCPP::Default);
+
     // 设置注释颜色
     CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::Comment), QsciLexerCPP::Comment);
     CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::CommentLine), QsciLexerCPP::CommentLine);
@@ -75,7 +80,7 @@ void EditArea::InitLexer()
     CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::Number), QsciLexerCPP::Number);
 
     // 设置关键字颜色
-    CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::Keyword), QsciLexerCPP::Keyword);
+    CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::Keyword), QsciLexerCPP::Keyword);//设置关键字高亮颜色
     CppLexer->setColor(Lexer_Color.value(QsciLexerCPP::KeywordSet2), QsciLexerCPP::KeywordSet2); // 第二组关键字
 
     // 设置字符串颜色
@@ -116,49 +121,148 @@ void EditArea::InitLexer()
 
 
 
-
-    textEdit->setAutoCompletionSource(QsciScintilla::AcsAll);
-    textEdit->setAutoCompletionThreshold(1); // 当用户输入至少一个字符后触发自动完成
-    textEdit->setAutoCompletionReplaceWord(true); // 自动替换当前词
-
-    QStringList customSeparators = {" ", "(", ")", ",", ";", ".", ":", "[", "]", "{", "}"};
-    textEdit->setAutoCompletionWordSeparators(customSeparators);
-
-
-    ///自动补全的实现
-   /* QsciAPIs *apis = new QsciAPIs(textEdit->lexer());
-    apis->load("path/to/api/file.api");*////后序添加语言api文件解析keyword实现自动补全
-
-    // 获取并添加Lexer提供的关键字到自动完成列表
-
-
-    QString keywords =  CppLexer->keywords(-1);; // -1 表示所有关键字集合
-    QStringList keywordList = keywords.split(" ", Qt::SkipEmptyParts);
-    QsciAPIs *apis = new QsciAPIs(CppLexer);
-    foreach (const QString &keyword, keywordList) {
-        apis->add(keyword);
+    QsciAPIs *cppAPIs = new QsciAPIs(CppLexer);
+    if(cppAPIs->load("./apis/cpp.api")){
+        qDebug()<<"cpp api is ok";
+        cppAPIs->prepare();
     }
-    apis->prepare();
+
+
+/******************************set pythonLexer*********************************************/
+
+    PythonLexer->setDefaultColor(FontDefaultColor);///默认字体颜色
+    PythonLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
+    PythonLexer->setFont(QFont("Consolas",14));///默认字体
+
+    PythonLexer->setFoldCompact(true);      // 折叠时隐藏空行
+
+
+    //.................................................................
+
+
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::Default),QsciLexerPython::Default);//设置关键字高亮颜色
+    // 设置注释颜色
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::Comment), QsciLexerPython::Comment);
+
+
+    // 设置数字颜色
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::Number), QsciLexerPython::Number);
+
+    // 设置关键字颜色
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::Keyword), QsciLexerPython::Keyword);
+
+    // 设置字符串颜色
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::DoubleQuotedString), QsciLexerPython::DoubleQuotedString);
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::SingleQuotedString), QsciLexerPython::SingleQuotedString);
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::UnclosedString), QsciLexerPython::UnclosedString);
+
+    // 设置操作符颜色
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::Operator), QsciLexerPython::Operator);
+
+    // 设置标识符颜色
+    PythonLexer->setColor(Lexer_Color.value(QsciLexerCPP::Identifier), QsciLexerPython::Identifier);
+
+    // ///自动补全的实现
+    QsciAPIs *pyAPIs = new QsciAPIs(PythonLexer);
+    if(pyAPIs->load("./apis/Python-3.11.api")){
+        qDebug()<<"py api is ok";
+        pyAPIs->prepare();
+    }
+
+    ///添加语言api文件解析keyword实现自动补全
+
+    /******************************set defaultLexer*********************************************/
+
+    DefaultLexer->setDefaultColor(FontDefaultColor);///默认字体颜色
+    DefaultLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
+    DefaultLexer->setFont(QFont("Consolas",14));///默认字体
+
+    // 设置默认 Lexer
+    // 设置默认文本颜色为白色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Default);
+
+    // 设置注释颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Comment);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentLine);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentDoc);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentNested);
+
+    // 设置数字颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Number);
+
+    // 设置关键字颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Keyword);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSecondary);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordDoc);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Typedefs);
+
+    // 设置字符串颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::String);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::UnclosedString);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Character);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::BackquoteString);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::RawString);
+
+    // 设置操作符颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Operator);
+
+    // 设置标识符颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::Identifier);
+
+    // 设置文档注释颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentLineDoc);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentDocKeyword);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentDocKeywordError);
+
+    // 设置其他关键字颜色
+    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSet5);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSet6);
+    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSet7);
+
+
+
+
 
 }
 
 void EditArea::InitTextEdit()
 {
-    textEdit->setLexer(CppLexer);
+
+    // textEdit->setLexer(CppLexer);
+
     textEdit->setTabWidth(4);///设置Tab长度为4空格
     textEdit->setBraceMatching(QsciScintilla::SloppyBraceMatch);///启用括号匹配
     textEdit->setMatchedBraceBackgroundColor(MatchedBraceBackgroundColor);
     textEdit->setMatchedBraceForegroundColor(MatchedBraceForegroundColor);
 
+/////////////////
+    textEdit->setCallTipsStyle(QsciScintilla::CallTipsNoContext);///调用提示
+    textEdit->setCallTipsPosition(QsciScintilla::CallTipsBelowText);
+    textEdit->setCallTipsVisible(0);
 
-    textEdit->setCallTipsStyle(QsciScintilla::CallTipsNoAutoCompletionContext);///调用提示
+    textEdit->setCallTipsBackgroundColor(QColor(30,30,30));
+    textEdit->setCallTipsForegroundColor(QColor(210,210,210));
+    textEdit->setCallTipsHighlightColor(QColor(255, 71, 87));
+
+
+    ///自动补全,tab enter 确认选择，esc取消AutoCompletion
+    textEdit->setAutoCompletionSource(QsciScintilla::AcsAll);
+    textEdit->setAutoCompletionThreshold(2); // 当用户输入至少一个字符后触发自动完成
+    textEdit->setAutoCompletionReplaceWord(true); // 自动替换当前词
+    textEdit->setAutoCompletionCaseSensitivity(false); // 不区分大小写
+    textEdit->setAutoCompletionShowSingle(true); //只有一个匹配项也显示补全提示
+
+////////////////
+
+
     ///无需设置TextEdit的背景色，直接设置lexer即可，会被lexer覆盖
+    // textEdit->setPaper(QColor(60,60,60));
+
 
     textEdit->setIndentationGuides(true);///启动缩进提示
     textEdit->setAutoIndent(true);///启动自动缩进
-    // void setCaretForegroundColor(const QColor &col)
-    textEdit->setCaretForegroundColor(CursorColor);////设置光标color
 
+    textEdit->setCaretForegroundColor(CursorColor);////设置光标color
 
     textEdit->setCaretLineVisible(true);//启用当前行高亮
     textEdit->setCaretLineBackgroundColor(LineHighLightColor);///设置当前行高亮颜色
@@ -170,30 +274,31 @@ void EditArea::InitTextEdit()
     textEdit->setMarginType(EditArea::SymMargin1,QsciScintilla::SymbolMargin);///符号栏,后序实现断点等操作
     textEdit->setMarginWidth(EditArea::SymMargin1,20);
 
-    textEdit->setMarginType(EditArea::SymMargin2,QsciScintilla::SymbolMargin);
+    textEdit->setMarginType(EditArea::SymMargin2,QsciScintilla::SymbolMargin);//设置符号栏,后序实现断点等标识
     textEdit->setMarginWidth(EditArea::SymMargin2,20);
 
-    textEdit->setMarginLineNumbers(EditArea::LineNumMargin,true);
+    textEdit->setMarginLineNumbers(EditArea::LineNumMargin,true);///设置行号栏
     textEdit->setMarginType(EditArea::LineNumMargin,QsciScintilla::NumberMargin);
     textEdit->setMarginWidth(EditArea::LineNumMargin,"0000");///设置行号栏宽度
     textEdit->setMarginsForegroundColor(Qt::white);///行号字体颜色
 
-    textEdit->setMarginType(EditArea::SymMargin3,QsciScintilla::SymbolMargin);
+    textEdit->setMarginType(EditArea::SymMargin3,QsciScintilla::SymbolMargin);///设置符号栏,后序实现断点等标识
     textEdit->setMarginWidth(EditArea::SymMargin3,20);
 
     textEdit->setFolding(QsciScintilla::BoxedTreeFoldStyle,FoldMargin);///折叠代码块栏
-    // textEdit->setFoldMarker(QsciScintilla::SC_MARKNUM_FOLDEROPEN, QsciScintilla::SC_MARK_ARROWDOWN);
-    // textEdit->setFoldMarker(QsciScintilla::SC_MARKNUM_FOLDER, QsciScintilla::SC_MARK_ARROW);
-
-
     textEdit->setMarginWidth(EditArea::FoldMargin,20);
-    textEdit->setFoldMarginColors(FoldingColor,FoldingColor);
+    textEdit->setFoldMarginColors(FoldingColor,FoldingColor);///fold栏backgroundColor
 
 
     int  LineTag= 0;
-    textEdit->markerDefine(QsciScintilla::VerticalLine , LineTag);
+    textEdit->markerDefine(QsciScintilla::VerticalLine , LineTag);///当前行标识
     textEdit->setMarkerBackgroundColor(currentLineTagColor, LineTag);
 
+
+
+    ///符号自动补全
+    QStringList customSeparators = {" ", "(", ")", ",", ";", ".", ":", "[", "]", "{", "}","->","::"};
+    textEdit->setAutoCompletionWordSeparators(customSeparators);
 
 
 }
@@ -218,6 +323,22 @@ void EditArea::CloseLineTag(bool flag)
         connect(textEdit, &QsciScintilla::cursorPositionChanged, this, &EditArea::highlightCurrentLine);
     }else{
         disconnect(textEdit, &QsciScintilla::cursorPositionChanged, this, &EditArea::highlightCurrentLine);
+    }
+
+}
+
+void EditArea::setCurLexer(QString &type)
+{
+    qDebug()<<"type:"<<type;
+    if(type=="py"){
+        qDebug()<<"change to pylexer";
+        textEdit->setLexer(PythonLexer);
+    }else if(type=="cpp"){
+        qDebug()<<"change to cpplexer";
+        textEdit->setLexer(CppLexer);
+    }else{
+
+        textEdit->setLexer(DefaultLexer);
     }
 
 }

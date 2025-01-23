@@ -102,9 +102,7 @@ private:
     QAction* cancelSelectAct;
     QAction* foldAllAct;
     QAction* openAllAct;
-    // QAction* ;
-    // QAction* ;
-    // QAction* ;
+
 
     QAction* showFileExplorerAct;
     QAction* showTerminalAct;
@@ -124,6 +122,7 @@ private:
     ResourceManager * fileExplorer;
     QString curFilePath;
     QString curFolderPath;
+    QString curFileType;
 
     bool isModified=false;
 
