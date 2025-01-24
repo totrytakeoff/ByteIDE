@@ -17,6 +17,8 @@ CMakeCache.txt
 cmake_install.cmake
 CPackConfig.cmake
 CPackSourceConfig.cmake
+CMakePresets.json
+CMakeUserPresets.json
 
 # 忽略 Qt Creator 生成的文件
 *.pro.user
