@@ -1,6 +1,7 @@
 # 忽略所有 build 文件夹
 /build/
 _build/
+/out/
 
 # 忽略 Visual Studio 生成的文件
 *.sln
@@ -8,6 +9,7 @@ _build/
 *.user
 *.vcxproj*
 *.filters
+*.vs
 
 # 忽略 CMake 生成的文件
 CMakeLists.txt.user
@@ -25,6 +27,7 @@ CPackSourceConfig.cmake
 *.so
 *.dll
 *.exe
+*.out
 
 # 忽略调试符号文件
 *.pdb

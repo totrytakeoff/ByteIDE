@@ -173,51 +173,51 @@ void EditArea::InitLexer()
 
     /******************************set defaultLexer*********************************************/
 
-    DefaultLexer->setDefaultColor(FontDefaultColor);///默认字体颜色
+    DefaultLexer->setDefaultColor(DefaultTextColor);///默认字体颜色
     DefaultLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
     DefaultLexer->setFont(QFont("Consolas",14));///默认字体
 
     // 设置默认 Lexer
     // 设置默认文本颜色为白色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Default);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Default);
 
     // 设置注释颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Comment);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentLine);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentDoc);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentNested);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Comment);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::CommentLine);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::CommentDoc);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::CommentNested);
 
     // 设置数字颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Number);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Number);
 
     // 设置关键字颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Keyword);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSecondary);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordDoc);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Typedefs);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Keyword);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::KeywordSecondary);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::KeywordDoc);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Typedefs);
 
     // 设置字符串颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::String);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::UnclosedString);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Character);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::BackquoteString);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::RawString);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::String);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::UnclosedString);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Character);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::BackquoteString);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::RawString);
 
     // 设置操作符颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Operator);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Operator);
 
     // 设置标识符颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::Identifier);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::Identifier);
 
     // 设置文档注释颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentLineDoc);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentDocKeyword);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::CommentDocKeywordError);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::CommentLineDoc);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::CommentDocKeyword);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::CommentDocKeywordError);
 
     // 设置其他关键字颜色
-    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSet5);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSet6);
-    DefaultLexer->setColor(Qt::white, QsciLexerD::KeywordSet7);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::KeywordSet5);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::KeywordSet6);
+    DefaultLexer->setColor(DefaultTextColor, QsciLexerD::KeywordSet7);
 
 
 
@@ -256,7 +256,7 @@ void EditArea::InitTextEdit()
 
 
     ///无需设置TextEdit的背景色，直接设置lexer即可，会被lexer覆盖
-    // textEdit->setPaper(QColor(60,60,60));
+    textEdit->setPaper(QColor(30,30,30));
 
 
     textEdit->setIndentationGuides(true);///启动缩进提示
@@ -340,6 +340,14 @@ void EditArea::setCurLexer(QString &type)
 
         textEdit->setLexer(DefaultLexer);
     }
+
+    ///修改lexer后textEdit一些属性会被清空,故需要重新设置
+    InitTextEdit();
+    // textEdit->setMatchedBraceBackgroundColor(MatchedBraceBackgroundColor);
+    // textEdit->setMatchedBraceForegroundColor(MatchedBraceForegroundColor);
+    // textEdit->setMarkerBackgroundColor(currentLineTagColor, 0);
+    // textEdit->setMarginsBackgroundColor(MarginBackColor);///设置margin边栏的背景color
+    // textEdit->setMarginsForegroundColor(Qt::white);///行号字体颜色
 
 }
 

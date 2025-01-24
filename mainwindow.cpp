@@ -711,7 +711,6 @@ void MainWindow::onTabChange()
         //更新当前文件类型，更改textEdit的Lexer
 
         QString type=QFileInfo(path).suffix();
-
         curEditArea->setCurLexer(type);
 
     }else{
