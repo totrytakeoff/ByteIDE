@@ -11,7 +11,7 @@ class Terminal;
 class CodeRunner;
 class QFile;
 class QSplitter;
-
+class QLabel;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,8 +35,10 @@ public:
     void CreatMenuBar();
     void CreatEdit();
     void CreatDock();
+    void CreatStatusBar();
     void setCurrentFile(const QString fileName);
 
+    void loadFromFile(QString path);///加载文件
     void saveFile(QString fileName);
 
 
@@ -44,15 +46,15 @@ public:
     void ShowFileDock();
     QString GetCurFileType();
 
+private:
+
 private slots:
 
-    void loadFormFile(QString path);
-    void openFile();
+    void openFile();//打开文件,调用loadFromFile;
 
     void saveCurFile();
-
     void openFolder();
-    void createNewFile();
+    void createNewFile();///创建一个新文件,调用newfile类实现新建文件界面
     void onFileTreeClicked(const QString FileName);
     void onTabClose(int index);
     void toggleFileExplorer(bool show);
@@ -71,9 +73,9 @@ private slots:
 
     void runCode();
 
-
     void onTabChange();
 
+    void updateStatusBar(int line,int index);
 
 protected:
     void closeEvent(QCloseEvent* event) override;
@@ -123,6 +125,10 @@ private:
     QString curFilePath;
     QString curFolderPath;
     QString curFileType;
+    int curLineIndex=0;
+    int curCharIndex=0;
+    QLabel* curLineLabel;
+    QLabel* curCharLabel;
 
     bool isModified=false;
 

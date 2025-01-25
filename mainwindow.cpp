@@ -16,6 +16,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPoint>
+#include <QLabel>
 
 #include <QSettings>///读取，保存用户个性配置
 
@@ -35,7 +36,6 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 
-#include <Qsci/qsciscintilla.h>
 
 #include "newfile.h"
 #include "resourcemanager.h"
@@ -54,17 +54,15 @@ pubilc:
 
     runner=new CodeRunner(this);
 
-
-
     codeTabWidget=new QTabWidget(this);
     codeTabWidget->clear();///清空tabwidget内Tab
     codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
-
 
     CreatAction();
     CreatToolBar();
     CreatMenuBar();
     CreatDock();
+    CreatStatusBar();
     SetStyles();
 
     connect(codeTabWidget,&QTabWidget::tabCloseRequested,this,&MainWindow::onTabClose);
@@ -75,7 +73,6 @@ pubilc:
 
     setCentralWidget(codeTabWidget);
 
-    qDebug()<<"sheet"<<fileDock->styleSheet();
 }
 
 MainWindow::~MainWindow()
@@ -277,6 +274,25 @@ void MainWindow::CreatDock()
 
 }
 
+void MainWindow::CreatStatusBar()
+{
+    QString style=R"(
+    QLabel{
+        color:rgb(220,220,220);
+    }
+    )";
+    curLineLabel=new QLabel("行:",this);
+    curLineLabel->setStyleSheet(style);
+
+    curCharLabel=new QLabel("字符:",this);
+    curCharLabel->setStyleSheet(style);
+
+
+    statusBar()->addPermanentWidget(curLineLabel);
+    statusBar()->addPermanentWidget(curCharLabel);
+
+}
+
 void MainWindow::setCurrentFile(const QString fileName)
 {
 
@@ -436,7 +452,7 @@ QString MainWindow::GetCurFileType()
     return FileInfo.suffix();
 }
 
-void MainWindow::loadFormFile(QString path)
+void MainWindow::loadFromFile(QString path)
 {
     qDebug()<<"is loading:"<<path ;
     EditArea* editor=new EditArea(codeTabWidget);
@@ -487,7 +503,7 @@ void MainWindow::openFile()
         return ;
     }
 
-    loadFormFile(path);
+    loadFromFile(path);
 
 }
 
@@ -552,7 +568,7 @@ void MainWindow::createNewFile()
             qDebug()<<"newfile is empty";
             return;
         }
-        loadFormFile(filePath);
+        loadFromFile(filePath);
 
 
     }
@@ -571,7 +587,7 @@ void MainWindow::onFileTreeClicked(const QString FileName)
         return ;
     }
     qDebug()<<"onfileTreeClicked:"<<FileName;
-    loadFormFile(FileName);
+    loadFromFile(FileName);
 
 }
 
@@ -603,15 +619,19 @@ void MainWindow::toggleTerminal(bool show)
 
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("About Application"),
-                       tr("<h3>App Name</h3>"
-                          "<spin>"
-                          "<div>This <b>Application</b> example demonstrates how to "
-                          "write modern GUI applications using Qt, with a menu bar, "
-                          "toolbars, and a status bar.</div>"
-                          "<div><h2>nihaoya</h2></div>"
-                          "</spin>"
-
+    QMessageBox::about(this, tr("关于软件"),
+                       tr("<h3>MyIDE</h3>"
+                          "<div style='font-size: 14px;'>"
+                          "<p>MyIDE 是一个基于 <b>Qt</b> 开发的文本编辑器和简单的集成开发环境 (IDE)。"
+                          "它使用了 <b>QScintilla</b> 库来实现编辑器功能，提供了基本的文本编辑功能和常用的快捷键。</p>"
+                          "<p>该软件集成了文件资源管理器和终端界面，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
+                          "此外，MyIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"
+                          "使用户无需进行复杂的安装和配置，开箱即用，非常适合 <b>Python</b> 和 <b>C/C++</b> 初学者使用。</p>"
+                          "</div>"
+                          "<div style='font-size: 12px; color: gray;'>"
+                          "<p>版本: 1.0.0</p>"
+                          "<p>作者: Your Name</p>"
+                          "</div>"
                           ));
 }
 
@@ -708,10 +728,12 @@ void MainWindow::onTabChange()
             isModified=true;
         });
 
-        //更新当前文件类型，更改textEdit的Lexer
+        connect(curEditArea->textEdit,&QsciScintilla::cursorPositionChanged,this,&MainWindow::updateStatusBar);
 
+        //更新当前文件类型，更改textEdit的Lexer
         QString type=QFileInfo(path).suffix();
         curEditArea->setCurLexer(type);
+
 
     }else{
         ///当Tab=0时无现存curEditArea，将curEditArea置空
@@ -722,6 +744,17 @@ void MainWindow::onTabChange()
 
     setCurrentFile(path);
 
+}
+
+void MainWindow::updateStatusBar(int line,int index)
+{
+    if(curEditArea){
+        // curEditArea->textEdit->getCursorPosition(&curLineIndex,&curCharIndex);
+        curLineIndex=line+1;
+        curCharIndex=index;
+        curLineLabel->setText(QString("行:%1").arg(curLineIndex));
+        curCharLabel->setText(QString("字符:%1").arg(curCharIndex));
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -749,12 +782,3 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 
 }
-
-
-
-
-
-
-
-
-

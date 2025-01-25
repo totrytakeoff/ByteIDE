@@ -44,7 +44,6 @@ EditArea::EditArea(QWidget* parent)
 
     // 安装事件过滤器,模拟keyEvent
     textEdit->installEventFilter(this);
-
 }
 
 EditArea::~EditArea()
@@ -253,7 +252,6 @@ void EditArea::InitTextEdit()
     textEdit->setAutoCompletionShowSingle(true); //只有一个匹配项也显示补全提示
 
 ////////////////
-
 
     ///无需设置TextEdit的背景色，直接设置lexer即可，会被lexer覆盖
     textEdit->setPaper(QColor(30,30,30));

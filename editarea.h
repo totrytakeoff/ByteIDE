@@ -2,7 +2,7 @@
 #define EDITAREA_H
 #include<QMap>
 #include<QWidget>
-#include<QColor>
+
 
 class QsciScintilla;
 class QsciLexerCPP;
@@ -44,10 +44,6 @@ public:
 
 
 
-
-
-
-
     // QTabWidget* tabwidget;
     QsciScintilla *textEdit;
     QsciLexerPython *PythonLexer;
@@ -66,6 +62,7 @@ public slots:
 
 signals:
 
+
 private:
     QMap<int,QColor> createDefaultColorMap();
 
@@ -78,9 +75,6 @@ private:
         FoldMargin=4
     };
 
-
-
-
     bool LineTagIsOpen=true;
     QMap<int,QColor> Lexer_Color;
     QColor currentLineTagColor=QColor(241, 196, 15);
@@ -88,6 +82,7 @@ private:
     QColor MarginBackColor=QColor(30, 30, 30);
     QColor LineHighLightColor=QColor(46, 47, 48);
     QColor CursorColor=Qt::white;
+    QColor DefaultTextColor=QColor(220,220,220);
 
     QColor FontDefaultColor=QColor(214, 207, 154);
     QColor EditorDefaultBackgroundColor= QColor(35, 35, 35);
