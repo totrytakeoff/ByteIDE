@@ -438,3 +438,8 @@ void Terminal::setIsRunning(bool flag)
 {
     isrunning=flag;
 }
+
+QProcess *Terminal::getProcess()
+{
+    return this->process;
+}

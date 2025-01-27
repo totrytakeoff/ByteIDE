@@ -49,6 +49,8 @@ public:
 
     void setIsRunning(bool flag);
 
+    QProcess *getProcess();
+
 protected:
     /**
      * @brief 键盘事件处理函数

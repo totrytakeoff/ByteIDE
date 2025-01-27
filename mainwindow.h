@@ -47,7 +47,7 @@ public:
     QString GetCurFileType();
 
 private:
-
+    void setEditActEnable(bool b);
 private slots:
 
     void openFile();//打开文件,调用loadFromFile;
@@ -60,16 +60,6 @@ private slots:
     void toggleFileExplorer(bool show);
     void toggleTerminal(bool show);
     void about();
-
-    void redoAction();          // 重做
-    void undoAction();          // 撤销
-    void cutAction();           // 剪切
-    void copyAction();          // 复制
-    void pasteAction();         // 粘贴
-    void selectAllAction();     // 全选
-    void cancelSelectAction();  // 取消选择
-    void foldAllAction();       // 折叠全部
-    void openAllAction();       // 展开全部
 
     void runCode();
 
@@ -88,9 +78,11 @@ private:
     Terminal * terminal;
     CodeRunner* runner;
 
+    QAction* addEmptyFileAct;
     QAction* newFileAct;
     QAction* openFileAct;
     QAction* saveFileAct;
+    QAction* saveAsFileAct;
     QAction* openFolderAct;
     QAction* exitAct;
     QAction* aboutAct;

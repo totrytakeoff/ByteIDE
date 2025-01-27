@@ -15,7 +15,8 @@ ResourceManager::ResourceManager(QDockWidget* Dock) {
     fileModel->setFilter(QDir::AllEntries | QDir::NoDotAndDotDot);
 
     ///设置根路径
-    treeView->setRootIndex(fileModel->index(QDir::currentPath()));
+    // treeView->setRootIndex(fileModel->index(QDir::currentPath()));
+
 
     treeView->setModel(fileModel);
 

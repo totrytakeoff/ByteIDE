@@ -50,7 +50,9 @@ QString CodeRunner::runCode()
 
 QString CodeRunner::runCppCode()
 {
-    return "";
+    QString outputPath="./out/"+QFileInfo(runFile).completeBaseName();
+    QString command=CppRunner+" "+runFile+QString(" -o %1").arg(outputPath);
+    return command;
 }
 
 QString CodeRunner::runPythonCode()
