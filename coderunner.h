@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include <QWidget>
-#include <QProcess>
-#include "pyrunner.h"
+#include <windows.h>
+#include "terminal.h"
+
 
 
 class QString;
@@ -12,7 +13,7 @@ class QString;
 
 
 
-class CodeRunner:public QWidget
+class CodeRunner:public Terminal
 {
     Q_OBJECT
 public:
@@ -27,11 +28,11 @@ public:
 
     void setMode(QString &fileType);
 
-    QString runCode();
+    void runCode();
 
-    QString runCppCode();
+    void runCppCode();
 
-    QString runPythonCode();
+    void runPythonCode();
 
     void searchRunner();
 
@@ -39,18 +40,10 @@ public:
 
     QString searchFiles(const QString &dirPath, const QString &searchPattern);
 
+    BOOL WinStartProcess(TCHAR* lpApplicationName, TCHAR* lpCommandLine);
 
-    PyRunner* getOutput();
-
-    // void initProcess();
-
-    // void handleProcessOutput();
-
-    // void handleProcessError();
-
-    // void handleProcessFinish(int exitCode, QProcess::ExitStatus exitstatus);
-
-    // void handleProcessInput();
+protected:
+    void keyPressEvent(QKeyEvent *e) override;
 
 private:
     QString FileType;
@@ -61,9 +54,6 @@ private:
 
     QString PythonRunner;
     QString CppRunner;
-    // QProcess *process;
-    PyRunner* pyrunner;
-
 
     bool isRunnerExist;
 };

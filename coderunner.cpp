@@ -6,15 +6,15 @@
 #include <QProcess>
 
 #include "terminal.h"
-
+#include <cstdlib>
 
 
 CodeRunner::CodeRunner(QWidget* parent)
-    :QWidget(parent)
+    :Terminal(parent)
 {
 
     searchRunner();
-    pyrunner=new PyRunner(this);
+
 }
 
 CodeRunner::~CodeRunner()
@@ -33,37 +33,62 @@ void CodeRunner::setMode(QString &fileType)
 
 }
 
-QString CodeRunner::runCode()
+void CodeRunner::runCode()
 {
 
     if(RunMode==Mode::Python){
-        QString command=runPythonCode();
-        qDebug()<<command;
-        return command;
+        runPythonCode();
+        return;
     }else if(RunMode==Mode::Cpp){
-        return runCppCode();
+        runCppCode();
+        return;
     }else {
         QMessageBox::warning(this,"运行错误","该文件不能被直接运行");
-        return "";
+        return;
     }
 }
 
-QString CodeRunner::runCppCode()
+void CodeRunner::runCppCode()
 {
+
+
     QString outputPath="./out/"+QFileInfo(runFile).completeBaseName();
-    QString command=CppRunner+" "+runFile+QString(" -o %1").arg(outputPath);
-    return command;
+    QStringList arguments;
+
+    ///g++ 参数
+    arguments<<runFile<<"-o"<<outputPath;
+
+    process->start(CppRunner,arguments);
+    process->waitForFinished();
+
+    if(process->exitCode()==0&&process->exitStatus()==QProcess::NormalExit){
+
+        #ifdef Q_OS_WIN
+        outputPath=".\\out\\"+QFileInfo(runFile).completeBaseName()+".exe";
+            ///     TEXT()<----_T();
+            TCHAR cmdLine[128];
+            #ifdef _UNICODE
+            qDebug()<<"outputpath::"<<outputPath;
+                swprintf(cmdLine,sizeof(cmdLine),TEXT("cmd /k %s && echo.&& pause && exit"),outputPath.toLocal8Bit().constData());
+            #else
+                snprintf(cmdLine,sizeof(cmdLine),TEXT("cmd /k %s && echo.&& pause && exit"),runFile.toLocal8Bit().constData());
+            #endif
+
+            qDebug()<<"cmdline::"<<QString(cmdLine);
+            WinStartProcess(NULL,cmdLine);
+        #else
+        ///留给linux的
+        #endif
+    }else{
+        qDebug()<<"编译错误！";
+    }
+
+
 }
 
-QString CodeRunner::runPythonCode()
+void CodeRunner::runPythonCode()
 {
-    QString command=PythonRunner+" "+runFile;
-
-    // pyrunner->executeCommand(command);
-    pyrunner->runCode(PythonRunner,QStringList()<<runFile);
-
-
-    return command;
+    process->start(PythonRunner,QStringList()<<runFile);
 }
 
 
@@ -135,8 +160,65 @@ QString CodeRunner::searchFiles(const QString &dirPath, const QString &searchPat
     return "";
 }
 
-PyRunner *CodeRunner::getOutput()
+BOOL CodeRunner::WinStartProcess(TCHAR* lpApplicationName, TCHAR* lpCommandLine)
 {
-    return pyrunner;
+        STARTUPINFO si;
+        PROCESS_INFORMATION pi;
+
+        // 初始化 STARTUPINFO 结构体
+        ZeroMemory(&si, sizeof(si));
+        si.cb = sizeof(si);
+        si.dwFlags = STARTF_USESHOWWINDOW;
+        si.wShowWindow = SW_SHOW; // 显示窗口
+
+        // 初始化 PROCESS_INFORMATION 结构体
+        ZeroMemory(&pi, sizeof(pi));
+
+        // 创建进程
+        BOOL bSuccess = CreateProcess(
+            lpApplicationName,   // 应用程序名称（可以为 NULL）
+            lpCommandLine,       // 命令行参数
+            NULL,                // 进程安全属性
+            NULL,                // 线程安全属性
+            FALSE,               // 是否继承句柄
+            CREATE_NEW_CONSOLE,  // 创建标志：创建新的控制台窗口
+            NULL,                // 使用父进程的环境
+            NULL,                // 使用父进程的当前目录
+            &si,                 // STARTUPINFO 指针
+            &pi                  // PROCESS_INFORMATION 指针
+            );
+
+        if (!bSuccess) {
+            printf("CreateProcess failed (%d).\n", GetLastError());
+            return FALSE;
+        }
+        else {
+            // // 等待进程结束（可选）
+            //这玩意会阻塞IDE主进程
+            // WaitForSingleObject(pi.hProcess, INFINITE);
+
+            // 关闭进程和线程句柄
+            CloseHandle(pi.hProcess);
+            CloseHandle(pi.hThread);
+        }
+
+        return TRUE;
 }
+
+
+void CodeRunner::keyPressEvent(QKeyEvent *e)
+{
+
+    QTextCursor cursor = textCursor();
+    // 防止修改历史命令输出
+    if (cursor.position() < promptPosition && e->key() != Qt::Key_Control) {
+        cursor.movePosition(QTextCursor::End);
+        setTextCursor(cursor);
+    }
+
+    ///处理运行时的交互输入
+    keyPressEventWhileRunning(e);
+}
+
+
 

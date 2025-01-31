@@ -63,6 +63,8 @@ protected:
      */
     void keyPressEvent(QKeyEvent *e) override;
 
+    bool keyPressEventWhileRunning(QKeyEvent *e);
+
 protected slots:
     /**
      * @brief 处理进程标准输出

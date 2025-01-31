@@ -71,9 +71,6 @@ Terminal::~Terminal()
 void Terminal::keyPressEvent(QKeyEvent *e)
 {
 
-    // qDebug()<<"status while keypress "<<process->exitStatus();
-    // qDebug()<<"exitCode while keypress "<<process->exitCode();
-
     // 获取光标位置
     QTextCursor cursor = textCursor();
     // 防止修改历史命令输出
@@ -82,69 +79,14 @@ void Terminal::keyPressEvent(QKeyEvent *e)
         setTextCursor(cursor);
     }
 
-    if(isrunning){
 
-        qDebug()<<"isrunning input...";
-        switch(e->key()){
-        case Qt::Key_Return:
-        case Qt::Key_Enter: {
-
-            QTextCursor cursor = textCursor();
-            cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
-
-            cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
-
-            // write input
-            QString command = cursor.selectedText();
-            qDebug()<<"process->write::"<<command;
-
-            // if (!command.isEmpty()) {
-            //     commandHistory.append(command);  // 添加到历史记录
-            //     historyPosition = commandHistory.size();
-            // }
-            // appendPlainText("");  // 换行
-            // executeCommand(command);
-            process->write(command.toUtf8() + "\n");
-            process->waitForBytesWritten();
-
-            break;
-        }
-        default:
-
-            QTextCursor cursor = textCursor();
-
-            // cursorLinePos=cursor.position();
-
-            QPlainTextEdit::keyPressEvent(e);
-
-            // 设置用户输入的颜色
-            QTextCharFormat userInputFormat;
-            userInputFormat.setForeground(Qt::yellow);
-            // promptPosition
-            cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
-
-            cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
-            QString input=cursor.selectedText();
-            // qDebug()<<"cursor select::"<<cursor.selectedText();
-
-            cursor.removeSelectedText();///删除这段文本
-            cursor.setCharFormat(userInputFormat);///设置字体格式
-            cursor.insertText(input);///插入格式化后的字体
-            setTextCursor(cursor);
-
-
-        }
-
-
+    // 处理不同的按键事件(running)
+    if(keyPressEventWhileRunning(e)){
         return;
     }
 
 
-
-    
-
-
-    // 处理不同的按键事件
+    // 处理不同的按键事件(default)
     switch (e->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter: {
@@ -215,6 +157,64 @@ void Terminal::keyPressEvent(QKeyEvent *e)
 
         break;
     }
+}
+
+bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
+{
+    if(isrunning){
+
+        qDebug()<<"isrunning input...";
+        switch(e->key()){
+        case Qt::Key_Return:
+        case Qt::Key_Enter: {
+
+            QTextCursor cursor = textCursor();
+            cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
+
+            cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
+
+            // write input
+            QString command = cursor.selectedText();
+            qDebug()<<"process->write::"<<command;
+
+
+            process->write(command.toUtf8() + "\n");
+            process->waitForBytesWritten();
+
+            break;
+        }
+        default:
+
+            QTextCursor cursor = textCursor();
+
+            // cursorLinePos=cursor.position();
+
+            QPlainTextEdit::keyPressEvent(e);
+
+            // 设置用户输入的颜色
+            QTextCharFormat userInputFormat;
+            userInputFormat.setForeground(Qt::yellow);
+            // promptPosition
+            cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
+
+            cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);///移动cursor到末尾位置并选中这段文本
+            QString input=cursor.selectedText();
+
+
+            cursor.removeSelectedText();///删除这段文本
+            cursor.setCharFormat(userInputFormat);///设置字体格式
+            cursor.insertText(input);///插入格式化后的字体
+            setTextCursor(cursor);
+
+
+        }
+
+
+        return true;
+    }else{
+        return false;
+    }
+
 }
 
 /**
