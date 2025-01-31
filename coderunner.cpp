@@ -14,7 +14,7 @@ CodeRunner::CodeRunner(QWidget* parent)
 {
 
     searchRunner();
-
+    pyrunner=new PyRunner(this);
 }
 
 CodeRunner::~CodeRunner()
@@ -58,6 +58,11 @@ QString CodeRunner::runCppCode()
 QString CodeRunner::runPythonCode()
 {
     QString command=PythonRunner+" "+runFile;
+
+    // pyrunner->executeCommand(command);
+    pyrunner->runCode(PythonRunner,QStringList()<<runFile);
+
+
     return command;
 }
 
@@ -130,56 +135,8 @@ QString CodeRunner::searchFiles(const QString &dirPath, const QString &searchPat
     return "";
 }
 
-
-
-
-/*
-// void CodeRunner::initProcess()
-// {
-//     process=new QProcess(this);
-
-//     process->setProgram(PythonRunner);
-//     process->setArguments(runFile);
-
-//     connect(process,&QProcess::readyReadStandardOutput,this,&CodeRunner::handleProcessOutput);
-//     connect(process,&QProcess::readyReadStandardError,this,&CodeRunner::handleProcessError);
-//     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-//             this, &CodeRunner::handleProcessFinish);
-
-// }
-
-// void CodeRunner::handleProcessOutput()
-// {
-//     qDebug()<<QString::fromLocal8Bit(process->readAllStandardOutput());
-// }
-
-// void CodeRunner::handleProcessError()
-// {
-//     qDebug()<<QString::fromLocal8Bit(process->readAllStandardError());
-// }
-
-// void CodeRunner::handleProcessFinish(int exitCode, QProcess::ExitStatus exitstatus)
-// {
-//     // // 等待进程结束（可以选择同步或异步等待）
-//     // if (!process->waitForFinished()) {
-//     //     qDebug() << "Process did not finish.";
-//     // }
-
-//     // 检查退出状态
-//     if (process->exitStatus() == QProcess::NormalExit && process->exitCode() == 0) {
-//         qDebug() << "Python script executed successfully.";
-//     } else {
-//         qDebug() << "Python script failed with exit code" << process->exitCode();
-//     }
-// }
-
-// void CodeRunner::handleProcessInput()
-// {
-
-
-
-// }
-
-*/
-
+PyRunner *CodeRunner::getOutput()
+{
+    return pyrunner;
+}
 

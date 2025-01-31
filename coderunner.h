@@ -4,8 +4,12 @@
 #include <QObject>
 #include <QWidget>
 #include <QProcess>
+#include "pyrunner.h"
+
 
 class QString;
+
+
 
 
 class CodeRunner:public QWidget
@@ -35,6 +39,9 @@ public:
 
     QString searchFiles(const QString &dirPath, const QString &searchPattern);
 
+
+    PyRunner* getOutput();
+
     // void initProcess();
 
     // void handleProcessOutput();
@@ -55,6 +62,8 @@ private:
     QString PythonRunner;
     QString CppRunner;
     // QProcess *process;
+    PyRunner* pyrunner;
+
 
     bool isRunnerExist;
 };

@@ -108,6 +108,7 @@ private:
 
     QDockWidget *fileDock;
     QDockWidget *terminalViewDock;
+    QDockWidget *pyOutputDock;
 
     QMenu *fileMenu;
     QMenu *editMenu;

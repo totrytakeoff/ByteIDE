@@ -36,7 +36,7 @@ public:
      * 
      * 在终端中执行指定的命令，并显示输出结果
      */
-    void executeCommand(const QString &command);
+    virtual void executeCommand(const QString &command);
 
     /**
      * @brief 设置进程环境变量
@@ -63,7 +63,7 @@ protected:
      */
     void keyPressEvent(QKeyEvent *e) override;
 
-private slots:
+protected slots:
     /**
      * @brief 处理进程标准输出
      * 
@@ -89,7 +89,7 @@ private slots:
 
 
 
-private:
+protected:
     /**
      * @brief 插入命令提示符
      * 

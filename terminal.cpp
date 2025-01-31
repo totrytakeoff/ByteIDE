@@ -379,9 +379,9 @@ void Terminal::handleProcessError()
  */
 void Terminal::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    // qDebug()<<"process:"<<process->processId()<<"have finish";
-    // qDebug()<<"exitcode:"<<exitCode;
-    // qDebug()<<"exitstatus:"<<exitStatus;
+    qDebug()<<"process:"<<process->processId()<<"have finish";
+    qDebug()<<"exitcode:"<<exitCode;
+    qDebug()<<"exitstatus:"<<exitStatus;
     isrunning=false;
     insertPrompt();  // 显示新的提示符
 }

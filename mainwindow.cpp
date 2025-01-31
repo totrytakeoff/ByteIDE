@@ -340,6 +340,15 @@ void MainWindow::CreatDock()
 
     addDockWidget(Qt::BottomDockWidgetArea,terminalViewDock);
 
+
+    pyOutputDock=new QDockWidget("Output",this);
+    pyOutputDock->setAllowedAreas(Qt::BottomDockWidgetArea);
+    pyOutputDock->setWidget(runner->getOutput());
+
+    addDockWidget(Qt::BottomDockWidgetArea,pyOutputDock);
+
+
+
 }
 
 void MainWindow::CreatStatusBar()
@@ -769,17 +778,39 @@ void MainWindow::runCode()
     runner->setMode(filetype);
 
 
+
+
     QString command=runner->runCode();
+
     qDebug()<<command;
-    if(!command.isEmpty()){
-        // qDebug()<<"runcode:"<<command;
-        terminal->setIsRunning(true);
-        terminal->executeCommand(command);
-        if(filetype=="cpp"&&terminal->getProcess()->exitStatus() == QProcess::NormalExit && terminal->getProcess()->exitCode() == 0){
-            QString outputPath="./out/"+QFileInfo(curFilePath).completeBaseName();
-            terminal->executeCommand(outputPath);
-        }
-    }
+
+
+
+
+    // if(!command.isEmpty()){
+    //     // qDebug()<<"runcode:"<<command;
+    //     terminal->setIsRunning(true);
+    //     terminal->executeCommand(command);
+    //     if(filetype=="cpp"&&terminal->getProcess()->exitStatus() == QProcess::NormalExit && terminal->getProcess()->exitCode() == 0){
+
+    //         QString outputPath="./out/"+QFileInfo(curFilePath).completeBaseName()+"bat";
+    //         QString batFile="./out/test.bat";
+    //         // QFile file=QFile(batFile);
+    //         // file.open(QFile::WriteOnly);
+    //         // QString a=QFileInfo(curFilePath).completeBaseName()+".exe \npause";
+
+    //         // QTextStream out(&file);
+    //         // out<<a;
+    //         // file.close();
+
+    //         // terminal->executeCommand(QFileInfo(batFile).absoluteFilePath());
+
+    //         qDebug()<<"bat::"<<QFileInfo(batFile).absoluteFilePath();
+    //         QProcess *process;
+    //         process->start(QFileInfo(batFile).absoluteFilePath());
+
+    //     }
+    // }
 
 }
 
