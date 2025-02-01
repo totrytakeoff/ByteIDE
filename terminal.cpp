@@ -161,9 +161,10 @@ void Terminal::keyPressEvent(QKeyEvent *e)
 
 bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
 {
+
+
     if(isrunning){
 
-        qDebug()<<"isrunning input...";
         switch(e->key()){
         case Qt::Key_Return:
         case Qt::Key_Enter: {

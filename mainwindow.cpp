@@ -133,6 +133,7 @@ void MainWindow::CreatAction()
     runAct->setStatusTip("保存并运行当前文件");
     runAct->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
     runAct->setShortcut(QKeySequence("Ctrl+F5"));
+    runAct->setEnabled(false);
     connect(runAct, &QAction::triggered, this, &MainWindow::runCode);
 
     exitAct = new QAction("&退出", this);
@@ -341,13 +342,13 @@ void MainWindow::CreatDock()
     addDockWidget(Qt::BottomDockWidgetArea,terminalViewDock);
 
 
-    pyOutputDock=new QDockWidget("Output",this);
-    pyOutputDock->setAllowedAreas(Qt::BottomDockWidgetArea);
-    pyOutputDock->setWidget(runner);
+    OutputDock=new QDockWidget("Output",this);
+    OutputDock->setAllowedAreas(Qt::BottomDockWidgetArea);
+    OutputDock->setWidget(runner);
 
-    addDockWidget(Qt::BottomDockWidgetArea,pyOutputDock);
+    addDockWidget(Qt::BottomDockWidgetArea,OutputDock);
 
-
+    tabifyDockWidget(terminalViewDock,OutputDock);
 
 }
 
@@ -616,13 +617,16 @@ void MainWindow::saveFile(QString fileName)
                                                         "",
                                                         tr("所有文件(*.*);;C/C++(*.cpp *.c *.h);;python(*.py);;文本文件(*.txt)"));
 
+        if (fileName.isEmpty()) {
+            return; // 用户取消了对话框
+        }
         curFilePath=fileName;
-        curEditArea->curEditFile=fileName;
+        if(curEditArea){
+            curEditArea->curEditFile=fileName;
+        }
         codeTabWidget->setTabText(codeTabWidget->currentIndex(),QFileInfo(fileName).fileName());
     }
-    if (fileName.isEmpty()) {
-        return; // 用户取消了对话框
-    }
+
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly)) {
@@ -756,10 +760,15 @@ void MainWindow::about()
                           "<p>该软件集成了文件资源管理器和终端界面，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
                           "此外，MyIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"
                           "使用户无需进行复杂的安装和配置，开箱即用，非常适合 <b>Python</b> 和 <b>C/C++</b> 初学者使用。</p>"
+                          "<p>项目已上传<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>,欢迎大家点点star或者提issue</p>"
                           "</div>"
-                          "<div style='font-size: 12px; color: gray;'>"
+                          "</br></br></br></br></br></br></br></br></br></br></br></br></br>"
+                          "<div width=100px; height=100px;></div>"
+                          "<div style='font-size: 8px; color: gray;'>"
                           "<p>版本: 1.0.0</p>"
-                          "<p>作者: Your Name</p>"
+                          "<p>作者: myself</p>"
+                          "<p>反馈邮箱: 2467315534@qq.com</p>"
+
                           "</div>"
                           ));
 }
@@ -768,11 +777,17 @@ void MainWindow::about()
 void MainWindow::runCode()
 {
 
+
+    if(codeTabWidget->count() <= 0){
+        QMessageBox::warning(this,"warning!","请先打开一个文件再运行！");
+        return;
+    }
     saveCurFile();
     QString filetype=GetCurFileType();
 
     // qDebug()<<"the curfile with file type :"<<curFilePath<<" "<<filetype;
     ///设置当前运行文件
+    OutputDock->show();
     runner->setRunFile(curFilePath);
 
     ///设置运行模式(文件类型)
@@ -788,6 +803,7 @@ void MainWindow::onTabChange()
 
     ///注意处理空指针情况
     if(codeTabWidget->count()>0){
+        runAct->setEnabled(true);
         curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
         path=curEditArea->curEditFile;
 
@@ -804,7 +820,7 @@ void MainWindow::onTabChange()
 
 
     }else{
-
+        runAct->setEnabled(false);///无Tab时运行btn设为禁用
         setEditActEnable(false);///无Tab时设置为禁用状态
 
         ///当Tab=0时无现存curEditArea，将curEditArea置空

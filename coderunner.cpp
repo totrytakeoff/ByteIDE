@@ -35,7 +35,7 @@ void CodeRunner::setMode(QString &fileType)
 
 void CodeRunner::runCode()
 {
-
+    isrunning=true;
     if(RunMode==Mode::Python){
         runPythonCode();
         return;
@@ -216,8 +216,10 @@ void CodeRunner::keyPressEvent(QKeyEvent *e)
         setTextCursor(cursor);
     }
 
+    qDebug()<<"clicked:::"<<e->key();
     ///处理运行时的交互输入
     keyPressEventWhileRunning(e);
+
 }
 
 
