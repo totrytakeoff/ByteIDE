@@ -325,7 +325,7 @@ void MainWindow::CreatDock()
 
 
     ///creat a resourceManager and set fileDock'widget with fileExolorer->treeView
-    fileExplorer=new ResourceManager(fileDock);
+    fileExplorer=new ResourceManager(fileDock,this);
 
 
     addDockWidget(Qt::LeftDockWidgetArea, fileDock);

@@ -50,7 +50,15 @@ void CodeRunner::runCode()
 
 void CodeRunner::runCppCode()
 {
-
+    // 确保输出目录存在
+    QDir dir("./out");
+    if (!dir.exists()) {
+        bool success = dir.mkpath(".");
+        if (!success) {
+            qDebug() << "Failed to create output directory.";
+            return;
+        }
+    }
 
     QString outputPath="./out/"+QFileInfo(runFile).completeBaseName();
     QStringList arguments;
