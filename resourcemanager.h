@@ -1,10 +1,7 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
-// #include <QTreeWidget>
-// #include <QFileSystemModel>
-//hello
-#include <QObject>
+#include <QWidget>
 #include <QString>
 #include <QModelIndex>
 class QTreeView;
@@ -13,9 +10,9 @@ class QDockWidget;
 
 class QPushButton;
 class QAction;
+class QInputDialog;
 
-
-class ResourceManager :public QObject
+class ResourceManager :public QWidget
 {
     Q_OBJECT
 public:
@@ -61,12 +58,14 @@ private:
 
 
     QAction *newFileAct;
+    QAction *newFolderAct;
     QAction *openAct;
     QAction *deleteAct;
     QAction *renameAct;
     QAction *openInExplorerAct;
     QAction *copyFilePathAct;
 
+    QInputDialog *styleDialog;
 
 };
 

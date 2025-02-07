@@ -14,7 +14,7 @@
 #include <QProcess>
 
 ResourceManager::ResourceManager(QDockWidget* Dock,QWidget *parent)
-    :QObject(parent)
+    :QWidget(parent)
 {
 
 
@@ -40,12 +40,12 @@ ResourceManager::ResourceManager(QDockWidget* Dock,QWidget *parent)
 
     Dock->setWidget(treeView);
 
-    initSheet();
     initAct();
 
     connect(treeView,&QTreeView::clicked,this,&ResourceManager::on_FileClick);
     connect(treeView,&QTreeView::doubleClicked,this,&ResourceManager::on_FileDoubleClick);
     connect(treeView,&QTreeView::customContextMenuRequested,this,&ResourceManager::showContextMenu);
+    initSheet();
 
 }
 
@@ -78,7 +78,28 @@ void ResourceManager::ModifyStyle()
 
 void ResourceManager::initSheet()
 {
+    ///QInputDialog不能独立设置样式，故构造一个父Dialog单独设置样式，再让其他QInputDialog继承其样式
+    styleDialog=new QInputDialog();
+    styleDialog->setStyleSheet(
+        R"(QInputDialog { background-color: rgb(31, 31, 31); }
+            QLineEdit {
+                color: white;
+                background-color: rgb(56, 56, 56);
+                border:1px solid rgb(153,153,153);
+            }
+            QPushButton {
+                color: white;
+                background-color: rgb(61, 61, 61);
+            }
+            QLabel{
+                color: white;
+            }
+        )");
+
+
+
     treeViewStyleSheet=R"(
+
         QTreeView{background-color: rgb(31, 31, 31);
             color: rgb(214, 214, 214);
         }
@@ -131,12 +152,6 @@ void ResourceManager::initSheet()
     )";
     //border-image: url(:/icons/branch-closed.png) 0;
 
-    // Dock->setStyleSheet(R"(
-
-    //         color:rgb(214,214,214);
-    //         boder: 10px solid white;
-
-    //     )");
 
     treeView->setStyleSheet(treeViewStyleSheet);
 }
@@ -181,18 +196,48 @@ void ResourceManager::on_FileDoubleClick(const QModelIndex &index)
 
 
     emit(fileDoubleClick(filename));
-    qDebug()<<"emit doubleClick,filename:"<<filename;
     qDebug()<<"filePath:"<<fileModel->filePath(index);
 
 }
 
 void ResourceManager::newFile()
 {
+    bool ok;
+    QString newfileName = QInputDialog::getText(styleDialog, "新建文件",
+                                            "文件名:", QLineEdit::Normal,
+                                            "", &ok);
+    if (ok && !newfileName.isEmpty()) {
+        QString newfilePath = curFilePath + "/" + newfileName;
+         qDebug()<<"newFilePath->"<<newfilePath;
+        QFile file(newfilePath);
+        if (file.exists()) {
+            QMessageBox::warning(this,"创建失败!","该文件已经存在!",QMessageBox::Ok);
+            return;
+        }
+         file.open(QIODevice::WriteOnly);
 
+    }
 }
 
 void ResourceManager::newFolder()
 {
+
+
+    bool ok;
+    QString newfileName = QInputDialog::getText(styleDialog, "新建文件夹",
+                                                "文件夹名:", QLineEdit::Normal,
+                                                "", &ok);
+    if (ok && !newfileName.isEmpty()) {
+        QString newfilePath = curFilePath + "/" + newfileName;
+        qDebug()<<"newFilePath->"<<newfilePath;
+        if (QDir(newfilePath).exists()) {
+             QMessageBox::warning(this,"创建失败!","该文件夹已经存在!",QMessageBox::Ok);
+            return;
+        }
+        QDir dir;
+        dir.mkpath(newfilePath);
+
+    }
 
 }
 
@@ -212,7 +257,7 @@ void ResourceManager::deleteFile()
 {
         // 确认用户是否真的想要删除
         QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(nullptr, "确认删除",
+        reply = QMessageBox::question(this, "确认删除",
                                       QString("你确定要删除 %1 吗?").arg(curFilePath),
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
@@ -236,7 +281,7 @@ void ResourceManager::renameFile()
 {
         bool ok;
         QString newName = QInputDialog::getText(nullptr, "重命名",
-                                                "New name:", QLineEdit::Normal,
+                                                "新文件名:", QLineEdit::Normal,
                                                 fileModel->fileName(curIdx), &ok);
         if (ok && !newName.isEmpty()) {
             QString newPath = fileModel->fileInfo(curIdx).absolutePath() + "/" + newName;
@@ -289,6 +334,7 @@ void ResourceManager::showContextMenu(const QPoint &pos)
     // 根据是否是目录来添加不同的菜单项
     if (fileModel->isDir(index)) {
         menu.addAction(openAct);
+        menu.addAction(newFileAct);
         menu.addAction(newFolderAct);
         menu.addAction(deleteAct);
         menu.addAction(renameAct);
@@ -296,7 +342,7 @@ void ResourceManager::showContextMenu(const QPoint &pos)
         menu.addAction(copyFilePathAct);
     } else {
         menu.addAction(openAct);
-        menu.addAction(newFileAct);
+
         menu.addAction(deleteAct);
         menu.addAction(renameAct);
         menu.addAction(openInExplorerAct);
