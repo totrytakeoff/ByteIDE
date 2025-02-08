@@ -1,17 +1,18 @@
 #include "editarea.h"
-#include<Qsci/qscilexercpp.h>
-#include<Qsci/qsciscintilla.h>
-#include<Qsci/qscilexerpython.h>
-#include<Qsci/qscilexerd.h>
-#include<Qsci/qscistyledtext.h>
-#include<Qsci/qsciapis.h>
-#include<QTabWidget>
-#include<QDebug>
-#include<QString>
-#include<QVBoxLayout>
-#include<QKeyEvent>
-
-#include<QDir>
+#include <Qsci/qscilexercpp.h>
+#include <Qsci/qsciscintilla.h>
+#include <Qsci/qscilexerpython.h>
+#include <Qsci/qscilexerd.h>
+#include <Qsci/qscistyledtext.h>
+#include <Qsci/qsciapis.h>
+#include <QTabWidget>
+#include <QDebug>
+#include <QString>
+#include <QVBoxLayout>
+#include <QKeyEvent>
+#include <QTextCursor>
+#include <QDir>
+#include <QMessageBox>
 
 EditArea::EditArea(QWidget* parent)
     :QWidget(parent)
@@ -400,6 +401,24 @@ void EditArea::highlightCurrentLine(int line,int index)
         textEdit->markerAdd(line, 0);
 
     }
+}
+
+void EditArea::findNext(const QString &text, bool caseSensitive, bool wholeWords,bool forward)
+{   qDebug()<<"finding";
+    // 设置搜索参数
+    bool found = textEdit->findFirst(text, false, caseSensitive, wholeWords, true, forward, -1, -1, true, false, false);
+
+    if (!found) {
+        // 如果没有找到，可以从文档开头重新开始搜索
+        textEdit->setCursorPosition(0,0);
+        found = textEdit->findFirst(text, false, caseSensitive, wholeWords, true, forward, -1, -1, true, false, false);
+    }
+
+    if (!found) {
+        QMessageBox::information(this, "查找", "未找到指定文本");
+    }
+
+
 }
 
 QMap<int, QColor> EditArea::createDefaultColorMap()

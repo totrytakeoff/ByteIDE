@@ -4,11 +4,12 @@
 #include <QMainWindow>
 
 
-class QHBoxLayout;
+class QVBoxLayout;
 class ResourceManager;
 class EditArea;
 class Terminal;
 class CodeRunner;
+class SearchWidget;
 class QFile;
 class QSplitter;
 class QLabel;
@@ -74,9 +75,11 @@ protected:
 private:
     Ui::MainWindow *ui;
 
+    QVBoxLayout* mainLayout;
     EditArea* curEditArea;
     Terminal * terminal;
     CodeRunner* runner;
+    SearchWidget *searchDia;
 
     QAction* addEmptyFileAct;
     QAction* newFileAct;
@@ -96,6 +99,8 @@ private:
     QAction* cancelSelectAct;
     QAction* foldAllAct;
     QAction* openAllAct;
+
+    QAction* searchTextAct;
 
 
     QAction* showFileExplorerAct;

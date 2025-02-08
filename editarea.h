@@ -39,11 +39,6 @@ public:
     void modifyFontDefaultColor(QColor &col);
     void modifyEditorDefaultBackgroundColor(QColor &col);
 
-
-
-
-
-
     // QTabWidget* tabwidget;
     QsciScintilla *textEdit;
     QsciLexerPython *PythonLexer;
@@ -59,6 +54,8 @@ protected:
 
 public slots:
     void highlightCurrentLine(int line,int index);
+
+    void findNext(const QString &text, bool caseSensitive, bool wholeWords,bool forward=true);
 
 signals:
 

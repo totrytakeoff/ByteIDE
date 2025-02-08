@@ -42,6 +42,7 @@
 #include "editarea.h"
 #include "terminal.h"
 #include "coderunner.h"
+#include "searchwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,13 +51,27 @@ MainWindow::MainWindow(QWidget *parent)
 
 pubilc:
 
-    ui->setupUi(this);
+    QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
+    mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
+
+
+
+
 
     runner=new CodeRunner(this);
-
+    searchDia=new SearchWidget(this);
+    searchDia->hide();
     codeTabWidget=new QTabWidget(this);
     codeTabWidget->clear();///清空tabwidget内Tab
     codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
+
+
+    // 将codeTabWidget添加到mainLayout中，并设置适当的拉伸因子以让它占据剩余空间
+    mainLayout->addWidget(codeTabWidget, 1); // 使用拉伸因子1让codeTabWidget尽可能多地占据空间
+
+
+    // 设置centralWidget为主窗口的中心部件
+    setCentralWidget(centralWidget);
 
     CreatAction();
     CreatToolBar();
@@ -69,9 +84,20 @@ pubilc:
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
+    connect(searchDia,&SearchWidget::findNext,this,[=](const QString &text, bool caseSensitive, bool wholeWords){
+        qDebug()<<"click search";
+        if(curEditArea){
+            curEditArea->findNext(text,caseSensitive,wholeWords);
+        }
+    });
 
 
-    setCentralWidget(codeTabWidget);
+
+
+
+
+
+    // setCentralWidget(codeTabWidget);
 
 }
 
@@ -192,7 +218,7 @@ void MainWindow::CreatAction()
 
 
 
-    setEditActEnable(false);///无Tab时设置为禁用状态
+
 
     // 连接槽函数
     connect(redoAct, &QAction::triggered, this, [this](){
@@ -240,8 +266,24 @@ void MainWindow::CreatAction()
             curEditArea->textEdit->foldAll(false);
     });
 
+    searchTextAct=new QAction("查找",this);
+    searchTextAct->setShortcut(QKeySequence("Ctrl+F"));
+    connect(searchTextAct,&QAction::triggered,this,[this](){
+        qDebug()<<"searchwidget1";
+        if (!searchDia->isVisible()) { // 如果searchWidget不可见，则显示它
+            qDebug()<<"searchwidget2";
+            mainLayout->addWidget(searchDia, 0); // 添加searchWidget到布局，使用0拉伸因子避免占据过多空间
+            searchDia->show();
+            mainLayout->update(); // 更新布局以反映更改
+        } else {
+            qDebug()<<"searchwidget3";
+            mainLayout->removeWidget(searchDia); // 如果searchWidget已经可见，则从布局中移除
+            searchDia->hide();
+            mainLayout->update(); // 更新布局以反映更改
+        }
+    });
 
-
+    setEditActEnable(false);///无Tab时设置为禁用状态
 }
 
 void MainWindow::CreatToolBar()
@@ -302,6 +344,7 @@ void MainWindow::CreatMenuBar()
     editMenu->addAction(cancelSelectAct);
     editMenu->addAction(foldAllAct);
     editMenu->addAction(openAllAct);
+    editMenu->addAction(searchTextAct);
     // editMenu->addAction();
 
 
@@ -545,6 +588,8 @@ void MainWindow::setEditActEnable(bool b)
     cancelSelectAct->setEnabled(b);
     foldAllAct->setEnabled(b);
     openAllAct->setEnabled(b);
+    searchTextAct->setEnabled(b);
+    runAct->setEnabled(b);
 }
 
 void MainWindow::loadFromFile(QString path)
@@ -569,7 +614,7 @@ void MainWindow::loadFromFile(QString path)
 
         codeTabWidget->addTab(editor,QFileInfo(file).fileName());///添加Tab页面
         // qDebug()<<"Tab_count:"<<codeTabWidget->count();
-        setEditActEnable(false);///将editAct设为可用状态
+        setEditActEnable(true);///将editAct设为可用状态
 
         codeTabWidget->setCurrentIndex(codeTabWidget->count()-1);
 
@@ -638,7 +683,9 @@ void MainWindow::saveFile(QString fileName)
 
     QTextStream out(&file);
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    out << curEditArea->textEdit->text();
+    if(curEditArea->textEdit){
+        out << curEditArea->textEdit->text();
+    }
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
@@ -803,7 +850,8 @@ void MainWindow::onTabChange()
 
     ///注意处理空指针情况
     if(codeTabWidget->count()>0){
-        runAct->setEnabled(true);
+
+        setEditActEnable(true);
         curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
         path=curEditArea->curEditFile;
 
@@ -820,7 +868,7 @@ void MainWindow::onTabChange()
 
 
     }else{
-        runAct->setEnabled(false);///无Tab时运行btn设为禁用
+
         setEditActEnable(false);///无Tab时设置为禁用状态
 
         ///当Tab=0时无现存curEditArea，将curEditArea置空

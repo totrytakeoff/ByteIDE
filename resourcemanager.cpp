@@ -179,7 +179,7 @@ void ResourceManager::initAct()
 void ResourceManager::on_FileClick(const QModelIndex &index)
 {
     QString filename=fileModel->filePath(index);
-    emit(fileClick(filename));
+    emit fileClick(filename);
 
 }
 
@@ -195,7 +195,7 @@ void ResourceManager::on_FileDoubleClick(const QModelIndex &index)
     }
 
 
-    emit(fileDoubleClick(filename));
+    emit fileDoubleClick(filename);
     qDebug()<<"filePath:"<<fileModel->filePath(index);
 
 }
@@ -247,20 +247,26 @@ void ResourceManager::openFile()
     if(curIdx.isValid()&&fileModel->isDir(curIdx))
     {
         treeView->expand(curIdx);
-    }else{
-        emit(fileDoubleClick(curFilePath));
+        return;
     }
-
+    emit fileDoubleClick(curFilePath);
 }
 
 void ResourceManager::deleteFile()
 {
-        // 确认用户是否真的想要删除
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "确认删除",
-                                      QString("你确定要删除 %1 吗?").arg(curFilePath),
-                                      QMessageBox::Yes|QMessageBox::No);
-        if (reply == QMessageBox::Yes) {
+
+
+        // 显示一个包含三个选项的对话框：取消、永久删除和移至回收站
+        QMessageBox messageBox(this);
+        messageBox.setWindowTitle("确认删除");
+        messageBox.setText(QString("你确定要删除 %1 吗?").arg(curFilePath));
+        QPushButton *permanentDeleteButton = messageBox.addButton(tr("永久删除"), QMessageBox::YesRole);
+        QPushButton *moveToRecycleBinButton = messageBox.addButton(tr("移至回收站"), QMessageBox::NoRole);
+        QPushButton *cancelBtn=messageBox.addButton(tr("取消"),QMessageBox::RejectRole);
+        messageBox.exec();
+
+        if (messageBox.clickedButton() == permanentDeleteButton) {
+            // 用户选择了永久删除
             bool result;
             if (QFileInfo(curFilePath).isDir()) {
                 QDir dir(curFilePath);
@@ -273,7 +279,18 @@ void ResourceManager::deleteFile()
             } else {
                 qDebug() << "Failed to delete:" << curFilePath;
             }
+        } else if (messageBox.clickedButton() == moveToRecycleBinButton) {
+            // 用户选择了移至回收站
+            bool result = QFile::moveToTrash(curFilePath);
+            if (result) {
+                qDebug() << "Successfully moved to trash:" << curFilePath;
+            } else {
+                qDebug() << "Failed to move to trash:" << curFilePath;
+            }
+        }else if(messageBox.clickedButton() == cancelBtn){
+            return;
         }
+
 
 }
 
