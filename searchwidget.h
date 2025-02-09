@@ -36,6 +36,7 @@ private:
     QPushButton *replaceBtn;
     QPushButton *selectAllBtn;
     QPushButton *replaceAllBtn;
+    QPushButton *CloseBtn;
 };
 
 #endif // SEARCHWIDGET_H

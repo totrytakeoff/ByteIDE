@@ -95,7 +95,7 @@ pubilc:
 
 
 
-
+    this->resize(1000,800);
 
     // setCentralWidget(codeTabWidget);
 

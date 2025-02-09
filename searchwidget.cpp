@@ -3,6 +3,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QGridLayout>
+
 
 SearchWidget::SearchWidget(QWidget *parent)
     :QWidget(parent)
@@ -23,34 +25,87 @@ SearchWidget::SearchWidget(QWidget *parent)
     replaceAllBtn = new QPushButton("替换全部",this);
     selectAllBtn=new QPushButton("选择全部",this);
 
+    CloseBtn=new QPushButton("X",this);
+    // 推荐方式：通过布局管理器控制尺寸
+    CloseBtn->setFixedSize(24, 24);  // 固定尺寸
+    CloseBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 固定尺寸策略
+
+    // 修改样式表避免尺寸冲突
+    CloseBtn->setStyleSheet(
+        "QPushButton {"
+        "   min-width: 24px;"        // 最小宽度
+        "   max-width: 24px;"        // 最大宽度
+        "   min-height: 24px;"       // 最小高度
+        "   max-height: 24px;"       // 最大高度
+        "   padding: 0px;"           // 清除内边距
+        "background-color:rgb(80,80,80);"
+        "}"
+        "QPushButton:hover {"
+        "background-color:red;"
+        "color:red;"
+        "}");
     QLabel *findLab = new QLabel("查找:",this);
     QLabel *replaceLab = new QLabel("替换为:",this);
 
         // 布局
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    QHBoxLayout *findLayout = new QHBoxLayout();
-    QHBoxLayout *replaceLayout = new QHBoxLayout();
     QHBoxLayout *argLayout=new QHBoxLayout();
+    // QHBoxLayout *findLayout = new QHBoxLayout();
+    // QHBoxLayout *replaceLayout = new QHBoxLayout();
+
+    QVBoxLayout * labelLayout=new QVBoxLayout;
+    QVBoxLayout * lineEditLayout=new QVBoxLayout;
+
+    QHBoxLayout * HLayout=new QHBoxLayout;
+
+    QGridLayout *gridLayout=new QGridLayout();
 
     // 添加查找输入框到布局
     // findLayout->addWidget(findLabel);
     argLayout->addWidget(wholeWords,1);
     argLayout->addWidget(caseSensitive,1);
+    argLayout->addWidget(CloseBtn,0);
 
-    findLayout->addWidget(findLab,0);
-    findLayout->addWidget(findText,7);
-    findLayout->addWidget(prveBtn,1);
-    findLayout->addWidget(nextBtn,1);
-    findLayout->addWidget(selectAllBtn,1);
+    // findLayout->addWidget(findLab,5);
+    // findLayout->addWidget(findText,70);
+    // findLayout->addWidget(prveBtn,10);
+    // findLayout->addWidget(nextBtn,10);
+    // findLayout->addWidget(selectAllBtn,10);
 
-    replaceLayout->addWidget(replaceLab,0);
-    replaceLayout->addWidget(replaceText,7);
-    replaceLayout->addWidget(replaceBtn,1);
-    replaceLayout->addWidget(replaceAllBtn,1);
+    // replaceLayout->addWidget(replaceLab,5);
+    // replaceLayout->addWidget(replaceText,70);
+    // replaceLayout->addWidget(replaceBtn,15);
+    // replaceLayout->addWidget(replaceAllBtn,15);
+
+    labelLayout->addWidget(findLab,0);
+    labelLayout->addWidget(replaceLab,0);
+
+    lineEditLayout->addWidget(findText,0);
+    lineEditLayout->addWidget(replaceText,0);
+
+    gridLayout->addWidget(prveBtn,0,0,1,1);
+    gridLayout->addWidget(nextBtn,0,1,1,1);
+    gridLayout->addWidget(selectAllBtn,0,2,1,1);
+    gridLayout->addWidget(replaceBtn,1,0,1,1);
+    gridLayout->addWidget(replaceAllBtn,1,1,1,1);
+
+    // 添加占位控件保持列数一致
+    QWidget *spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    gridLayout->addWidget(spacer, 1, 2);
+
+    gridLayout->setColumnStretch(0,1);
+    gridLayout->setColumnStretch(1,1);
+    gridLayout->setColumnStretch(2,1);
+
+    HLayout->addLayout(labelLayout,0);
+    HLayout->addLayout(lineEditLayout,8);
+    HLayout->addLayout(gridLayout,2);
 
     mainLayout->addLayout(argLayout,0);
-    mainLayout->addLayout(findLayout,1);
-    mainLayout->addLayout(replaceLayout,1);
+    // mainLayout->addLayout(findLayout,1);
+    // mainLayout->addLayout(replaceLayout,1);
+    mainLayout->addLayout(HLayout,1);
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
     // 设置主布局
@@ -64,6 +119,8 @@ SearchWidget::SearchWidget(QWidget *parent)
     connect(prveBtn,&QPushButton::clicked,this,[this](){
         emit findNext(findText->text(), caseSensitive->isChecked(), wholeWords->isChecked(),false);
     });
+
+    connect(CloseBtn,&QPushButton::clicked,this,&QWidget::close);
 
 }
 
