@@ -68,6 +68,7 @@ pubilc:
 
     // 将codeTabWidget添加到mainLayout中，并设置适当的拉伸因子以让它占据剩余空间
     mainLayout->addWidget(codeTabWidget, 1); // 使用拉伸因子1让codeTabWidget尽可能多地占据空间
+    mainLayout->setContentsMargins(0,0,0,0);
 
 
     // 设置centralWidget为主窗口的中心部件
@@ -84,10 +85,18 @@ pubilc:
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
+
     connect(searchDia,&SearchWidget::findNext,this,[=](const QString &text, bool caseSensitive, bool wholeWords){
         qDebug()<<"click search";
         if(curEditArea){
             curEditArea->findNext(text,caseSensitive,wholeWords);
+        }
+    });
+
+    connect(searchDia,&SearchWidget::inputSearchWord,this,[=](const QString &text){
+        qDebug()<<"highlightAlll";
+        if(curEditArea){
+            curEditArea->highLightAll(text);
         }
     });
 
@@ -457,6 +466,7 @@ void MainWindow::SetStyles()
 
         QMainWindow{
            background-color: rgb(80, 80, 80);
+            border: 1px solid rgb(20,20,20);
         }
         QMenuBar {
             background-color: rgb(60, 60, 60);
@@ -551,7 +561,11 @@ void MainWindow::SetStyles()
         QMessageBox QLabel{
             color:white;
         }
-
+        QTabWidget{
+            background-color:rgb(60,60,60);
+            margin: 0,0,0,0;
+            padding 0,0,0,0;
+        }
 
     )";
 
@@ -800,9 +814,9 @@ void MainWindow::toggleTerminal(bool show)
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("关于软件"),
-                       tr("<h3>MyIDE</h3>"
+                       tr("<h3>ByteIDE</h3>"
                           "<div style='font-size: 14px;'>"
-                          "<p>MyIDE 是一个基于 <b>Qt</b> 开发的文本编辑器和简单的集成开发环境 (IDE)。"
+                          "<p>ByteIDE 是一个基于 <b>Qt</b> 开发的简易文本编辑器和简单的集成开发环境 (IDE)。"
                           "它使用了 <b>QScintilla</b> 库来实现编辑器功能，提供了基本的文本编辑功能和常用的快捷键。</p>"
                           "<p>该软件集成了文件资源管理器和终端界面，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
                           "此外，MyIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"

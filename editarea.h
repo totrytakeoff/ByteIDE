@@ -39,7 +39,7 @@ public:
     void modifyFontDefaultColor(QColor &col);
     void modifyEditorDefaultBackgroundColor(QColor &col);
 
-    // QTabWidget* tabwidget;
+
     QsciScintilla *textEdit;
     QsciLexerPython *PythonLexer;
     QsciLexerCPP *CppLexer;
@@ -57,6 +57,11 @@ public slots:
 
     void findNext(const QString &text, bool caseSensitive, bool wholeWords,bool forward=true);
 
+    void selectAllText(const QString &text);
+
+    void highLightAll(const QString &text);
+
+    void replaceText(QString &origin,QString &replaced);
 signals:
 
 
@@ -87,7 +92,9 @@ private:
     QColor MatchedBraceBackgroundColor=QColor(255, 107, 129);
     QColor MatchedBraceForegroundColor=QColor(241, 196, 15);
 
-
+    int m_flags;
+    int m_lastFindPos;
+    int highlightIndicator = -1; // 需要初始化指示器ID
 
 };
 

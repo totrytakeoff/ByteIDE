@@ -13,6 +13,7 @@
 #include <QTextCursor>
 #include <QDir>
 #include <QMessageBox>
+#include <QScrollBar>
 
 EditArea::EditArea(QWidget* parent)
     :QWidget(parent)
@@ -300,7 +301,78 @@ void EditArea::InitTextEdit()
     textEdit->setAutoCompletionWordSeparators(customSeparators);
 
 
+    QString StyleSheet=R"(
+
+
+.QsciScintilla QScrollBar:horizontal {
+    border-top:1px solid gray;
+    background-color: rgb(45,45,45);
+    height: 12px;
+    margin: 0px 0px 0px 0px;
+    padding-left:12px;
+    padding-right:12px;
+    border-radius: 7px;
+
 }
+
+
+
+
+/* 定义 QScintilla 内部垂直滚动条的样式 */
+.QsciScintilla QScrollBar:vertical {
+    border-left:1px solid gray;
+    background-color: rgb(45,45,45);
+    width: 12px;
+    margin: 0px 0px 0px 0px;
+    padding-top:12px;
+    padding-bottom:12px;
+    border-radius: 7px;
+}
+
+
+QScrollBar::handle:vertical:hover{
+    background-color:rgb(30,30,30);
+    border-left:1px solid gray;
+}
+QScrollBar::handle:horizontal:hover{
+    background-color:rgb(30,30,30);
+    border-left:1px solid gray;
+}
+
+QScrollBar::handle:horizontal{
+  background-color:rgb(80,80,80);
+  border-radius:2px;
+  min-width:20px;
+  margin:2px 1px 2px 1px;
+}
+
+QScrollBar::handle:vertical{
+  background-color:rgb(80,80,80);
+  border-radius:2px;
+  min-width:20px;
+  margin:1px 2px 1px 2px;
+}
+
+/* 移除滚动区域 */
+.QsciScintilla QScrollBar::add-page:horizontal, .QsciScintilla QScrollBar::sub-page:horizontal {
+    background: none; /* 设置背景为无 */
+}
+
+
+/* 移除滚动区域 */
+.QsciScintilla QScrollBar::add-page:vertical, .QsciScintilla QScrollBar::sub-page:vertical {
+    background: none; /* 设置背景为无 */
+}
+
+    )";
+
+
+
+    textEdit->setStyleSheet(StyleSheet);
+
+}
+
+
 
 
 void EditArea::ModifyLexerColor(int WordType,QColor &col)
@@ -419,6 +491,36 @@ void EditArea::findNext(const QString &text, bool caseSensitive, bool wholeWords
     }
 
 
+}
+
+void EditArea::selectAllText(const QString &text)
+{
+    qDebug()<<"selectAll";
+}
+
+void EditArea::highLightAll(const QString &text)
+{
+    // 清除之前的所有指示器
+    textEdit->clearIndicatorRange(0, 0, textEdit->lines(), 0, highlightIndicator);
+
+    int line = 0;
+    int index = 0;
+    while (textEdit->findFirst(text, false, true, false, true, true, line, index)) {
+        int startPos = textEdit->positionFromLineIndex(line, index);
+        int endPos = startPos + text.length();
+        textEdit->fillIndicatorRange(line, index, line, index + text.length(), highlightIndicator);
+        // 更新索引和行号以便继续查找下一个匹配项
+        textEdit->lineIndexFromPosition(endPos,&line,&index);
+        // textEdit
+    }
+}
+
+void EditArea::replaceText(QString &origin, QString &replaced)
+{
+    if (textEdit->hasSelectedText()) {
+        textEdit->replaceSelectedText(replaced);
+        // findNext(origin,); // 自动查找下一个匹配项
+    }
 }
 
 QMap<int, QColor> EditArea::createDefaultColorMap()

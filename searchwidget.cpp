@@ -19,6 +19,7 @@ SearchWidget::SearchWidget(QWidget *parent)
 
     caseSensitive = new QCheckBox("区分大小写", this);
     wholeWords = new QCheckBox("仅匹配整个单词", this);
+
     nextBtn =new QPushButton("查找下一个",this);
     prveBtn =new QPushButton("查找前一个",this);
     replaceBtn = new QPushButton("替换",this);
@@ -50,8 +51,6 @@ SearchWidget::SearchWidget(QWidget *parent)
         // 布局
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     QHBoxLayout *argLayout=new QHBoxLayout();
-    // QHBoxLayout *findLayout = new QHBoxLayout();
-    // QHBoxLayout *replaceLayout = new QHBoxLayout();
 
     QVBoxLayout * labelLayout=new QVBoxLayout;
     QVBoxLayout * lineEditLayout=new QVBoxLayout;
@@ -60,22 +59,9 @@ SearchWidget::SearchWidget(QWidget *parent)
 
     QGridLayout *gridLayout=new QGridLayout();
 
-    // 添加查找输入框到布局
-    // findLayout->addWidget(findLabel);
     argLayout->addWidget(wholeWords,1);
     argLayout->addWidget(caseSensitive,1);
     argLayout->addWidget(CloseBtn,0);
-
-    // findLayout->addWidget(findLab,5);
-    // findLayout->addWidget(findText,70);
-    // findLayout->addWidget(prveBtn,10);
-    // findLayout->addWidget(nextBtn,10);
-    // findLayout->addWidget(selectAllBtn,10);
-
-    // replaceLayout->addWidget(replaceLab,5);
-    // replaceLayout->addWidget(replaceText,70);
-    // replaceLayout->addWidget(replaceBtn,15);
-    // replaceLayout->addWidget(replaceAllBtn,15);
 
     labelLayout->addWidget(findLab,0);
     labelLayout->addWidget(replaceLab,0);
@@ -103,8 +89,6 @@ SearchWidget::SearchWidget(QWidget *parent)
     HLayout->addLayout(gridLayout,2);
 
     mainLayout->addLayout(argLayout,0);
-    // mainLayout->addLayout(findLayout,1);
-    // mainLayout->addLayout(replaceLayout,1);
     mainLayout->addLayout(HLayout,1);
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -112,13 +96,28 @@ SearchWidget::SearchWidget(QWidget *parent)
     setLayout(mainLayout);
 
 
-    // connect(findText,&QLineEdit::cursorPositionChanged , this, &SearchWidget::findClicked);
+    connect(findText,&QLineEdit::cursorPositionChanged , this,[this](){
+        if(!findText->text().isEmpty()){
+            emit inputSearchWord(findText->text());
+        }
+    });
     connect(nextBtn,&QPushButton::clicked,this,[this](){
         emit findNext(findText->text(), caseSensitive->isChecked(), wholeWords->isChecked(),true);
     });
     connect(prveBtn,&QPushButton::clicked,this,[this](){
         emit findNext(findText->text(), caseSensitive->isChecked(), wholeWords->isChecked(),false);
     });
+
+    connect(replaceBtn,&QPushButton::clicked,this,[this](){
+        emit replace(findText->text(),replaceText->text());
+    });
+    connect(replaceAllBtn,&QPushButton::clicked,this,[this](){
+        emit replaceAll(findText->text(),replaceText->text());
+    });
+    connect(selectAllBtn,&QPushButton::clicked,this,[this](){
+        emit selectAll(findText->text());
+    });
+
 
     connect(CloseBtn,&QPushButton::clicked,this,&QWidget::close);
 

@@ -19,6 +19,10 @@ private slots:
     void findClicked();
 signals:
     void findNext(const QString &text, bool caseSensitive, bool wholeWords,bool forward=true);
+    void inputSearchWord(const QString &text);
+    void selectAll(const QString &text);
+    void replace(const QString &origin,const QString &replaced);
+    void replaceAll(const QString &origin,const QString &replaced);
 
 private:
     void setStyle();
