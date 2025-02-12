@@ -86,10 +86,10 @@ pubilc:
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
 
-    connect(searchDia,&SearchWidget::findNext,this,[=](const QString &text, bool caseSensitive, bool wholeWords){
+    connect(searchDia,&SearchWidget::findNext,this,[=](const QString &text, bool caseSensitive, bool wholeWords,bool forward){
         qDebug()<<"click search";
         if(curEditArea){
-            curEditArea->findNext(text,caseSensitive,wholeWords);
+            curEditArea->findNext(text,caseSensitive,wholeWords,forward);
         }
     });
 
@@ -100,6 +100,26 @@ pubilc:
         }
     });
 
+    connect(searchDia,&SearchWidget::replace,this,[=](const QString &origin,const QString &replaced){
+        qDebug()<<"highlightAlll";
+        if(curEditArea){
+            curEditArea->replaceText(origin,replaced);
+        }
+    });
+
+    connect(searchDia,&SearchWidget::replaceAll,this,[=](const QString &origin,const QString &replaced){
+        qDebug()<<"highlightAlll";
+        if(curEditArea){
+            curEditArea->replaceAll(origin,replaced);
+        }
+    });
+
+    connect(searchDia,&SearchWidget::selectAll,this,[=](const QString &text){
+        qDebug()<<"highlightAlll";
+        if(curEditArea){
+            curEditArea->selectAllText(text);
+        }
+    });
 
 
 
@@ -494,6 +514,7 @@ void MainWindow::SetStyles()
         QToolBar {
             background-color: rgb(60, 60, 60);
             border: none;
+            border-bottom:1px solid rgb(45,45,45);
         }
 
         QToolButton {

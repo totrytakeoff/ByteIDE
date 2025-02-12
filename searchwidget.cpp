@@ -97,9 +97,9 @@ SearchWidget::SearchWidget(QWidget *parent)
 
 
     connect(findText,&QLineEdit::cursorPositionChanged , this,[this](){
-        if(!findText->text().isEmpty()){
+
             emit inputSearchWord(findText->text());
-        }
+
     });
     connect(nextBtn,&QPushButton::clicked,this,[this](){
         emit findNext(findText->text(), caseSensitive->isChecked(), wholeWords->isChecked(),true);

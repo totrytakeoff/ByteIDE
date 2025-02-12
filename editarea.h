@@ -1,7 +1,7 @@
 #ifndef EDITAREA_H
 #define EDITAREA_H
-#include<QMap>
-#include<QWidget>
+#include <QMap>
+#include <QWidget>
 
 
 class QsciScintilla;
@@ -61,7 +61,9 @@ public slots:
 
     void highLightAll(const QString &text);
 
-    void replaceText(QString &origin,QString &replaced);
+    void replaceText(const QString &origin,const QString &replaced);
+
+    void replaceAll(const QString &origin,const QString &replaced);
 signals:
 
 
@@ -94,7 +96,9 @@ private:
 
     int m_flags;
     int m_lastFindPos;
-    int highlightIndicator = -1; // 需要初始化指示器ID
+    int highlightIndicator = 7; // 需要初始化指示器ID
+
+    QVector<QPair<int,int>> matchPosVec;
 
 };
 

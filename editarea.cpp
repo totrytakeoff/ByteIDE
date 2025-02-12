@@ -476,14 +476,22 @@ void EditArea::highlightCurrentLine(int line,int index)
 }
 
 void EditArea::findNext(const QString &text, bool caseSensitive, bool wholeWords,bool forward)
-{   qDebug()<<"finding";
+{   qDebug()<<"finding "<<forward;
+
     // 设置搜索参数
     bool found = textEdit->findFirst(text, false, caseSensitive, wholeWords, true, forward, -1, -1, true, false, false);
 
+    ///因为find后一项后，cursor位于匹配项的end，故再find前一项会匹配到当前项，则需利用findNext再往前推一项
+    if(!forward)
+        textEdit->findNext();
+
+
+    qDebug()<<"found1:"<<found;
     if (!found) {
         // 如果没有找到，可以从文档开头重新开始搜索
         textEdit->setCursorPosition(0,0);
-        found = textEdit->findFirst(text, false, caseSensitive, wholeWords, true, forward, -1, -1, true, false, false);
+        found = textEdit->findFirst(text, false, caseSensitive, wholeWords, true, true, -1, -1, true, false, false);
+        qDebug()<<"found2:"<<found;
     }
 
     if (!found) {
@@ -495,32 +503,121 @@ void EditArea::findNext(const QString &text, bool caseSensitive, bool wholeWords
 
 void EditArea::selectAllText(const QString &text)
 {
-    qDebug()<<"selectAll";
+    qDebug()<<"selectAll "<<text;
+    textEdit->clearIndicatorRange(0, 0, textEdit->lines(), 0, highlightIndicator);
+    if(text.isEmpty())
+        return;
+
+
+    int startPos=0;
+    int endPos=textEdit->length();
+
+
+    if(textEdit->hasSelectedText()&&textEdit->selectedText()!=text){
+        startPos=textEdit->SendScintilla(QsciScintilla::SCI_GETSELECTIONSTART);
+        endPos=textEdit->SendScintilla(QsciScintilla::SCI_GETSELECTIONEND);
+    }
+
+    // 清除现有选区
+    textEdit->SendScintilla(QsciScintilla::SCI_CLEARSELECTIONS);
+
+    // 设置多选区模式
+    textEdit->SendScintilla(QsciScintilla::SCI_SETMULTIPLESELECTION, 1);
+    textEdit->SendScintilla(QsciScintilla::SCI_SETADDITIONALSELECTIONTYPING, 1);
+
+    // 设置选择样式，透明度和Color
+    textEdit->SendScintilla(QsciScintilla::SCI_SETSELALPHA, 75); // 半透明效果
+    // textEdit->SendScintilla(QsciScintilla::SCI_SETSELBACK, true, QColor(0, 0, 255).rgb());
+
+
+    ///设置选区
+    textEdit->SendScintilla(QsciScintilla::SCI_SETSELECTION, matchPosVec[0].first, matchPosVec[0].second);
+    for(int i=1;i<matchPosVec.size();i++){
+        ///限定多选范围
+        if(matchPosVec[i].first>=startPos&&matchPosVec[i].second<=endPos){
+            textEdit->SendScintilla(QsciScintilla::SCI_ADDSELECTION,  matchPosVec[i].first, matchPosVec[i].second);
+        }
+    }
+
+
 }
+
+
+
 
 void EditArea::highLightAll(const QString &text)
 {
-    // 清除之前的所有指示器
+    // return;
+    // 清除所有旧的高亮
     textEdit->clearIndicatorRange(0, 0, textEdit->lines(), 0, highlightIndicator);
 
-    int line = 0;
-    int index = 0;
-    while (textEdit->findFirst(text, false, true, false, true, true, line, index)) {
-        int startPos = textEdit->positionFromLineIndex(line, index);
-        int endPos = startPos + text.length();
-        textEdit->fillIndicatorRange(line, index, line, index + text.length(), highlightIndicator);
-        // 更新索引和行号以便继续查找下一个匹配项
-        textEdit->lineIndexFromPosition(endPos,&line,&index);
-        // textEdit
+    //清空匹配cursor Start to End map
+    matchPosVec.clear();
+
+    if(text.isEmpty())
+        return;
+
+    // 设置指示器样式
+    textEdit->SendScintilla(QsciScintilla::SCI_INDICSETSTYLE, highlightIndicator, QsciScintilla::INDIC_FULLBOX); // 可选择其他样式如 INDIC_PLAIN, INDIC_SQUIGGLE 等
+    textEdit->SendScintilla(QsciScintilla::SCI_INDICSETFORE, highlightIndicator, QColor(255, 0, 0)); // 设置前景色（可选）
+
+
+    int startPos = 0;
+    int endPos = textEdit->length();
+    bool found=true;
+    int line1, index1,line2,index2;
+    qDebug()<<"start:"<<startPos<<" endPos:"<<endPos;
+
+     while (found){
+        ///注意该处匹配需要wrap(回转到开头匹配),不然会从cursor匹配,导致前面的匹配项丢失
+        found = textEdit->findFirst(text, false, false, false, true, true);
+        if (found) {
+
+            ///获取选择的初始和结束位置
+            const int matchStart = textEdit->SendScintilla(QsciScintilla::SCI_GETSELECTIONSTART);
+            const int matchEnd = textEdit->SendScintilla(QsciScintilla::SCI_GETSELECTIONEND);
+
+            ///将位置转化为 Line 和 Index
+            textEdit->lineIndexFromPosition(matchStart,&line1,&index1);
+            textEdit->lineIndexFromPosition(matchEnd,&line2,&index2);
+
+            qDebug()<<"startPos:"<<startPos<<" matchStart:"<<matchStart<<" matchEnd: "<<matchEnd<<"line index::"<<line1<<" "
+                     <<index1<<" "<<line2<<" "<<index2;
+            /// 高亮匹配区域
+            textEdit->fillIndicatorRange(line1,index1, line2,index2, highlightIndicator);
+
+            ///存储匹配项的起始位置
+            matchPosVec.push_back(qMakePair(matchStart,matchEnd));
+
+
+            /// 防越wrap死循环
+            if (startPos > matchStart) break;
+
+            // 更新起始位置到当前匹配结束位置
+            startPos = matchEnd;
+
+        }
     }
 }
 
-void EditArea::replaceText(QString &origin, QString &replaced)
-{
+
+
+
+void EditArea::replaceText(const QString &origin,const QString &replaced)
+{   qDebug()<<"replace text :"<<replaced ;
     if (textEdit->hasSelectedText()) {
         textEdit->replaceSelectedText(replaced);
-        // findNext(origin,); // 自动查找下一个匹配项
+        textEdit->findNext(); // 自动查找下一个匹配项
     }
+}
+
+void EditArea::replaceAll(const QString &origin, const QString &replaced)
+{   bool found=true;
+    while(textEdit->hasSelectedText()&&found) {
+        textEdit->replaceSelectedText(replaced);
+        found=textEdit->findNext(); // 自动查找下一个匹配项
+    }
+
 }
 
 QMap<int, QColor> EditArea::createDefaultColorMap()
