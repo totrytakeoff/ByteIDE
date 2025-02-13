@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 pubilc:
 
+
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
     mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
 
@@ -838,11 +839,11 @@ void MainWindow::about()
                        tr("<h3>ByteIDE</h3>"
                           "<div style='font-size: 14px;'>"
                           "<p>ByteIDE 是一个基于 <b>Qt</b> 开发的简易文本编辑器和简单的集成开发环境 (IDE)。"
-                          "它使用了 <b>QScintilla</b> 库来实现编辑器功能，提供了基本的文本编辑功能和常用的快捷键。</p>"
-                          "<p>该软件集成了文件资源管理器和终端界面，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
-                          "此外，MyIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"
+                          "它使用了 <b>QScintilla</b> 库来实现编辑器功能，提供了基本的文本编辑功能和常用的快捷键以及查找替换功能。</p>"
+                          "<p>该软件集成了文件资源管理器和终端界面并且嵌入了Python解释器和C/C++编译器，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
+                          "此外，ByteIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"
                           "使用户无需进行复杂的安装和配置，开箱即用，非常适合 <b>Python</b> 和 <b>C/C++</b> 初学者使用。</p>"
-                          "<p>项目已上传<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>,欢迎大家点点star或者提issue</p>"
+                          "<p>项目已上传<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>,欢迎大家点点star或者提提issue</p>"
                           "</div>"
                           "</br></br></br></br></br></br></br></br></br></br></br></br></br>"
                           "<div width=100px; height=100px;></div>"
