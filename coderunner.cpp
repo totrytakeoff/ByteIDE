@@ -27,7 +27,7 @@ void CodeRunner::setMode(QString &fileType)
     qDebug()<<"setmode:"<<fileType;
     if(fileType=="py")
         RunMode=Mode::Python;
-    else if(fileType=="cpp")
+    else if(fileType=="cpp"||fileType=="c")
         RunMode=Mode::Cpp;
     else RunMode=Mode::UnKown;
 

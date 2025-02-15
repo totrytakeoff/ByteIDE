@@ -4,15 +4,18 @@
 #include <QMainWindow>
 
 
-class QVBoxLayout;
 class ResourceManager;
 class EditArea;
 class Terminal;
 class CodeRunner;
 class SearchWidget;
+class CodeTabWidget;
+
+class QVBoxLayout;
 class QFile;
 class QSplitter;
 class QLabel;
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -68,6 +71,9 @@ private slots:
 
     void updateStatusBar(int line,int index);
 
+    // void onFileRename();
+    ///响应文件资源管理器右键菜单栏重命名操作对应的Tab修改
+
 protected:
     void closeEvent(QCloseEvent* event) override;
 
@@ -80,6 +86,7 @@ private:
     Terminal * terminal;
     CodeRunner* runner;
     SearchWidget *searchDia;
+    CodeTabWidget *codeTabWidget;
 
     QAction* addEmptyFileAct;
     QAction* newFileAct;
@@ -108,7 +115,6 @@ private:
 
     QAction* runAct;
 
-    QTabWidget *codeTabWidget;
     QToolBar *mainToolBar;
 
     QDockWidget *fileDock;

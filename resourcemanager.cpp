@@ -59,6 +59,7 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::SetCurPath(QString path)
 {
+
     fileModel->setRootPath(path);
     treeView->setRootIndex(fileModel->index(path));
 
@@ -173,6 +174,18 @@ void ResourceManager::initAct()
     connect(copyFilePathAct, &QAction::triggered, this, &ResourceManager::copyFilePath);
     connect(newFileAct, &QAction::triggered, this, &ResourceManager::newFile);
     connect(newFolderAct, &QAction::triggered, this, &ResourceManager::newFolder);
+
+}
+
+void ResourceManager::goToFilePos(QString &path)
+{
+    QModelIndex index=fileModel->index(path);
+    // 选择该项
+    QItemSelectionModel *selectionModel = treeView->selectionModel();
+    selectionModel->select(index, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+
+    // 滚动到该项
+    treeView->scrollTo(index);
 
 }
 
@@ -296,18 +309,10 @@ void ResourceManager::deleteFile()
 
 void ResourceManager::renameFile()
 {
-        bool ok;
-        QString newName = QInputDialog::getText(nullptr, "重命名",
-                                                "新文件名:", QLineEdit::Normal,
-                                                fileModel->fileName(curIdx), &ok);
-        if (ok && !newName.isEmpty()) {
-            QString newPath = fileModel->fileInfo(curIdx).absolutePath() + "/" + newName;
-            if (QFile::rename(curFilePath, newPath)) {
-                qDebug() << "Successfully renamed" << curFilePath << "to" << newPath;
-            } else {
-                qDebug() << "Failed to rename" << curFilePath << "to" << newPath;
-            }
-        }
+    ///直接发信号使用Tab的rename，避免Tab名未跟随重命名
+    qDebug()<<"renameFile:<"<<curFilePath;
+    emit renameRequest(curFilePath);
+
 }
 
 void ResourceManager::openInExplorer()
@@ -315,6 +320,7 @@ void ResourceManager::openInExplorer()
     // 使用 QDesktopServices::openUrl 打开文件或目录,这玩意使用默认打开方式打开，不能实现本地文件资源管理器打开
     // QDesktopServices::openUrl(QUrl::fromLocalFile(curFilePath));
     QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(curFilePath)});
+
 }
 
 void ResourceManager::copyFilePath()

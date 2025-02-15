@@ -5,6 +5,7 @@
 #include <Qsci/qscilexerd.h>
 #include <Qsci/qscistyledtext.h>
 #include <Qsci/qsciapis.h>
+
 #include <QTabWidget>
 #include <QDebug>
 #include <QString>
@@ -404,7 +405,7 @@ void EditArea::setCurLexer(QString &type)
     if(type=="py"){
         qDebug()<<"change to pylexer";
         textEdit->setLexer(PythonLexer);
-    }else if(type=="cpp"){
+    }else if(type=="cpp"||type=="c"){
         qDebug()<<"change to cpplexer";
         textEdit->setLexer(CppLexer);
     }else{

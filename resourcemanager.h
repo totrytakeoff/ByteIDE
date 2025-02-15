@@ -28,6 +28,9 @@ public:
     void initSheet();
 
     void initAct();
+
+    void goToFilePos(QString &path);
+
 public slots:
     void on_FileClick(const QModelIndex &index);
     void on_FileDoubleClick(const QModelIndex &index);
@@ -44,8 +47,9 @@ protected slots:
     void showContextMenu(const QPoint &pos);
 
 signals:
-    void fileClick(QString FileName);
-    void fileDoubleClick(QString FileName);
+    void fileClick(QString &FileName);
+    void fileDoubleClick(QString &FileName);
+    void renameRequest(QString &renameFilePath);
     ///FileName-->is full path+FileName
 private:
     QTreeView* treeView;

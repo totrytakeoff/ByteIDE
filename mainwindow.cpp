@@ -43,14 +43,12 @@
 #include "terminal.h"
 #include "coderunner.h"
 #include "searchwidget.h"
+#include "codetabwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
-pubilc:
-
 
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
     mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
@@ -58,11 +56,10 @@ pubilc:
 
 
 
-
     runner=new CodeRunner(this);
     searchDia=new SearchWidget(this);
     searchDia->hide();
-    codeTabWidget=new QTabWidget(this);
+    codeTabWidget=new CodeTabWidget(this);
     codeTabWidget->clear();///清空tabwidget内Tab
     codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
 
@@ -82,8 +79,14 @@ pubilc:
     CreatStatusBar();
     SetStyles();
 
+    codeTabWidget->bindFileExplorer(fileExplorer);
+
     connect(codeTabWidget,&QTabWidget::tabCloseRequested,this,&MainWindow::onTabClose);
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
+    connect(codeTabWidget,&CodeTabWidget::haveRenameFile,this,[this](QString renameFilePath){
+        curFilePath=renameFilePath;
+    });
+
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
 
@@ -124,10 +127,7 @@ pubilc:
 
 
 
-
     this->resize(1000,800);
-
-    // setCentralWidget(codeTabWidget);
 
 }
 
@@ -648,11 +648,13 @@ void MainWindow::loadFromFile(QString path)
         file.close();
 
 
-        codeTabWidget->addTab(editor,QFileInfo(file).fileName());///添加Tab页面
+        ///添加Tab页面
+        codeTabWidget->addCodeTab(editor,path);
         // qDebug()<<"Tab_count:"<<codeTabWidget->count();
         setEditActEnable(true);///将editAct设为可用状态
 
         codeTabWidget->setCurrentIndex(codeTabWidget->count()-1);
+
 
         // qDebug()<<"path::"<<path;
         setCurrentFile(path);///更新当前Tab对应文件
@@ -780,42 +782,41 @@ void MainWindow::onFileTreeClicked(const QString FileName)
 
 void MainWindow::onTabClose(int index)
 {
-    int idx=codeTabWidget->currentIndex();
-    if (idx<0)
-        return;
-
-    if(curEditArea->curEditFile.isEmpty()){///另存为保存提示
-        if (isModified) {
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, "保存文件", "文件已修改，是否保存？",
-                                          QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-
-            if (reply == QMessageBox::Save) {
-                // 保存文件
-                saveCurFile();
-            }
-
-        }
-    }else{
-        saveFile(curEditArea->curEditFile);
-    }
-
 
     // 获取要删除的 EditArea 对象
-    EditArea* editAreaToDelete = qobject_cast<EditArea*>(codeTabWidget->widget(idx));
+    EditArea* editAreaToDelete = qobject_cast<EditArea*>(codeTabWidget->widget(index));
     if (!editAreaToDelete) {
         return; // 如果没有有效的 EditArea，直接返回
     }
 
+    if (isModified) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "保存文件", "文件已修改，是否保存？",
+                                      QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Save) {
+            // 保存文件
+            saveFile(editAreaToDelete->curEditFile);
+            statusBar()->showMessage(tr("文件已保存并关闭"), 2000);
+        }else{
+            statusBar()->showMessage(tr("文件已关闭"), 2000);
+        }
+
+    }else{
+        statusBar()->showMessage(tr("文件已关闭"), 2000);
+    }
+
+
     // 移除 Tab
-    codeTabWidget->removeTab(idx);
+    codeTabWidget->removeTab(index);
 
     // 安全地删除 EditArea 对象
     editAreaToDelete->deleteLater();
 
     // 如果当前 Tab 是最后一个，将 curEditArea 置空（tabchange中处理）
 
-    statusBar()->showMessage(tr("文件已自动保存并关闭"), 2000);
+    statusBar()->showMessage(tr("文件已保存并关闭"), 2000);
+
 }
 
 void MainWindow::toggleFileExplorer(bool show)
