@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
+
 
 #include <Qsci/qscilexer.h>
 #include<Qsci/qscilexercpp.h>
@@ -47,7 +47,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+
 {
 
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
@@ -133,7 +133,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete ui;
 }
 
 void MainWindow::CreatAction()

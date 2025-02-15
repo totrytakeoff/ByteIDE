@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     MainWindow w;
 
     w.setWindowTitle(QString("ByteIDE"));
-    w.setWindowIcon(QIcon(":/res/img/mainIcon.icon"));
+    w.setWindowIcon(QIcon(":img/mainIcon.icon"));
 
     w.show();
     return a.exec();

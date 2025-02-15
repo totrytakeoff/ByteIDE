@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/code_icon.png</file>
+        <file>img/code_icon2.png</file>
+        <file>img/deletefile.png</file>
+        <file>img/favicon.ico</file>
+        <file>img/mainicon.ico</file>
+        <file>img/mainIcon.png</file>
+        <file>img/newfile.png</file>
+        <file>img/openfile.png</file>
+        <file>img/search.png</file>
+    </qresource>
+</RCC>
