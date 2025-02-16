@@ -14,7 +14,12 @@ CodeRunner::CodeRunner(QWidget* parent)
 {
 
     searchRunner();
+    prompt=runFile;
 
+    connect(process,&QProcess::finished,this,[this](int exitCode, QProcess::ExitStatus exitStatus){
+        insertPrompt("none",QString("进程已结束，退出代码为%1").arg(exitCode));
+        isrunning=false;
+    });
 }
 
 CodeRunner::~CodeRunner()
@@ -95,7 +100,9 @@ void CodeRunner::runCppCode()
 }
 
 void CodeRunner::runPythonCode()
-{
+{   prompt=runFile;
+    this->clear();
+    this->insertPrompt("","\n");
     process->start(PythonRunner,QStringList()<<runFile);
 }
 
@@ -218,6 +225,7 @@ void CodeRunner::keyPressEvent(QKeyEvent *e)
 {
 
     QTextCursor cursor = textCursor();
+
     // 防止修改历史命令输出
     if (cursor.position() < promptPosition && e->key() != Qt::Key_Control) {
         cursor.movePosition(QTextCursor::End);

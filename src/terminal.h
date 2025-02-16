@@ -97,7 +97,7 @@ protected:
      * 
      * 在终端末尾插入一个新的命令提示符
      */
-    void insertPrompt();
+    void insertPrompt(QString insertHead="",QString insertRear="");
 
     /**
      * @brief 获取当前命令
