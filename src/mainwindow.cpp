@@ -343,15 +343,18 @@ void MainWindow::CreatToolBar()
 
 
 
-
-
 }
 
 void MainWindow::CreatMenuBar()
 {
-    // File Menu
-    fileMenu = menuBar()->addMenu("&文件");
-    fileMenu->addAction(addEmptyFileAct                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       );
+
+    QMenu *temp=menuBar()->addMenu("菜单栏: ");
+    temp->setDisabled(true);
+    // temp=menuBar()->addMenu("|||||") ;
+
+    fileMenu = menuBar()->addMenu("&文 件");
+
+    fileMenu->addAction(addEmptyFileAct);
     fileMenu->addAction(newFileAct);
     fileMenu->addAction(openFileAct);
     fileMenu->addAction(saveFileAct);
@@ -360,9 +363,8 @@ void MainWindow::CreatMenuBar()
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
-
     // Edit Menu
-    editMenu = menuBar()->addMenu("&编辑");
+    editMenu = menuBar()->addMenu("&编 辑");
 
     editMenu->addAction(redoAct);
     editMenu->addAction(undoAct);
@@ -374,16 +376,15 @@ void MainWindow::CreatMenuBar()
     editMenu->addAction(foldAllAct);
     editMenu->addAction(openAllAct);
     editMenu->addAction(searchTextAct);
-    // editMenu->addAction();
 
 
     // View Menu
-    viewMenu = menuBar()->addMenu("&视图");
+    viewMenu = menuBar()->addMenu("&视 图");
     viewMenu->addAction(showFileExplorerAct);
     viewMenu->addAction(showTerminalAct);
 
     // Help Menu
-    helpMenu = menuBar()->addMenu("&帮助");
+    helpMenu = menuBar()->addMenu("&帮 助");
     helpMenu->addAction(aboutAct);
 
 }
@@ -492,8 +493,7 @@ void MainWindow::SetStyles()
             background-color: rgb(60, 60, 60);
             color: rgb(240, 240, 240);
             border-bottom: 1px solid black;
-
-        }
+            }
         QMenuBar::item:selected {
             background-color: rgb(80, 80, 80);
 
@@ -502,6 +502,8 @@ void MainWindow::SetStyles()
             background-color: rgb(60, 60, 60);
             color: rgb(240, 240, 240);
             border: 1px solid rgb(100, 100, 100);
+            margin: 0px;
+            padding: 0px;
         }
         QMenu::item:selected {
             background-color: rgb(80, 80, 80);

@@ -177,10 +177,13 @@ bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
 
             // write input
             QString command = cursor.selectedText();
+
             qDebug()<<"process->write::"<<command;
 
+            cursor.insertText(command+"\n");
 
             process->write(command.toUtf8() + "\n");
+
             process->waitForBytesWritten();
 
             break;
