@@ -182,7 +182,9 @@ bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
 
             cursor.insertText(command+"\n");
 
-            process->write(command.toUtf8() + "\n");
+
+            // process->write(command.toUtf8() + "\n");
+            process->write(command.toLocal8Bit() + "\n");///使用toLocal8Bit()自动匹配当前系统的编码，防止中文乱码
 
             process->waitForBytesWritten();
 
