@@ -44,11 +44,15 @@
 #include "coderunner.h"
 #include "searchwidget.h"
 #include "codetabwidget.h"
+#include "updatelogwidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
 {
+
+
+
 
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
     mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
@@ -85,46 +89,52 @@ MainWindow::MainWindow(QWidget *parent)
     connect(codeTabWidget,&QTabWidget::currentChanged,this,&MainWindow::onTabChange);
     connect(codeTabWidget,&CodeTabWidget::haveRenameFile,this,[this](QString renameFilePath){
         curFilePath=renameFilePath;
+        //更新当前文件类型，更改textEdit的Lexer
+        QString type=QFileInfo(curFilePath).suffix();
+        curEditArea->setCurLexer(type);
     });
 
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
 
     connect(searchDia,&SearchWidget::findNext,this,[=](const QString &text, bool caseSensitive, bool wholeWords,bool forward){
-        qDebug()<<"click search";
         if(curEditArea){
             curEditArea->findNext(text,caseSensitive,wholeWords,forward);
         }
     });
 
     connect(searchDia,&SearchWidget::inputSearchWord,this,[=](const QString &text){
-        qDebug()<<"highlightAlll";
         if(curEditArea){
             curEditArea->highLightAll(text);
         }
     });
 
     connect(searchDia,&SearchWidget::replace,this,[=](const QString &origin,const QString &replaced){
-        qDebug()<<"highlightAlll";
         if(curEditArea){
             curEditArea->replaceText(origin,replaced);
         }
     });
 
     connect(searchDia,&SearchWidget::replaceAll,this,[=](const QString &origin,const QString &replaced){
-        qDebug()<<"highlightAlll";
         if(curEditArea){
             curEditArea->replaceAll(origin,replaced);
         }
     });
 
     connect(searchDia,&SearchWidget::selectAll,this,[=](const QString &text){
-        qDebug()<<"highlightAlll";
         if(curEditArea){
             curEditArea->selectAllText(text);
         }
     });
 
+
+    connect(runner,&CodeRunner::processExit,this,[=](){
+        stopRunAct->setEnabled(true);
+    });
+    connect(runner,&CodeRunner::startRunningCode,this,[=](){
+        ///开始运行后设置stopBtn为可用状态
+        stopRunAct->setEnabled(true);
+    });
 
 
     this->resize(1000,800);
@@ -140,6 +150,9 @@ void MainWindow::CreatAction()
 
     //// Add actions that will be used in toolbar and menus
     addEmptyFileAct=new QAction("&新建一个临时文本文件",this);
+
+    addEmptyFileAct->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
+
     connect(addEmptyFileAct,&QAction::triggered, this,[this](){
         EditArea* editor=new EditArea(codeTabWidget);
         editor->curEditFile="";///记录打开文件路径
@@ -186,10 +199,20 @@ void MainWindow::CreatAction()
 
     runAct = new QAction("&运行", this);
     runAct->setStatusTip("保存并运行当前文件");
-    runAct->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    runAct->setIcon(QIcon(":/img/runningBtn.png"));
     runAct->setShortcut(QKeySequence("Ctrl+F5"));
     runAct->setEnabled(false);
     connect(runAct, &QAction::triggered, this, &MainWindow::runCode);
+
+
+    stopRunAct=new QAction("&终止运行",this);
+    stopRunAct->setStatusTip("强制终止当前运行的进程");
+    stopRunAct->setIcon(QIcon(":/img/stopBtn.png"));
+    runAct->setShortcut(QKeySequence("Ctrl+C"));//这玩意会不会影响copy
+    stopRunAct->setEnabled(false);
+    connect(stopRunAct,&QAction::triggered,this,&MainWindow::forceStopProcess);
+
+
 
     exitAct = new QAction("&退出", this);
     exitAct->setStatusTip("退出应用程序");
@@ -207,7 +230,12 @@ void MainWindow::CreatAction()
     aboutAct = new QAction("&关于", this);
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
-    // curEditArea->textEdit->redo();
+    updateLogAct =new QAction("&软件更新日志",this);
+    connect(updateLogAct,&QAction::triggered,this,[=](){
+        UpdateLogWidget *showlog=new UpdateLogWidget();
+        showlog->show();
+    });
+
 
 
     redoAct = new QAction("重做", this);
@@ -323,24 +351,24 @@ void MainWindow::CreatToolBar()
     mainToolBar->setIconSize(QSize(20,20));
     mainToolBar->setToolButtonStyle(Qt::ToolButtonFollowStyle);///
 
+    mainToolBar->addAction(addEmptyFileAct);
     mainToolBar->addAction(openFileAct);
     mainToolBar->addAction(saveFileAct);
-    mainToolBar->addAction(newFileAct);
     mainToolBar->addAction(openFolderAct);
+
     mainToolBar->addSeparator();
 
-    // mainToolBar->addWidget(spacerWidget);
 
 
-    QWidget *spacer = new QWidget();///添加占位widget把runact挤到右边去
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    mainToolBar->addWidget(spacer);
 
+    // QWidget *spacer = new QWidget();///添加占位widget把runact挤到右边去
+    // spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    // mainToolBar->addWidget(spacer);
 
 
     mainToolBar->addSeparator();
     mainToolBar->addAction((runAct));
-
+    mainToolBar->addAction(stopRunAct);
 
 
 }
@@ -386,6 +414,7 @@ void MainWindow::CreatMenuBar()
     // Help Menu
     helpMenu = menuBar()->addMenu("&帮 助");
     helpMenu->addAction(aboutAct);
+    helpMenu->addAction((updateLogAct));
 
 }
 
@@ -403,6 +432,9 @@ void MainWindow::CreatDock()
 
     addDockWidget(Qt::LeftDockWidgetArea, fileDock);
 
+    ///默认关闭
+    fileDock->close();
+    // fileDock->setVisible(false);
 
 
     // // Terminal dock
@@ -449,7 +481,6 @@ void MainWindow::setCurrentFile(const QString fileName)
 
 
     curFilePath=fileName;///记录当前所在文件
-
 
 
     setWindowModified(false);
@@ -605,6 +636,7 @@ void MainWindow::SetStyles()
 void MainWindow::ShowFileDock()
 {
     fileExplorer->SetCurPath(curFolderPath);
+    fileDock->show();
 
 }
 
@@ -845,15 +877,15 @@ void MainWindow::about()
                           "<p>该软件集成了文件资源管理器和终端界面并且嵌入了Python解释器和C/C++编译器，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
                           "此外，ByteIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"
                           "使用户无需进行复杂的安装和配置，开箱即用，非常适合 <b>Python</b> 和 <b>C/C++</b> 初学者使用。</p>"
-                          "<p>项目已上传<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>,欢迎大家点点star或者提提issue</p>"
+                          "<p>项目已上传<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>,欢迎大家点点star或者提提issue。</p>"
+                          "<p>可在项目github主页或者<a href=\" https://www.byteoj.com/posts/257\">ByteOJ网站</a>获取最新软件</p>"
                           "</div>"
                           "</br></br></br></br></br></br></br></br></br></br></br></br></br>"
                           "<div width=100px; height=100px;></div>"
                           "<div style='font-size: 8px; color: gray;'>"
                           "<p>版本: 1.0.0</p>"
-                          "<p>作者: myself</p>"
                           "<p>反馈邮箱: 2467315534@qq.com</p>"
-
+                          "<p>Copyright © 2025 Myself . All rights reserved.</p>"
                           "</div>"
                           ));
 }
@@ -863,24 +895,36 @@ void MainWindow::runCode()
 {
 
 
+
     if(codeTabWidget->count() <= 0){
         QMessageBox::warning(this,"warning!","请先打开一个文件再运行！");
         return;
     }
+
     saveCurFile();
     QString filetype=GetCurFileType();
 
     // qDebug()<<"the curfile with file type :"<<curFilePath<<" "<<filetype;
+
     ///设置当前运行文件
     OutputDock->show();
     runner->setRunFile(curFilePath);
 
     ///设置运行模式(文件类型)
     runner->setMode(filetype);
+
+
+
     runner->runCode();
 
 
 }
+
+void MainWindow::forceStopProcess()
+{
+    runner->forceExitProcess();
+}
+
 
 void MainWindow::onTabChange()
 {

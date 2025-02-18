@@ -45,6 +45,17 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *e) override;
 
+
+public slots:
+    void forceExitProcess(){
+        ///强制结束进程
+        process->kill();
+    }
+
+signals:
+    void startRunningCode();
+
+
 private:
     QString FileType;
     QString runFile;
@@ -52,10 +63,9 @@ private:
 
     Mode RunMode=Mode::UnKown;
 
-    QString PythonRunner;
-    QString CppRunner;
+    QString PythonRunner="";
+    QString CppRunner="";
 
-    bool isRunnerExist;
 };
 
 #endif // CODERUNNER_H

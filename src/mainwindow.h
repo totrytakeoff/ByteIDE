@@ -66,6 +66,7 @@ private slots:
     void about();
 
     void runCode();
+    void forceStopProcess();
 
     void onTabChange();
 
@@ -96,6 +97,8 @@ private:
     QAction* openFolderAct;
     QAction* exitAct;
     QAction* aboutAct;
+    QAction *updateLogAct;
+
 
     QAction* redoAct;//重做
     QAction* undoAct;//撤销
@@ -114,6 +117,7 @@ private:
     QAction* showTerminalAct;
 
     QAction* runAct;
+    QAction *stopRunAct;
 
     QToolBar *mainToolBar;
 

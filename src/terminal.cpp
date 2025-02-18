@@ -169,7 +169,7 @@ bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
         case Qt::Key_Return:
         case Qt::Key_Enter: {
 
-            qDebug()<<"running curpos:"<<cursorLinePos;
+
             QTextCursor cursor = textCursor();
             cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
 
@@ -178,7 +178,6 @@ bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
             // write input
             QString command = cursor.selectedText();
 
-            qDebug()<<"process->write::"<<command;
 
             cursor.insertText(command+"\n");
 
@@ -397,6 +396,7 @@ void Terminal::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStat
     insertPrompt("\n");  // 显示新的提示符
 
     isrunning=false;
+    emit processExit();
 }
 
 /**
@@ -419,13 +419,11 @@ void Terminal::insertPrompt(QString insertHead,QString insertRear)
     FontFormat.setForeground(Qt::white);
 
 
-    qDebug()<<"currentPrompt:"<<prompt;
-
     cursor.insertText(insertText,FontFormat);
 
-    qDebug()<<"curpromptPos1:"<<promptPosition;
+
     promptPosition = cursor.position();
-    qDebug()<<"curpromptPos2:"<<promptPosition;
+
 
     cursorLinePos=promptPosition;
     setTextCursor(cursor);
