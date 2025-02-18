@@ -230,6 +230,9 @@ void ResourceManager::newFile()
          file.open(QIODevice::WriteOnly);
 
     }
+
+    goToFilePos(newfileName);
+
 }
 
 void ResourceManager::newFolder()

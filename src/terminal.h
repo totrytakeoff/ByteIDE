@@ -51,6 +51,10 @@ public:
 
     QProcess *getProcess();
 
+signals:
+    void processExit();
+
+
 protected:
     /**
      * @brief 键盘事件处理函数

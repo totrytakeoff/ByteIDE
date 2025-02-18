@@ -39,6 +39,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/codetabwidget.h src/codetabwidget.cpp
         res/res.qrc
         res/res.rc
+        src/updatelogwidget.h src/updatelogwidget.cpp
     )
 else()
     if(ANDROID)

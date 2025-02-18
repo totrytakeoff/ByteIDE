@@ -40,6 +40,10 @@ void CodeRunner::setMode(QString &fileType)
 
 void CodeRunner::runCode()
 {
+
+    if(isrunning){
+        forceExitProcess();
+    }
     isrunning=true;
     if(RunMode==Mode::Python){
         runPythonCode();
@@ -55,6 +59,13 @@ void CodeRunner::runCode()
 
 void CodeRunner::runCppCode()
 {
+    ///若编译器缺失，弹出提示
+    if(CppRunner.isEmpty()){
+        QMessageBox::warning(this,"未找到编译器","未找到Cpp编译器,请检查CPP目录是否完整或自定义路径是否正确");
+        emit processExit();
+        return;
+    }
+
     // 确保输出目录存在
     QDir dir("./out");
     if (!dir.exists()) {
@@ -89,6 +100,7 @@ void CodeRunner::runCppCode()
 
             qDebug()<<"cmdline::"<<QString(cmdLine);
             WinStartProcess(NULL,cmdLine);
+            emit startRunningCode();
         #else
         ///留给linux的
         #endif
@@ -100,17 +112,38 @@ void CodeRunner::runCppCode()
 }
 
 void CodeRunner::runPythonCode()
-{   prompt=runFile;
+{
+    if(PythonRunner.isEmpty()){
+
+        QMessageBox::warning(this,"未找到解释器","未找到Python解释器,请检查PYTHON目录是否完整或自定义路径是否正确");
+        emit processExit();
+        return;
+    }
+
+    qDebug()<<"runPythonCode";
+    prompt=runFile;
     this->clear();
     this->insertPrompt("","\n");
+
+    // 设置环境变量,关闭输入输出缓存
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("PYTHONUNBUFFERED", "1");  // 设置PYTHONUNBUFFERED环境变量
+
+    process->setProcessEnvironment(env);  // 应用环境变量到QProcess
+
     process->start(PythonRunner,QStringList()<<runFile);
+    emit startRunningCode();
+
+    //命令行参数 -u 关闭缓存
+    // process->start(PythonRunner, QStringList() << "-u" << runFile);
+
 }
 
 
 
 void CodeRunner::searchRunner()
 {
-
+    ///看看能不能优化成多线程查找
     QString Path;
 
     QString searchPattern="python.exe";
@@ -129,17 +162,6 @@ void CodeRunner::searchRunner()
     CppRunner=searchFiles(Path,searchPattern);
     qDebug()<<"cpp:"<<CppRunner;
 
-
-    if(PythonRunner.isEmpty()){
-        QMessageBox::warning(this,"未找到解释器","未找到Python解释器,请检查PYTHON目录是否完整或自定义路径是否正确");
-    }
-
-
-
-    if(CppRunner.isEmpty()){
-        QMessageBox::warning(this,"未找到编译器","未找到Cpp编译器,请检查CPP目录是否完整或自定义路径是否正确");
-
-    }
 
 }
 

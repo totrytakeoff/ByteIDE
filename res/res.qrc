@@ -9,5 +9,7 @@
         <file>img/newfile.png</file>
         <file>img/openfile.png</file>
         <file>img/search.png</file>
+        <file>img/runningBtn.png</file>
+        <file>img/stopBtn.png</file>
     </qresource>
 </RCC>
