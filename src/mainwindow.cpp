@@ -883,9 +883,9 @@ void MainWindow::about()
                           "</br></br></br></br></br></br></br></br></br></br></br></br></br>"
                           "<div width=100px; height=100px;></div>"
                           "<div style='font-size: 8px; color: gray;'>"
-                          "<p>版本: 1.0.0</p>"
+                          "<p>版本: 1.1.1</p>"
                           "<p>反馈邮箱: 2467315534@qq.com</p>"
-                          "<p>Copyright © 2025 Myself . All rights reserved.</p>"
+                          "<p>Copyright © 2025 薛晓春 . All rights reserved.</p>"
                           "</div>"
                           ));
 }

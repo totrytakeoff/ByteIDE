@@ -409,8 +409,8 @@ void EditArea::setCurLexer(QString &type)
         qDebug()<<"change to cpplexer";
         textEdit->setLexer(CppLexer);
     }else{
-
-        textEdit->setLexer(DefaultLexer);
+        ///更改默认高亮为Python高亮
+        textEdit->setLexer(PythonLexer);
     }
 
     ///修改lexer后textEdit一些属性会被清空,故需要重新设置

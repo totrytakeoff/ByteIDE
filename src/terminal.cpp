@@ -181,9 +181,13 @@ bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
 
             cursor.insertText(command+"\n");
 
+            /// 注意每次 Input 之后要更新 cursorLinePos,保证连续读取不会出现重复问题
+            cursorLinePos=cursor.position();
+
 
             // process->write(command.toUtf8() + "\n");
             process->write(command.toLocal8Bit() + "\n");///使用toLocal8Bit()自动匹配当前系统的编码，防止中文乱码
+
 
             process->waitForBytesWritten();
 
