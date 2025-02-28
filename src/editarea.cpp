@@ -47,6 +47,8 @@ EditArea::EditArea(QWidget* parent)
 
     // 安装事件过滤器,模拟keyEvent
     textEdit->installEventFilter(this);
+
+    textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, '8' & 0xFF); // 注意这里的'8'对应于'/'在SCI中的表示形式;
 }
 
 EditArea::~EditArea()
@@ -404,9 +406,11 @@ void EditArea::setCurLexer(QString &type)
     qDebug()<<"type:"<<type;
     if(type=="py"){
         qDebug()<<"change to pylexer";
+        commentFlag="#";
         textEdit->setLexer(PythonLexer);
     }else if(type=="cpp"||type=="c"){
         qDebug()<<"change to cpplexer";
+        commentFlag="//";
         textEdit->setLexer(CppLexer);
     }else{
         ///更改默认高亮为Python高亮
@@ -457,6 +461,98 @@ void EditArea::modifyEditorDefaultBackgroundColor(QColor &col)
 {
     EditorDefaultBackgroundColor=col;
 }
+
+// void EditArea::setCommentline()
+// {
+
+//     qDebug()<<"commentLine";
+//     int *startLine=new int;
+//     int *endLine=new int;
+
+//     ///获取待注释行行号
+//     if(textEdit->hasSelectedText()){
+//         textEdit->getSelection(startLine,nullptr,endLine,nullptr);
+//     }else{
+//         textEdit->getCursorPosition(startLine,nullptr);
+//         *endLine=*startLine;
+//     }
+
+
+//     for(int i=(*startLine);i<=(*endLine);i++){
+//         //判断是否已经注释，再进行注释操作
+//         QString text=textEdit->text(i);
+//         int comment=text.indexOf(commentFlag);
+//         //除去首尾空格
+//         QString str=text.trimmed();
+
+//         bool iscomment=str.startsWith(commentFlag);
+
+//         int pos=textEdit->positionFromLineIndex(i,0);
+//         if(iscomment){
+//             textEdit->text().remove(pos+comment,commentFlag.length());
+//         }else{
+//             textEdit->SendScintilla(QsciScintillaBase::SCI_INSERTTEXT, pos, commentFlag.toUtf8().constData());
+//         }
+
+//     }
+
+//     delete startLine;
+//     delete endLine;
+// }
+
+
+
+
+
+void EditArea::setCommentline()
+{
+
+    textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, '8' & 0xFF); // 注意这里的'8'对应于'/'在SCI中的表示形式;
+
+    qDebug() << "commentLine";
+
+    int startLine, endLine;
+    int dummy; // 占位参数
+
+    // 安全获取选中行号（无需动态分配）
+    if (textEdit->hasSelectedText()) {
+        textEdit->getSelection(&startLine, &dummy, &endLine, &dummy);
+    } else {
+        textEdit->getCursorPosition(&startLine, &dummy);
+        endLine = startLine;
+    }
+
+    // 遍历所有选中行（包含最后一行）
+    for (int i = startLine; i <= endLine; ++i) {
+        // 获取完整行文本（保留首尾空格）
+        QString text = textEdit->text(i);
+
+        // 判断是否已注释
+        QString temp=text;
+        qDebug()<<temp;
+        temp=temp.trimmed();
+        if (temp.isEmpty()) continue; // 跳过空行
+
+
+
+        bool isCommented = temp.startsWith(commentFlag);
+
+        // 获取行首位置（确保多字节字符正确处理）
+        int pos = textEdit->positionFromLineIndex(i, 0);
+
+        if (isCommented) {
+            int comment=text.indexOf(commentFlag);
+            // textEdit->text().remove(pos+comment,commentFlag.length());
+            // 移除注释符号（直接替换行首的commentFlag）
+            textEdit->setSelection(i, comment, i, comment+commentFlag.length());
+            textEdit->removeSelectedText();
+        } else {
+            // 插入注释符号（使用SCI_INSERTTEXT确保编码正确）
+            textEdit->SendScintilla(QsciScintilla::SCI_INSERTTEXT, pos, commentFlag.toUtf8().constData());
+        }
+    }
+}
+
 
 void EditArea::highlightCurrentLine(int line,int index)
 {

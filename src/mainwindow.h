@@ -111,6 +111,7 @@ private:
     QAction* openAllAct;
 
     QAction* searchTextAct;
+    QAction* commentAct;
 
 
     QAction* showFileExplorerAct;

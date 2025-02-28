@@ -18,11 +18,9 @@ UpdateLogWidget::UpdateLogWidget(QWidget *parent)
     textBrowser->setOpenExternalLinks(true);  // 如果有链接可以点击打开
     textBrowser->setHtml(
         "<h1>更新内容</h1>"
-        "<h2>版本 1.1.0 - 2025年2月18日</h2>"
+        "<h2>版本 1.1.2 - 2025年2月20日</h2>"
         "<ul>"
-        "<li>修复了重命名时高亮的高亮丢失问题</li>"
-        "<li>修复了因Python默认输入输出缓存导致的不能实时输出的问题</li>"
-        "<li>优化了界面布局，新增强制终止运行中的程序按钮</li>"
+        "<li>修复了Pyhton连续两个input读取内容错误的问题</li>"
         "</ul>"
         "<br><br><br>"
         "更多信息请关注<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>与<a href=\" https://www.byteoj.com/posts/257\">ByteOJ网站</a>"

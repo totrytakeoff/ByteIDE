@@ -40,6 +40,7 @@ public:
     void modifyEditorDefaultBackgroundColor(QColor &col);
 
 
+
     QsciScintilla *textEdit;
     QsciLexerPython *PythonLexer;
     QsciLexerCPP *CppLexer;
@@ -64,6 +65,8 @@ public slots:
     void replaceText(const QString &origin,const QString &replaced);
 
     void replaceAll(const QString &origin,const QString &replaced);
+
+    void setCommentline();
 signals:
 
 
@@ -78,6 +81,7 @@ private:
         LineNumMargin=2,
         FoldMargin=4
     };
+
 
     bool LineTagIsOpen=true;
     QMap<int,QColor> Lexer_Color;
@@ -97,6 +101,7 @@ private:
     int m_flags;
     int m_lastFindPos;
     int highlightIndicator = 7; // 需要初始化指示器ID
+    QString commentFlag;
 
     QVector<QPair<int,int>> matchPosVec;
 

@@ -340,6 +340,11 @@ void MainWindow::CreatAction()
         }
     });
 
+
+    commentAct=new QAction("注释",this);
+    commentAct->setShortcut(QKeySequence("Ctrl+/"));
+
+///////////////////////////////////////////////////////////////
     setEditActEnable(false);///无Tab时设置为禁用状态
 }
 
@@ -369,6 +374,7 @@ void MainWindow::CreatToolBar()
     mainToolBar->addSeparator();
     mainToolBar->addAction((runAct));
     mainToolBar->addAction(stopRunAct);
+    mainToolBar->addAction(commentAct);
 
 
 }
@@ -659,6 +665,7 @@ void MainWindow::setEditActEnable(bool b)
     openAllAct->setEnabled(b);
     searchTextAct->setEnabled(b);
     runAct->setEnabled(b);
+    commentAct->setEnabled(b);
 }
 
 void MainWindow::loadFromFile(QString path)
@@ -934,6 +941,7 @@ void MainWindow::onTabChange()
     if(codeTabWidget->count()>0){
 
         setEditActEnable(true);
+
         curEditArea=qobject_cast<EditArea*>(codeTabWidget->currentWidget());
         path=curEditArea->curEditFile;
 
@@ -943,6 +951,9 @@ void MainWindow::onTabChange()
         });
 
         connect(curEditArea->textEdit,&QsciScintilla::cursorPositionChanged,this,&MainWindow::updateStatusBar);
+
+        //注释
+        connect(commentAct,&QAction::triggered,curEditArea,&EditArea::setCommentline);
 
         //更新当前文件类型，更改textEdit的Lexer
         QString type=QFileInfo(path).suffix();
