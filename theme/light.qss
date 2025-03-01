@@ -1,0 +1,7 @@
+QListView {
+    background-color: rgb(30,30,30);
+    color: rgb(220,220,220);
+    border: 1px solid gray;
+    selection-background-color: blue;
+    selection-color: white;
+}

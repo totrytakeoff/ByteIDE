@@ -40,6 +40,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         res/res.qrc
         res/res.rc
         src/updatelogwidget.h src/updatelogwidget.cpp
+        src/settingwidget.h src/settingwidget.cpp
+        src/form.ui
     )
 else()
     if(ANDROID)

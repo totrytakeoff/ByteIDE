@@ -15,6 +15,7 @@ class QVBoxLayout;
 class QFile;
 class QSplitter;
 class QLabel;
+class QSettings;
 
 
 QT_BEGIN_NAMESPACE
@@ -49,6 +50,7 @@ public:
     void SetStyles();
     void ShowFileDock();
     QString GetCurFileType();
+
 
 private:
     void setEditActEnable(bool b);
@@ -98,6 +100,7 @@ private:
     QAction* exitAct;
     QAction* aboutAct;
     QAction *updateLogAct;
+    QAction *settingAct;
 
 
     QAction* redoAct;//重做
@@ -143,6 +146,7 @@ private:
 
     QSplitter* mainSplitter;
 
+    QSettings *settings;
 
 };
 #endif // MAINWINDOW_H

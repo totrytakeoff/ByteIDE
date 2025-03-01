@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 
+
 EditArea::EditArea(QWidget* parent)
     :QWidget(parent)
 {
@@ -532,7 +533,6 @@ void EditArea::setCommentline()
         qDebug()<<temp;
         temp=temp.trimmed();
         if (temp.isEmpty()) continue; // 跳过空行
-
 
 
         bool isCommented = temp.startsWith(commentFlag);

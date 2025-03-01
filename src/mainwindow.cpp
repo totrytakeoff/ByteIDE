@@ -35,7 +35,7 @@
 #include <QLayout>
 #include <QGridLayout>
 #include <QVBoxLayout>
-
+#include <QSettings>
 
 #include "newfile.h"
 #include "resourcemanager.h"
@@ -45,6 +45,8 @@
 #include "searchwidget.h"
 #include "codetabwidget.h"
 #include "updatelogwidget.h"
+#include "settingwidget.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,17 +54,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
 
-
-
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
     mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
 
-
-
+    settings=new QSettings();
 
     runner=new CodeRunner(this);
+
     searchDia=new SearchWidget(this);
     searchDia->hide();
+
     codeTabWidget=new CodeTabWidget(this);
     codeTabWidget->clear();///清空tabwidget内Tab
     codeTabWidget->setTabsClosable(true);///启用Tab关闭btn
@@ -97,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(fileExplorer,&ResourceManager::fileDoubleClick,this,&MainWindow::onFileTreeClicked);
 
+    ///查找替换相关信号槽连接
     connect(searchDia,&SearchWidget::findNext,this,[=](const QString &text, bool caseSensitive, bool wholeWords,bool forward){
         if(curEditArea){
             curEditArea->findNext(text,caseSensitive,wholeWords,forward);
@@ -128,6 +130,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
+    /// 运行相关信号槽
     connect(runner,&CodeRunner::processExit,this,[=](){
         stopRunAct->setEnabled(true);
     });
@@ -135,6 +138,8 @@ MainWindow::MainWindow(QWidget *parent)
         ///开始运行后设置stopBtn为可用状态
         stopRunAct->setEnabled(true);
     });
+
+
 
 
     this->resize(1000,800);
@@ -236,6 +241,15 @@ void MainWindow::CreatAction()
         showlog->show();
     });
 
+
+    settingAct=new QAction("&设置",this);
+    connect(settingAct,&QAction::triggered,this,[this](){
+        SettingWidget* sett=new SettingWidget();
+        settings=&sett->settings;
+        connect(sett,&SettingWidget::save,this,&MainWindow::SetStyles);
+        sett->show();
+
+    });
 
 
     redoAct = new QAction("重做", this);
@@ -374,7 +388,15 @@ void MainWindow::CreatToolBar()
     mainToolBar->addSeparator();
     mainToolBar->addAction((runAct));
     mainToolBar->addAction(stopRunAct);
-    mainToolBar->addAction(commentAct);
+    mainToolBar->addAction(settingAct);
+    QAction *resetTer=new QAction("重启终端");
+    connect(resetTer,&QAction::triggered,this,[this](){
+        qDebug()<<"rs";
+        terminal->deleteLater();
+        terminal=new Terminal(this);
+        terminalViewDock->setWidget(terminal);
+    });
+    mainToolBar->addAction(resetTer);
 
 
 }
@@ -509,134 +531,33 @@ void MainWindow::setCurrentFile(const QString fileName)
 ///设置相关样式
 void MainWindow::SetStyles()
 {
+    qDebug()<<"is seting style";
 
+    QString Theme;
+    Theme=settings->value("UI/Theme","dark").value<QString>();
 
-    QString styleSheet = R"(
+    QString styleSheet;
+    QString qssName;
+    qssName="./theme/"+Theme+".qss";
 
+    qDebug()<<"qss:"<<qssName;
+    QFile qssfile(qssName);
 
-        QListView {
-            background-color: rgb(30,30,30);
-            color: rgb(220,220,220);
-            border: 1px solid gray;
-            selection-background-color: blue;
-            selection-color: white;
+    while(qssfile.open(QIODeviceBase::ReadOnly)){
+
+        styleSheet=qssfile.readAll();
+        qDebug()<<styleSheet;
+        if(styleSheet.isEmpty()){
+            break;
         }
-
-        QMainWindow{
-           background-color: rgb(80, 80, 80);
-            border: 1px solid rgb(20,20,20);
-        }
-        QMenuBar {
-            background-color: rgb(60, 60, 60);
-            color: rgb(240, 240, 240);
-            border-bottom: 1px solid black;
-            }
-        QMenuBar::item:selected {
-            background-color: rgb(80, 80, 80);
-
-        }
-        QMenu {
-            background-color: rgb(60, 60, 60);
-            color: rgb(240, 240, 240);
-            border: 1px solid rgb(100, 100, 100);
-            margin: 0px;
-            padding: 0px;
-        }
-        QMenu::item:selected {
-            background-color: rgb(80, 80, 80);
-        }
-        QMenu::item:disabled {
-            background-color: rgb(60, 60, 60);
-            color: rgb(150, 150, 150);
-        }
-
-        QToolBar {
-            background-color: rgb(60, 60, 60);
-            border: none;
-            border-bottom:1px solid rgb(45,45,45);
-        }
-
-        QToolButton {
-            background-color: rgb(60, 60, 60);
-            border: none;
-            padding: 3px;
-        }
-
-        QToolButton:hover {
-            background-color: rgb(80, 80, 80);
-        }
-
-        QToolTip{
-            background-color: rgb(60, 60, 60);
-            color:white
-        }
-
-       QDialog{
-            background-color: rgb(36, 36, 36);
-            color:white;
-        }
-        NewFile{
-            color:white;
-        }
-        QTabBar{
-            background-color: rgb(80, 80, 80);
-        }
-        QTabBar::tab {
-            background-color: rgb(60, 60, 60);
-            color: rgb(240, 240, 240);
-            padding: 5px;
-            border: 1px solid black;
-        }
-        QTabBar::tab:selected {
-            background-color: rgb(80, 80, 80);
-        }
-
-        QTabBar::close-button:hover {
-            background: rgb(100, 100, 100);
-        }
-        QStatusBar {
-            background-color: rgb(60, 60, 60);
-            color: rgb(240, 240, 240);
-        }
-        QDockWidget {
-            color:rgb(214,214,214);
+        setStyleSheet(styleSheet);
+        return ;
+    }
 
 
-        }
-        QDockWidget::title {
+    QMessageBox::warning(this,"error","加载主题"+Theme+"失败！");
+    settings->setValue("UI/Theme","dark");
 
-            background-color: rgb(60, 60, 60);
-            padding-left: 5px;
-            border-top: 1px solid rgb(160,160,160);
-
-        }
-        QDockWidget::close-button, QDockWidget::float-button {
-            background: rgb(100, 100, 100);
-            padding: 2px;
-
-        }
-        QDockWidget::close-button:hover, QDockWidget::float-button:hover {
-            background: rgb(100, 100, 100);
-        }
-        QMessageBox QLabel{
-            color:white;
-        }
-        QTabWidget{
-            background-color:rgb(60,60,60);
-            margin: 0,0,0,0;
-            padding 0,0,0,0;
-        }
-
-    )";
-
-    /*
-
-
-*/
-
-
-
-    setStyleSheet(styleSheet);
 }
 
 void MainWindow::ShowFileDock()
@@ -679,7 +600,7 @@ void MainWindow::loadFromFile(QString path)
 
 
     if(file.open(QIODevice::ReadOnly|QIODevice::Text)){
-        QTextStream fileStream(&file);
+        // QTextStream fileStream(&file);
         editor->textEdit->clear();///清空Textedit
 
         QApplication::setOverrideCursor(Qt::WaitCursor);///鼠标转圈圈

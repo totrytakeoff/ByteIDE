@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setApplicationName("ByteIDE");
-
+    a.setOrganizationName("2509软件工作室");
     MainWindow w;
 
     w.setWindowTitle(QString("ByteIDE"));

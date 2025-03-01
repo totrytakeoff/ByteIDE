@@ -1,0 +1,112 @@
+QListView {
+    background-color: rgb(30,30,30);
+    color: rgb(220,220,220);
+    border: 1px solid gray;
+    selection-background-color: blue;
+    selection-color: white;
+}
+
+QMainWindow{
+   background-color: rgb(80, 80, 80);
+    border: 1px solid rgb(20,20,20);
+}
+QMenuBar {
+    background-color: rgb(60, 60, 60);
+    color: rgb(240, 240, 240);
+    border-bottom: 1px solid black;
+    }
+QMenuBar::item:selected {
+    background-color: rgb(80, 80, 80);
+
+}
+QMenu {
+    background-color: rgb(60, 60, 60);
+    color: rgb(240, 240, 240);
+    border: 1px solid rgb(100, 100, 100);
+    margin: 0px;
+    padding: 0px;
+}
+QMenu::item:selected {
+    background-color: rgb(80, 80, 80);
+}
+QMenu::item:disabled {
+    background-color: rgb(60, 60, 60);
+    color: rgb(150, 150, 150);
+}
+
+QToolBar {
+    background-color: rgb(60, 60, 60);
+    border: none;
+    border-bottom:1px solid rgb(45,45,45);
+}
+
+QToolButton {
+    background-color: rgb(60, 60, 60);
+    border: none;
+    padding: 3px;
+}
+
+QToolButton:hover {
+    background-color: rgb(80, 80, 80);
+}
+
+QToolTip{
+    background-color: rgb(60, 60, 60);
+    color:white
+}
+
+QDialog{
+    background-color: rgb(36, 36, 36);
+    color:white;
+}
+NewFile{
+    color:white;
+}
+QTabBar{
+    background-color: rgb(80, 80, 80);
+}
+QTabBar::tab {
+    background-color: rgb(60, 60, 60);
+    color: rgb(240, 240, 240);
+    padding: 5px;
+    border: 1px solid black;
+}
+QTabBar::tab:selected {
+    background-color: rgb(80, 80, 80);
+}
+
+QTabBar::close-button:hover {
+    background: rgb(100, 100, 100);
+}
+QStatusBar {
+    background-color: rgb(60, 60, 60);
+    color: rgb(240, 240, 240);
+}
+QDockWidget {
+    color:rgb(214,214,214);
+
+
+}
+QDockWidget::title {
+
+    background-color: rgb(60, 60, 60);
+    padding-left: 5px;
+    border-top: 1px solid rgb(160,160,160);
+
+}
+QDockWidget::close-button, QDockWidget::float-button {
+    background: rgb(100, 100, 100);
+    padding: 2px;
+
+}
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background: rgb(100, 100, 100);
+}
+QMessageBox QLabel{
+    color:white;
+}
+QTabWidget{
+    background-color:rgb(60,60,60);
+    margin: 0,0,0,0;
+    padding: 0,0,0,0;
+}
