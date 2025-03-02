@@ -290,6 +290,9 @@ private:
 
     QString m_Theme;
     QSettings settings;
+
+
+    QString curFileType=".txt";
 };
 
 #endif // EDITAREA_H
