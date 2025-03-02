@@ -11,5 +11,8 @@
         <file>img/search.png</file>
         <file>img/runningBtn.png</file>
         <file>img/stopBtn.png</file>
+        <file>img/setting_dark.jpg</file>
+        <file>img/setting_light.jpg</file>
+        <file>img/up-arrow.png</file>
     </qresource>
 </RCC>

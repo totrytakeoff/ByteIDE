@@ -1,7 +1,367 @@
 QListView {
-    background-color: rgb(30,30,30);
-    color: rgb(220,220,220);
-    border: 1px solid gray;
-    selection-background-color: blue;
+    background-color: rgb(245,245,245);
+    color: rgb(50,50,50);
+    border: 1px solid #cccccc;
+    selection-background-color: #0078d4;
     selection-color: white;
+}
+
+QMainWindow {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #e0e0e0;
+}
+
+QMenuBar {
+    background-color: rgb(250, 250, 250);
+    color: rgb(60, 60, 60);
+    border-bottom: 1px solid #dddddd;
+}
+
+QMenuBar::item:selected {
+    background-color: #e8f0fe;
+}
+
+QMenu {
+    background-color: rgb(255, 255, 255);
+    color: rgb(60, 60, 60);
+    border: 1px solid #e0e0e0;
+    margin: 0px;
+    padding: 0px;
+}
+
+QMenu::item:selected {
+    background-color: #e8f0fe;
+}
+
+QMenu::item:disabled {
+    background-color: rgb(255, 255, 255);
+    color: #a0a0a0;
+}
+
+QToolBar {
+    background-color: rgb(245, 245, 245);
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+QToolButton {
+    background-color: transparent;
+    border: none;
+    padding: 3px;
+}
+
+QToolButton:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+QToolTip {
+    background-color: #ffffff;
+    color: #202124;
+}
+
+QDialog {
+    background-color: rgb(255, 255, 255);
+    color: rgb(60, 60, 60);
+}
+
+.NewFile {
+    color: #1a73e8;
+}
+
+QTabBar {
+    background-color: rgb(245, 245, 245);
+}
+
+QTabBar::tab {
+    background-color: rgb(255, 255, 255);
+    color: #5f6368;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+QTabBar::tab:selected {
+    background-color: #ffffff;
+    color: #1967d2;
+    border-color: #e0e0e0;
+}
+
+QTabBar::close-button:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+QStatusBar {
+    background-color: rgb(245, 245, 245);
+    color: #5f6368;
+    border-top: 1px solid #e0e0e0;
+}
+
+QDockWidget {
+    color: #202124;
+}
+
+QDockWidget::title {
+    background-color: rgb(245, 245, 245);
+    padding-left: 5px;
+    border-top: 1px solid #e0e0e0;
+}
+
+QDockWidget::close-button, QDockWidget::float-button {
+    background: rgba(0,0,0,0.1);
+    padding: 2px;
+}
+
+QDockWidget::close-button:hover, QDockWidget::float-button:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+QMessageBox QLabel {
+    color: #202124;
+}
+
+QTabWidget {
+    background-color: rgb(255, 255, 255);
+    margin: 0;
+    padding: 0;
+}
+
+QInputDialog {
+    background-color: rgb(255, 255, 255);
+}
+
+QLineEdit {
+    color: #202124;
+    background-color: rgb(245, 245, 245);
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton {
+    color: #202124;
+    background-color: rgb(245, 245, 245);
+}
+
+QLabel {
+    color: #202124;
+}
+
+QTreeView {
+    background-color: rgb(245, 245, 245);
+    color: rgb(50, 50, 50);
+}
+
+/* 基本项样式 */
+QTreeView::item {
+    padding: 1px;
+}
+
+/* 悬停时的样式 */
+QTreeView::item:hover {
+    background-color: #e8f0fe;
+    color: #202124;
+}
+
+/* 选中时的样式 */
+QTreeView::item:selected {
+    background-color: #0078d4;
+    color: white;
+}
+
+/* 非活动窗口中选中的项 */
+QTreeView::item:selected:!active {
+    background-color: #c8e6c9;
+}
+
+/* 展开箭头样式 */
+QTreeView::branch:has-children:!adjoins-item,
+QTreeView::branch:has-children:adjoins-item,
+QTreeView::branch:!has-children,
+QTreeView::branch:open:has-children,
+QTreeView::branch:closed:has-children {
+    color: #202124;
+}
+
+.QsciScintilla QScrollBar:horizontal {
+    border-top: 1px solid #e0e0e0;
+    background-color: rgb(245, 245, 245);
+    height: 12px;
+    margin: 0px 0px 0px 0px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 7px;
+}
+
+/* 定义 QScintilla 内部垂直滚动条的样式 */
+.QsciScintilla QScrollBar:vertical {
+    border-left: 1px solid #e0e0e0;
+    background-color: rgb(245, 245, 245);
+    width: 12px;
+    margin: 0px 0px 0px 0px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-radius: 7px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: rgb(220,220,220);
+    border-left: 1px solid #e0e0e0;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: rgb(220,220,220);
+    border-left: 1px solid #e0e0e0;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: rgb(200,200,200);
+    border-radius: 2px;
+    min-width: 20px;
+    margin: 2px 1px 2px 1px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: rgb(200,200,200);
+    border-radius: 2px;
+    min-width: 20px;
+    margin: 1px 2px 1px 2px;
+}
+
+/* 移除滚动区域 */
+.QsciScintilla QScrollBar::add-page:horizontal, .QsciScintilla QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/* 移除滚动区域 */
+.QsciScintilla QScrollBar::add-page:vertical, .QsciScintilla QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+/* SettingWidget 样式 */
+SettingWidget {
+    background-color: rgb(255, 255, 255);
+    color: rgb(60, 60, 60);
+}
+
+SettingWidget QComboBox {
+    background-color: rgb(245, 245, 245);
+    color: rgb(60, 60, 60);
+    border: 1px solid #e0e0e0;
+}
+
+SettingWidget QLabel {
+    color: rgb(60, 60, 60);
+}
+
+SettingWidget QSpinBox {
+    background-color: rgb(245, 245, 245);
+    color: rgb(60, 60, 60);
+    border: 1px solid #e0e0e0;
+}
+
+SettingWidget QSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 16px;
+    border-left: 1px solid #e0e0e0;
+    background-color: rgb(245, 245, 245);
+}
+
+SettingWidget QSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 16px;
+    border-left: 1px solid #e0e0e0;
+    background-color: rgb(245, 245, 245);
+}
+
+SettingWidget QSpinBox::up-arrow {
+    image: url(:/icons/up-arrow.png);
+    width: 10px;
+    height: 10px;
+}
+
+SettingWidget QSpinBox::down-arrow {
+    image: url(:/icons/down-arrow.png);
+    width: 10px;
+    height: 10px;
+}
+
+SettingWidget QSpinBox {
+    background-color: rgb(245, 245, 245);
+    color: rgb(60, 60, 60);
+    border: 1px solid #e0e0e0;
+}
+
+SettingWidget QFontComboBox {
+    background-color: rgb(245, 245, 245);
+    color: rgb(60, 60, 60);
+    border: 1px solid #e0e0e0;
+}
+
+SettingWidget QListWidget {
+    background-color: rgb(245, 245, 245);
+    color: rgb(60, 60, 60);
+    border: 1px solid #e0e0e0;
+}
+
+Terminal {
+    background-color: rgb(200, 200, 200);
+    color: rgb(50, 50, 50);
+    font-family: Consolas;
+    font-size: 12px;
+}
+
+Terminal QScrollBar:horizontal {
+    border-top: 1px solid #e0e0e0;
+    background-color: rgb(200, 200, 200);
+    height: 12px;
+    margin: 0px 0px 0px 0px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 7px;
+}
+
+Terminal QScrollBar:vertical {
+    border-left: 1px solid #e0e0e0;
+    background-color: rgb(200, 200, 200);
+    width: 12px;
+    margin: 0px 0px 0px 0px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    border-radius: 7px;
+}
+
+Terminal QScrollBar::handle:vertical:hover {
+    background-color: rgb(180, 180, 180);
+    border-left: 1px solid #e0e0e0;
+}
+
+Terminal QScrollBar::handle:horizontal:hover {
+    background-color: rgb(180, 180, 180);
+    border-left: 1px solid #e0e0e0;
+}
+
+Terminal QScrollBar::handle:horizontal {
+    background-color: rgb(160, 160, 160);
+    border-radius: 2px;
+    min-width: 20px;
+    margin: 2px 1px 2px 1px;
+}
+
+Terminal QScrollBar::handle:vertical {
+    background-color: rgb(160, 160, 160);
+    border-radius: 2px;
+    min-width: 20px;
+    margin: 1px 2px 1px 2px;
+}
+
+/* 移除滚动区域 */
+Terminal QScrollBar::add-page:horizontal, Terminal QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/* 移除滚动区域 */
+Terminal QScrollBar::add-page:vertical, Terminal QScrollBar::sub-page:vertical {
+    background: none;
 }

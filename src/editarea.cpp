@@ -15,21 +15,32 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QScrollBar>
-
+#include <QSettings>
 
 EditArea::EditArea(QWidget* parent)
     :QWidget(parent)
 {
 
+    m_Theme=settings.value("UI/Theme","dark").toString();
 
     textEdit=new QsciScintilla(this);
     CppLexer=new QsciLexerCPP(this);
     PythonLexer=new QsciLexerPython(this);
     DefaultLexer=new QsciLexerD(this);
-    Lexer_Color=createDefaultColorMap();
+
+    ///设置主题
+    if(m_Theme=="dark"){
+        ColorsList=darkColorList;
+        Lexer_Color=lightColorMap;
+    }else{
+        ColorsList=lightColorList;
+        Lexer_Color=lightColorMap;
+    }
+
 
     InitLexer();
     InitTextEdit();
+
 
 
     // 连接光标位置变化信号到自定义槽函数
@@ -49,7 +60,9 @@ EditArea::EditArea(QWidget* parent)
     // 安装事件过滤器,模拟keyEvent
     textEdit->installEventFilter(this);
 
-    textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, '8' & 0xFF); // 注意这里的'8'对应于'/'在SCI中的表示形式;
+
+    // textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, (QsciScintillaBase::SCMOD_CTRL << 16) | ('/' & 0xFF));
+
 }
 
 EditArea::~EditArea()
@@ -60,9 +73,10 @@ EditArea::~EditArea()
 void EditArea::InitLexer()
 {
 
+
 /******************************set cppLexer*********************************************/
-    CppLexer->setDefaultColor(FontDefaultColor);///默认字体颜色
-    CppLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
+    CppLexer->setDefaultColor(ColorsList[ColorType::FontDefaultColor]);///默认字体颜色
+    CppLexer->setDefaultPaper(ColorsList[ColorType::EditorDefaultBackgroundColor]);///默认背景色
     CppLexer->setFont(QFont("Consolas",14));///默认字体
 
     CppLexer->setFoldAtElse(true);       // 在 else 处折叠代码块
@@ -135,8 +149,8 @@ void EditArea::InitLexer()
 
 /******************************set pythonLexer*********************************************/
 
-    PythonLexer->setDefaultColor(FontDefaultColor);///默认字体颜色
-    PythonLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
+    PythonLexer->setDefaultColor(ColorsList[FontDefaultColor]);///默认字体颜色
+    PythonLexer->setDefaultPaper(ColorsList[EditorDefaultBackgroundColor]);///默认背景色
     PythonLexer->setFont(QFont("Consolas",14));///默认字体
 
     PythonLexer->setFoldCompact(true);      // 折叠时隐藏空行
@@ -179,7 +193,7 @@ void EditArea::InitLexer()
     /******************************set defaultLexer*********************************************/
 
     DefaultLexer->setDefaultColor(DefaultTextColor);///默认字体颜色
-    DefaultLexer->setDefaultPaper(EditorDefaultBackgroundColor);///默认背景色
+    DefaultLexer->setDefaultPaper(ColorsList[EditorDefaultBackgroundColor]);///默认背景色
     DefaultLexer->setFont(QFont("Consolas",14));///默认字体
 
     // 设置默认 Lexer
@@ -231,23 +245,21 @@ void EditArea::InitLexer()
 }
 
 void EditArea::InitTextEdit()
-{
-
-    // textEdit->setLexer(CppLexer);
+{    
 
     textEdit->setTabWidth(4);///设置Tab长度为4空格
     textEdit->setBraceMatching(QsciScintilla::SloppyBraceMatch);///启用括号匹配
-    textEdit->setMatchedBraceBackgroundColor(MatchedBraceBackgroundColor);
-    textEdit->setMatchedBraceForegroundColor(MatchedBraceForegroundColor);
+    textEdit->setMatchedBraceBackgroundColor(ColorsList[MatchedBraceBackgroundColor]);
+    textEdit->setMatchedBraceForegroundColor(ColorsList[MatchedBraceForegroundColor]);
 
 /////////////////
     textEdit->setCallTipsStyle(QsciScintilla::CallTipsNoContext);///调用提示
     textEdit->setCallTipsPosition(QsciScintilla::CallTipsBelowText);
     textEdit->setCallTipsVisible(0);
 
-    textEdit->setCallTipsBackgroundColor(QColor(30,30,30));
-    textEdit->setCallTipsForegroundColor(QColor(210,210,210));
-    textEdit->setCallTipsHighlightColor(QColor(255, 71, 87));
+    textEdit->setCallTipsBackgroundColor(ColorsList[CallTipBackgroundColor]);
+    textEdit->setCallTipsForegroundColor(ColorsList[CallTipForegroundColor]);
+    textEdit->setCallTipsHighlightColor(ColorsList[CallTipHighlightColor]);
 
 
     ///自动补全,tab enter 确认选择，esc取消AutoCompletion
@@ -260,18 +272,18 @@ void EditArea::InitTextEdit()
 ////////////////
 
     ///无需设置TextEdit的背景色，直接设置lexer即可，会被lexer覆盖
-    textEdit->setPaper(QColor(30,30,30));
+    textEdit->setPaper(ColorsList[EditorDefaultBackgroundColor]);
 
 
     textEdit->setIndentationGuides(true);///启动缩进提示
     textEdit->setAutoIndent(true);///启动自动缩进
 
-    textEdit->setCaretForegroundColor(CursorColor);////设置光标color
+    textEdit->setCaretForegroundColor(ColorsList[CursorColor]);////设置光标color
 
     textEdit->setCaretLineVisible(true);//启用当前行高亮
-    textEdit->setCaretLineBackgroundColor(LineHighLightColor);///设置当前行高亮颜色
+    textEdit->setCaretLineBackgroundColor(ColorsList[LineHighLightColor]);///设置当前行高亮颜色
 
-    textEdit->setMarginsBackgroundColor(MarginBackColor);///设置margin边栏的背景color
+    textEdit->setMarginsBackgroundColor(ColorsList[MarginBackColor]);///设置margin边栏的背景color
 
 
 
@@ -284,19 +296,19 @@ void EditArea::InitTextEdit()
     textEdit->setMarginLineNumbers(EditArea::LineNumMargin,true);///设置行号栏
     textEdit->setMarginType(EditArea::LineNumMargin,QsciScintilla::NumberMargin);
     textEdit->setMarginWidth(EditArea::LineNumMargin,"0000");///设置行号栏宽度
-    textEdit->setMarginsForegroundColor(Qt::white);///行号字体颜色
+    textEdit->setMarginsForegroundColor(ColorsList[MarginsForeground]);///行号字体颜色
 
     textEdit->setMarginType(EditArea::SymMargin3,QsciScintilla::SymbolMargin);///设置符号栏,后序实现断点等标识
     textEdit->setMarginWidth(EditArea::SymMargin3,20);
 
     textEdit->setFolding(QsciScintilla::BoxedTreeFoldStyle,FoldMargin);///折叠代码块栏
     textEdit->setMarginWidth(EditArea::FoldMargin,20);
-    textEdit->setFoldMarginColors(FoldingColor,FoldingColor);///fold栏backgroundColor
+    textEdit->setFoldMarginColors(ColorsList[FoldingColor],ColorsList[FoldingColor]);///fold栏backgroundColor
 
 
     int  LineTag= 0;
     textEdit->markerDefine(QsciScintilla::VerticalLine , LineTag);///当前行标识
-    textEdit->setMarkerBackgroundColor(currentLineTagColor, LineTag);
+    textEdit->setMarkerBackgroundColor(ColorsList[LineTagColor], LineTag);
 
 
 
@@ -305,74 +317,8 @@ void EditArea::InitTextEdit()
     textEdit->setAutoCompletionWordSeparators(customSeparators);
 
 
-    QString StyleSheet=R"(
 
-
-.QsciScintilla QScrollBar:horizontal {
-    border-top:1px solid gray;
-    background-color: rgb(45,45,45);
-    height: 12px;
-    margin: 0px 0px 0px 0px;
-    padding-left:12px;
-    padding-right:12px;
-    border-radius: 7px;
-
-}
-
-
-
-
-/* 定义 QScintilla 内部垂直滚动条的样式 */
-.QsciScintilla QScrollBar:vertical {
-    border-left:1px solid gray;
-    background-color: rgb(45,45,45);
-    width: 12px;
-    margin: 0px 0px 0px 0px;
-    padding-top:12px;
-    padding-bottom:12px;
-    border-radius: 7px;
-}
-
-
-QScrollBar::handle:vertical:hover{
-    background-color:rgb(30,30,30);
-    border-left:1px solid gray;
-}
-QScrollBar::handle:horizontal:hover{
-    background-color:rgb(30,30,30);
-    border-left:1px solid gray;
-}
-
-QScrollBar::handle:horizontal{
-  background-color:rgb(80,80,80);
-  border-radius:2px;
-  min-width:20px;
-  margin:2px 1px 2px 1px;
-}
-
-QScrollBar::handle:vertical{
-  background-color:rgb(80,80,80);
-  border-radius:2px;
-  min-width:20px;
-  margin:1px 2px 1px 2px;
-}
-
-/* 移除滚动区域 */
-.QsciScintilla QScrollBar::add-page:horizontal, .QsciScintilla QScrollBar::sub-page:horizontal {
-    background: none; /* 设置背景为无 */
-}
-
-
-/* 移除滚动区域 */
-.QsciScintilla QScrollBar::add-page:vertical, .QsciScintilla QScrollBar::sub-page:vertical {
-    background: none; /* 设置背景为无 */
-}
-
-    )";
-
-
-
-    textEdit->setStyleSheet(StyleSheet);
+    // textEdit->setStyleSheet(StyleSheet); //使用全局样式
 
 }
 
@@ -385,11 +331,7 @@ void EditArea::ModifyLexerColor(int WordType,QColor &col)
     InitLexer();
 }
 
-void EditArea::ResortDefault()
-{
-    Lexer_Color=createDefaultColorMap();
-    InitLexer();
-}
+
 
 void EditArea::CloseLineTag(bool flag)
 {
@@ -418,6 +360,7 @@ void EditArea::setCurLexer(QString &type)
         textEdit->setLexer(PythonLexer);
     }
 
+
     ///修改lexer后textEdit一些属性会被清空,故需要重新设置
     InitTextEdit();
     // textEdit->setMatchedBraceBackgroundColor(MatchedBraceBackgroundColor);
@@ -430,85 +373,66 @@ void EditArea::setCurLexer(QString &type)
 
 void EditArea::modifyLineTagColor(QColor &col)
 {
-    LineHighLightColor=col;
+    ColorsList[LineTagColor]=col;
 }
 
 void EditArea::modifyFoldingColor(QColor &col)
 {
-    FoldingColor=col;
+    ColorsList[FoldingColor]=col;
 }
 
 void EditArea::modifyMarginBackColor(QColor &col)
 {
-    MarginBackColor=col;
+    ColorsList[MarginBackColor]=col;
 }
 
 void EditArea::modifyLineHighLightColor(QColor &col)
 {
-    LineHighLightColor=col;
+    ColorsList[LineHighLightColor]=col;
 }
 
 void EditArea::modifyCursorColor(QColor &col)
 {
-    CursorColor=col;
+    ColorsList[CursorColor]=col;
 }
 
 void EditArea::modifyFontDefaultColor(QColor &col)
 {
-    FontDefaultColor=col;
+    ColorsList[FontDefaultColor]=col;
 }
 
 void EditArea::modifyEditorDefaultBackgroundColor(QColor &col)
 {
-    EditorDefaultBackgroundColor=col;
+    ColorsList[EditorDefaultBackgroundColor]=col;
 }
 
-// void EditArea::setCommentline()
-// {
-
-//     qDebug()<<"commentLine";
-//     int *startLine=new int;
-//     int *endLine=new int;
-
-//     ///获取待注释行行号
-//     if(textEdit->hasSelectedText()){
-//         textEdit->getSelection(startLine,nullptr,endLine,nullptr);
-//     }else{
-//         textEdit->getCursorPosition(startLine,nullptr);
-//         *endLine=*startLine;
-//     }
 
 
-//     for(int i=(*startLine);i<=(*endLine);i++){
-//         //判断是否已经注释，再进行注释操作
-//         QString text=textEdit->text(i);
-//         int comment=text.indexOf(commentFlag);
-//         //除去首尾空格
-//         QString str=text.trimmed();
+void EditArea::setTheme(QString theme)
+{
+    if(theme==m_Theme){
+        return ;
+    }
 
-//         bool iscomment=str.startsWith(commentFlag);
+    m_Theme=theme;
+    ///设置主题
+    if(m_Theme=="dark"){
+        ColorsList=darkColorList;
+        Lexer_Color=darkColorMap;
+    }else{
+        ColorsList=lightColorList;
+        Lexer_Color=lightColorMap;
+    }
 
-//         int pos=textEdit->positionFromLineIndex(i,0);
-//         if(iscomment){
-//             textEdit->text().remove(pos+comment,commentFlag.length());
-//         }else{
-//             textEdit->SendScintilla(QsciScintillaBase::SCI_INSERTTEXT, pos, commentFlag.toUtf8().constData());
-//         }
+    InitLexer();
+    InitTextEdit();
 
-//     }
-
-//     delete startLine;
-//     delete endLine;
-// }
-
-
+}
 
 
 
 void EditArea::setCommentline()
 {
-
-    textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, '8' & 0xFF); // 注意这里的'8'对应于'/'在SCI中的表示形式;
 
     qDebug() << "commentLine";
 
@@ -717,64 +641,7 @@ void EditArea::replaceAll(const QString &origin, const QString &replaced)
 
 }
 
-QMap<int, QColor> EditArea::createDefaultColorMap()
-{
-    QMap<int, QColor> colorMap;
 
-    // 默认文本
-    colorMap.insert(QsciLexerCPP::Default, QColor(214, 207, 154));
-
-    // 注释
-    colorMap.insert(QsciLexerCPP::Comment, QColor(87, 166, 74));
-    colorMap.insert(QsciLexerCPP::CommentLine, QColor(87, 166, 74));
-    colorMap.insert(QsciLexerCPP::CommentDoc, QColor(87, 166, 74));
-    colorMap.insert(QsciLexerCPP::CommentLineDoc, QColor(87, 166, 74));
-
-    // 数字
-    colorMap.insert(QsciLexerCPP::Number, QColor(181, 206, 168));
-
-    // 关键字
-    colorMap.insert(QsciLexerCPP::Keyword, QColor(86, 156, 214));
-    colorMap.insert(QsciLexerCPP::KeywordSet2, QColor(216, 160, 223)); // 第二组关键字
-
-    // 字符串
-    colorMap.insert(QsciLexerCPP::DoubleQuotedString, QColor(214, 157, 133));
-    colorMap.insert(QsciLexerCPP::SingleQuotedString, QColor(214, 157, 133));
-    colorMap.insert(QsciLexerCPP::UnclosedString, QColor(138, 96, 44));
-    colorMap.insert(QsciLexerCPP::VerbatimString, QColor(138, 96, 44));
-    colorMap.insert(QsciLexerCPP::TripleQuotedVerbatimString, QColor(214, 157, 133));
-
-    // 预处理器指令
-    colorMap.insert(QsciLexerCPP::PreProcessor, QColor(155, 155, 155));
-
-    // 操作符
-    colorMap.insert(QsciLexerCPP::Operator, QColor(180, 180, 180));
-
-    // 标识符
-    colorMap.insert(QsciLexerCPP::Identifier, QColor(220, 220, 170));
-
-    // 其他特殊样式
-    colorMap.insert(QsciLexerCPP::UserLiteral, QColor(78, 201, 176));
-    colorMap.insert(QsciLexerCPP::TaskMarker, QColor(193, 44, 31));
-    colorMap.insert(QsciLexerCPP::EscapeSequence, QColor(213, 235, 225));
-    // colorMap.insert(QsciLexerCPP::EscapeChar, QColor());
-
-    // 不活动区域的样式
-    colorMap.insert(QsciLexerCPP::InactiveDefault, QColor(214, 207, 154));
-    colorMap.insert(QsciLexerCPP::InactiveComment, QColor(87, 166, 74));
-    colorMap.insert(QsciLexerCPP::InactiveCommentLine, QColor(87, 166, 74));
-    colorMap.insert(QsciLexerCPP::InactiveNumber, QColor(181, 206, 168));
-    colorMap.insert(QsciLexerCPP::InactiveKeyword, QColor(86, 156, 214));
-    colorMap.insert(QsciLexerCPP::InactiveDoubleQuotedString, QColor(214, 157, 133));
-    colorMap.insert(QsciLexerCPP::InactiveSingleQuotedString, QColor(214, 157, 133));
-    colorMap.insert(QsciLexerCPP::InactivePreProcessor, QColor(155, 155, 155));
-    colorMap.insert(QsciLexerCPP::InactiveOperator, QColor(180, 180, 180));
-    colorMap.insert(QsciLexerCPP::InactiveIdentifier, QColor(218, 218, 218));
-    colorMap.insert(QsciLexerCPP::InactiveUnclosedString, QColor(218, 218, 218));
-    colorMap.insert(QsciLexerCPP::InactiveRawString, QColor(218, 218, 218));
-
-    return colorMap;
-}
 
 bool EditArea::eventFilter(QObject *obj, QEvent *event)
 {
@@ -812,12 +679,14 @@ bool EditArea::eventFilter(QObject *obj, QEvent *event)
 
             return true;  // 事件已处理
         }
+
     }
 
     // 调用基类的事件过滤器
     return QWidget::eventFilter(obj, event);
 
 }
+
 
 
 

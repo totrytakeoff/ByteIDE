@@ -81,6 +81,7 @@ void ResourceManager::initSheet()
 {
     ///QInputDialog不能独立设置样式，故构造一个父Dialog单独设置样式，再让其他QInputDialog继承其样式
     styleDialog=new QInputDialog();
+
     styleDialog->setStyleSheet(
         R"(QInputDialog { background-color: rgb(31, 31, 31); }
             QLineEdit {
@@ -151,10 +152,10 @@ void ResourceManager::initSheet()
 
 
     )";
-    //border-image: url(:/icons/branch-closed.png) 0;
 
 
-    treeView->setStyleSheet(treeViewStyleSheet);
+
+    // treeView->setStyleSheet(treeViewStyleSheet);
 }
 
 void ResourceManager::initAct()

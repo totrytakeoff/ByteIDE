@@ -36,6 +36,8 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QSettings>
+#include <QShortcut>
+
 
 #include "newfile.h"
 #include "resourcemanager.h"
@@ -52,7 +54,10 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
 {
-
+    QPalette p = palette();
+    p.setColor(QPalette::Base, QColor(30, 30, 30));     // 深色背景
+    p.setColor(QPalette::Text, QColor(200, 200, 200));  // 浅色文本
+    setPalette(p);
 
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
     mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
@@ -242,13 +247,17 @@ void MainWindow::CreatAction()
     });
 
 
-    settingAct=new QAction("&设置",this);
-    connect(settingAct,&QAction::triggered,this,[this](){
-        SettingWidget* sett=new SettingWidget();
-        settings=&sett->settings;
-        connect(sett,&SettingWidget::save,this,&MainWindow::SetStyles);
-        sett->show();
+    settingAct = new QAction("&设置", this);
+    connect(settingAct, &QAction::triggered, this, [this]() {
+        SettingWidget* sett = new SettingWidget();
+        settings = &sett->settings;
+        connect(sett, &SettingWidget::save, this, &MainWindow::SetStyles);
 
+        // 直接设置样式
+        QString styleSheet = this->styleSheet();
+        sett->setStyleSheet(styleSheet);
+
+        sett->show();
     });
 
 
@@ -355,8 +364,18 @@ void MainWindow::CreatAction()
     });
 
 
+    resetTerAct=new QAction("重启终端",this);
+    connect(resetTerAct,&QAction::triggered,this,[this](){
+        qDebug()<<"rs";
+        terminal->deleteLater();
+        terminal=new Terminal(this);
+        terminalViewDock->setWidget(terminal);
+    });
+
+
+
     commentAct=new QAction("注释",this);
-    commentAct->setShortcut(QKeySequence("Ctrl+/"));
+    commentAct->setShortcut(QKeySequence("Ctrl+Shift+/"));
 
 ///////////////////////////////////////////////////////////////
     setEditActEnable(false);///无Tab时设置为禁用状态
@@ -374,29 +393,15 @@ void MainWindow::CreatToolBar()
     mainToolBar->addAction(openFileAct);
     mainToolBar->addAction(saveFileAct);
     mainToolBar->addAction(openFolderAct);
+    mainToolBar->addAction(settingAct);
 
     mainToolBar->addSeparator();
-
-
-
-
-    // QWidget *spacer = new QWidget();///添加占位widget把runact挤到右边去
-    // spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    // mainToolBar->addWidget(spacer);
 
 
     mainToolBar->addSeparator();
     mainToolBar->addAction((runAct));
     mainToolBar->addAction(stopRunAct);
-    mainToolBar->addAction(settingAct);
-    QAction *resetTer=new QAction("重启终端");
-    connect(resetTer,&QAction::triggered,this,[this](){
-        qDebug()<<"rs";
-        terminal->deleteLater();
-        terminal=new Terminal(this);
-        terminalViewDock->setWidget(terminal);
-    });
-    mainToolBar->addAction(resetTer);
+
 
 
 }
@@ -432,17 +437,20 @@ void MainWindow::CreatMenuBar()
     editMenu->addAction(foldAllAct);
     editMenu->addAction(openAllAct);
     editMenu->addAction(searchTextAct);
+    editMenu->addAction(commentAct);
 
 
     // View Menu
     viewMenu = menuBar()->addMenu("&视 图");
     viewMenu->addAction(showFileExplorerAct);
     viewMenu->addAction(showTerminalAct);
+    viewMenu->addAction(resetTerAct);
 
     // Help Menu
-    helpMenu = menuBar()->addMenu("&帮 助");
-    helpMenu->addAction(aboutAct);
-    helpMenu->addAction((updateLogAct));
+    optionMenu = menuBar()->addMenu("&选项");
+    optionMenu->addAction(settingAct);
+    optionMenu->addAction(aboutAct);
+    optionMenu->addAction((updateLogAct));
 
 }
 
@@ -531,10 +539,26 @@ void MainWindow::setCurrentFile(const QString fileName)
 ///设置相关样式
 void MainWindow::SetStyles()
 {
+
+    //QColor(116, 185, 255) out
+
     qDebug()<<"is seting style";
 
     QString Theme;
     Theme=settings->value("UI/Theme","dark").value<QString>();
+
+    for(int i=0;i<codeTabWidget->count();i++){
+        qobject_cast<EditArea*>(codeTabWidget->currentWidget())->setTheme(Theme);
+    }
+
+    m_Theme=Theme;
+    if(Theme=="dark"){
+        settingAct->setIcon(QIcon(":/img/setting_light.jpg"));
+        terminal->setTheme(Qt::yellow,QColor(116, 185, 255),Qt::white);
+    }else{
+        settingAct->setIcon(QIcon(":/img/setting_dark.jpg"));
+        terminal->setTheme(QColor(214, 149, 62),QColor(116, 185, 255),Qt::black);
+    }
 
     QString styleSheet;
     QString qssName;
@@ -546,7 +570,7 @@ void MainWindow::SetStyles()
     while(qssfile.open(QIODeviceBase::ReadOnly)){
 
         styleSheet=qssfile.readAll();
-        qDebug()<<styleSheet;
+
         if(styleSheet.isEmpty()){
             break;
         }
@@ -811,9 +835,9 @@ void MainWindow::about()
                           "</br></br></br></br></br></br></br></br></br></br></br></br></br>"
                           "<div width=100px; height=100px;></div>"
                           "<div style='font-size: 8px; color: gray;'>"
-                          "<p>版本: 1.1.1</p>"
+                          "<p>版本: 1.2.0</p>"
                           "<p>反馈邮箱: 2467315534@qq.com</p>"
-                          "<p>Copyright © 2025 薛晓春 . All rights reserved.</p>"
+                          "<p>Copyright © 2025 Myself . All rights reserved.</p>"
                           "</div>"
                           ));
 }
@@ -874,6 +898,7 @@ void MainWindow::onTabChange()
         connect(curEditArea->textEdit,&QsciScintilla::cursorPositionChanged,this,&MainWindow::updateStatusBar);
 
         //注释
+
         connect(commentAct,&QAction::triggered,curEditArea,&EditArea::setCommentline);
 
         //更新当前文件类型，更改textEdit的Lexer

@@ -25,10 +25,7 @@ Terminal::Terminal(QWidget *parent)
     setFont(QFont("Consolas", 10));  // 使用等宽字体
     
     // 设置终端颜色主题
-    QPalette p = palette();
-    p.setColor(QPalette::Base, QColor(30, 30, 30));     // 深色背景
-    p.setColor(QPalette::Text, QColor(200, 200, 200));  // 浅色文本
-    setPalette(p);
+
 
     // 配置进程
     process->setWorkingDirectory(workingDirectory);
@@ -205,7 +202,7 @@ bool Terminal::keyPressEventWhileRunning(QKeyEvent *e)
 
             // 设置用户输入的颜色
             QTextCharFormat userInputFormat;
-            userInputFormat.setForeground(Qt::yellow);
+            userInputFormat.setForeground(inputColor);
             // promptPosition
             cursor.setPosition(cursorLinePos);///将cursor移动到prompt位置
 
@@ -343,7 +340,7 @@ void Terminal::handleProcessOutput()
     QByteArray output = process->readAllStandardOutput();
 
     QTextCharFormat outputFormat;
-    outputFormat.setForeground(QColor(116, 185, 255));
+    outputFormat.setForeground(outputColor);
 
 
     // insertPlainText(QString::fromLocal8Bit(output));
@@ -420,7 +417,7 @@ void Terminal::insertPrompt(QString insertHead,QString insertRear)
     cursor.movePosition(QTextCursor::End);
 
     QTextCharFormat FontFormat;
-    FontFormat.setForeground(Qt::white);
+    FontFormat.setForeground(promptColor);
 
 
     cursor.insertText(insertText,FontFormat);
@@ -442,10 +439,6 @@ QString Terminal::getCurrentCommand() const
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::End);
     cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
-
-    // qDebug()<<"curcmd:"<<line;
-    // qDebug()<<"prompt:"<<prompt;
-    // qDebug()<<"promptlen::"<<prompt.length();
 
 ///获取当前命令（带prompt）
 /// .mid(prompt.length())去prompt
@@ -470,4 +463,12 @@ void Terminal::setIsRunning(bool flag)
 QProcess *Terminal::getProcess()
 {
     return this->process;
+}
+
+void Terminal::setTheme(QColor inputColor, QColor outputColor, QColor promptColor)
+{
+    this->inputColor=inputColor;
+    this->outputColor=outputColor;
+    this->promptColor=promptColor;
+
 }

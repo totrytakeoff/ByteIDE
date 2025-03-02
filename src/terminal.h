@@ -51,6 +51,8 @@ public:
 
     QProcess *getProcess();
 
+    void setTheme(QColor inputColor,QColor outputColor,QColor promptColor);
+
 signals:
     void processExit();
 
@@ -138,6 +140,10 @@ protected:
     QString workingDirectory;  ///< 当前工作目录路径
     QStringList commandHistory; ///< 命令历史记录列表
     int historyPosition;       ///< 当前历史记录的位置索引
+
+    QColor inputColor=Qt::yellow;
+    QColor outputColor=Qt::blue;
+    QColor promptColor=Qt::white;
 
     bool isrunning=false;
 };

@@ -115,7 +115,7 @@ private:
 
     QAction* searchTextAct;
     QAction* commentAct;
-
+    QAction *resetTerAct;
 
     QAction* showFileExplorerAct;
     QAction* showTerminalAct;
@@ -132,7 +132,7 @@ private:
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *viewMenu;
-    QMenu *helpMenu;
+    QMenu *optionMenu;
     ResourceManager * fileExplorer;
     QString curFilePath;
     QString curFolderPath;
@@ -148,5 +148,6 @@ private:
 
     QSettings *settings;
 
+    QString m_Theme;
 };
 #endif // MAINWINDOW_H
