@@ -1,0 +1,272 @@
+/* ===== 基础颜色变量 ===== */
+* {
+    --base-bg: #1a1a1a;
+    --surface-1: #262626;
+    --surface-2: #333333;
+    --accent-blue: #4a9cff;
+    --text-primary: #e0e0e0;
+    --text-secondary: #9e9e9e;
+    --border-dark: #404040;
+    --border-light: #616161;
+}
+
+/* ===== 主窗口 ===== */
+QMainWindow {
+    background-color: var(--base-bg);
+    border: 1px solid var(--border-dark);
+}
+
+/* ===== 列表视图 ===== */
+QListView {
+    background-color: var(--surface-1);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    selection-background-color: var(--accent-blue);
+    selection-color: white;
+    alternate-background-color: var(--surface-2); /* 交替行颜色 */
+}
+
+/* ===== 菜单系统 ===== */
+QMenuBar {
+    background-color: var(--surface-1);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 4px;
+}
+
+QMenuBar::item {
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: var(--surface-2);
+}
+
+QMenu {
+    background-color: var(--surface-1);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+    margin: 2px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+QMenu::item {
+    padding: 8px 32px 8px 16px;
+    min-width: 160px;
+    border-radius: 3px;
+}
+
+QMenu::item:selected {
+    background-color: var(--accent-blue);
+}
+
+QMenu::item:disabled {
+    color: var(--text-secondary);
+}
+
+/* ===== 工具栏 ===== */
+QToolBar {
+    background-color: var(--surface-1);
+    border-bottom: 1px solid var(--border-dark);
+    padding: 4px;
+    spacing: 4px;
+}
+
+QToolButton {
+    background-color: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    qproperty-iconSize: 20px;
+}
+
+QToolButton:hover {
+    background-color: rgba(255,255,255,0.08);
+}
+
+QToolButton:pressed {
+    background-color: rgba(255,255,255,0.15);
+}
+
+/* ===== 对话框 ===== */
+QDialog {
+    background-color: var(--surface-1);
+    color: var(--text-primary);
+}
+
+QMessageBox QLabel {
+    color: var(--text-primary);
+    padding: 12px;
+}
+
+/* ===== 选项卡 ===== */
+QTabWidget {
+    background-color: var(--surface-1);
+    border-radius: 6px;
+}
+
+QTabBar {
+    background-color: transparent;
+}
+
+QTabBar::tab {
+    background-color: var(--surface-2);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border: 1px solid var(--border-dark);
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    margin-right: 2px;
+}
+
+QTabBar::tab:selected {
+    background-color: var(--surface-1);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+QTabBar::close-button {
+    qproperty-icon: url(:/icons/close_white.svg);
+    margin: 4px;
+}
+
+/* ===== 状态栏 ===== */
+QStatusBar {
+    background-color: var(--surface-1);
+    color: var(--text-primary);
+    border-top: 1px solid var(--border-dark);
+    padding: 8px;
+}
+
+/* ===== 停靠窗口 ===== */
+QDockWidget {
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    titlebar-close-icon: url(:/icons/close_small.svg);
+    titlebar-normal-icon: url(:/icons/undock.svg);
+}
+
+QDockWidget::title {
+    background-color: var(--surface-1);
+    padding: 8px;
+    border-top: 2px solid var(--accent-blue);
+}
+
+/* ===== 输入控件 ===== */
+QLineEdit {
+    background-color: var(--surface-2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    padding: 8px;
+    border-radius: 4px;
+    selection-background-color: var(--accent-blue);
+}
+
+QPushButton {
+    background-color: var(--surface-2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    padding: 8px 16px;
+    border-radius: 4px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+QPushButton:pressed {
+    background-color: #3d8aff;
+}
+
+/* ===== 树形视图 ===== */
+QTreeView {
+    background-color: var(--surface-1);
+    color: var(--text-primary);
+    alternate-background-color: var(--surface-2);
+    border: 1px solid var(--border-dark);
+}
+
+QTreeView::item {
+    padding: 8px;
+    border: 1px solid transparent;
+}
+
+QTreeView::item:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+
+QTreeView::item:selected {
+    background-color: var(--accent-blue);
+    border-radius: 3px;
+}
+
+/* ===== 代码编辑器 ===== */
+.QsciScintilla {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    caret-color: #ffffff;
+    margin: 8px;
+}
+
+.QsciScintilla QScrollBar:vertical {
+    width: 14px;
+    background: #252526;
+}
+
+.QsciScintilla QScrollBar::handle:vertical {
+    background: #3c3c3c;
+    min-height: 30px;
+    border-radius: 7px;
+}
+
+/* ===== 设置界面 ===== */
+SettingWidget {
+    background-color: var(--surface-1);
+    padding: 20px;
+}
+
+SettingWidget QComboBox,
+SettingWidget QSpinBox,
+SettingWidget QFontComboBox {
+    background-color: var(--surface-2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    padding: 6px;
+    border-radius: 4px;
+}
+
+SettingWidget QListWidget {
+    background-color: var(--surface-2);
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+}
+
+/* ===== 全局效果 ===== */
+* {
+    font-family: "Segoe UI", "Noto Sans";
+    font-size: 13px;
+    outline: none;
+}
+
+QToolTip {
+    background-color: var(--surface-2);
+    color: var(--text-primary);
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+* {
+    font-smoothing: grayscale;
+    -qt-font-smoothing: grayscale;
+}
+
+QPushButton {
+    transition: background-color 0.2s ease;
+}

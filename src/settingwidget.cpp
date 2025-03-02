@@ -49,8 +49,6 @@ void SettingWidget::closeEvent(QCloseEvent *e)
 
     if (reply == QMessageBox::Save) {
         saveSettings();
-        qDebug()<<"-----set";
-        qDebug()<<settings.fileName();
         e->accept();  // 关闭窗口
     } else if (reply == QMessageBox::Discard) {
         // 不保存，直接关闭窗口
@@ -89,9 +87,11 @@ void SettingWidget::setOp_UI()
     FontSizeSpin->setRange(1,50);
     FontSizeSpin->setSuffix("px");
     int fontsize=ft.pointSize();
+    qDebug()<<"fs: -"<<fontsize;
     if(fontsize==-1){
         fontsize=ft.pixelSize();
     }
+    qDebug()<<fontsize;
     FontSizeSpin->setValue(fontsize);
 
 

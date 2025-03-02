@@ -82,76 +82,23 @@ void ResourceManager::initSheet()
     ///QInputDialog不能独立设置样式，故构造一个父Dialog单独设置样式，再让其他QInputDialog继承其样式
     styleDialog=new QInputDialog();
 
-    styleDialog->setStyleSheet(
-        R"(QInputDialog { background-color: rgb(31, 31, 31); }
-            QLineEdit {
-                color: white;
-                background-color: rgb(56, 56, 56);
-                border:1px solid rgb(153,153,153);
-            }
-            QPushButton {
-                color: white;
-                background-color: rgb(61, 61, 61);
-            }
-            QLabel{
-                color: white;
-            }
-        )");
+    // styleDialog->setStyleSheet(
+    //     R"(QInputDialog { background-color: rgb(31, 31, 31); }
+    //         QLineEdit {
+    //             color: white;
+    //             background-color: rgb(56, 56, 56);
+    //             border:1px solid rgb(153,153,153);
+    //         }
+    //         QPushButton {
+    //             color: white;
+    //             background-color: rgb(61, 61, 61);
+    //         }
+    //         QLabel{
+    //             color: white;
+    //         }
+    //     )");
 
 
-
-    treeViewStyleSheet=R"(
-
-        QTreeView{background-color: rgb(31, 31, 31);
-            color: rgb(214, 214, 214);
-        }
-
-        /* 基本项样式 */
-        QTreeView::item {
-            padding: 1px;
-        }
-
-        /* 悬停时的样式 */
-        QTreeView::item:hover {
-            background-color:rgb(80,80,80);
-            color: white;
-        }
-
-        /* 选中时的样式 */
-        QTreeView::item:selected {
-            background-color: rgb(34, 91, 149);
-            color: white;
-        }
-
-        /* 非活动窗口中选中的项 */
-        QTreeView::item:selected:!active {
-            background-color: #c8e6c9;
-        }
-
-        /* 展开箭头样式 */
-        QTreeView::branch:has-children:!adjoins-item {
-            color: white;
-        }
-
-        QTreeView::branch:has-children:adjoins-item {
-            color: white;
-        }
-
-        QTreeView::branch:!has-children {
-            color: white;
-        }
-
-        /* 展开/折叠状态 */
-        QTreeView::branch:open:has-children {
-            color: white;
-        }
-
-        QTreeView::branch:closed:has-children {
-            color: white;
-        }
-
-
-    )";
 
 
 

@@ -74,6 +74,7 @@ private slots:
 
     void updateStatusBar(int line,int index);
 
+    void ShowUpdataLog();
     // void onFileRename();
     ///响应文件资源管理器右键菜单栏重命名操作对应的Tab修改
 

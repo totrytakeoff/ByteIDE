@@ -12,7 +12,7 @@ SearchWidget::SearchWidget(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint | Qt::SubWindow);
     setMinimumHeight(80);
     setMaximumHeight(80);
-    setStyle();
+
 
     findText = new QLineEdit(this);
     replaceText= new QLineEdit(this);
@@ -31,20 +31,8 @@ SearchWidget::SearchWidget(QWidget *parent)
     CloseBtn->setFixedSize(24, 24);  // 固定尺寸
     CloseBtn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 固定尺寸策略
 
-    // // 修改样式表避免尺寸冲突
-    // CloseBtn->setStyleSheet(
-    //     "QPushButton {"
-    //     "   min-width: 24px;"        // 最小宽度
-    //     "   max-width: 24px;"        // 最大宽度
-    //     "   min-height: 24px;"       // 最小高度
-    //     "   max-height: 24px;"       // 最大高度
-    //     "   padding: 0px;"           // 清除内边距
-    //     "background-color:rgb(80,80,80);"
-    //     "}"
-    //     "QPushButton:hover {"
-    //     "background-color:red;"
-    //     "color:red;"
-    //     "}");
+
+
     QLabel *findLab = new QLabel("查找:",this);
     QLabel *replaceLab = new QLabel("替换为:",this);
 
@@ -134,26 +122,3 @@ void SearchWidget::findClicked()
 
 }
 
-void SearchWidget::setStyle()
-{
-    QString StyleSheet=R"(
-           QLineEdit {
-                color: rgb(220,220,220);
-                background-color: rgb(56, 56, 56);
-            }
-            QPushButton {
-                color: white;
-                background-color: rgb(61, 61, 61);
-            }
-            QLabel{
-                color: rgb(220,220,220);
-            }
-            QCheckBox{
-                color: rgb(220,220,220);
-            }
-
-)";
-
-    setStyleSheet(StyleSheet);
-
-}

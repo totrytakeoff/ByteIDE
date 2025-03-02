@@ -9,6 +9,9 @@ class UpdateLogWidget : public QWidget
 public:
     explicit UpdateLogWidget(QWidget *parent = nullptr);
 
+    void applyTheme(const QString &theme);
+
+
 
 
 signals:

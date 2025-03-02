@@ -54,10 +54,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
 {
-    QPalette p = palette();
-    p.setColor(QPalette::Base, QColor(30, 30, 30));     // 深色背景
-    p.setColor(QPalette::Text, QColor(200, 200, 200));  // 浅色文本
-    setPalette(p);
+
+
 
     QWidget *centralWidget = new QWidget(this); // 创建一个新的QWidget作为中央部件
     mainLayout = new QVBoxLayout(centralWidget); // 为中央部件设置垂直布局
@@ -147,7 +145,19 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+
     this->resize(1000,800);
+
+
+    ///第一次打开新版本软件显示更新日志
+    const QString version="1.2.0";
+
+    QString lastVersion = settings->value("Version/last").toString();
+    if(lastVersion.isEmpty()||lastVersion!=version){
+        settings->setValue("Version/last",version);
+        ShowUpdataLog();
+    }
+
 
 }
 
@@ -241,10 +251,7 @@ void MainWindow::CreatAction()
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 
     updateLogAct =new QAction("&软件更新日志",this);
-    connect(updateLogAct,&QAction::triggered,this,[=](){
-        UpdateLogWidget *showlog=new UpdateLogWidget();
-        showlog->show();
-    });
+    connect(updateLogAct,&QAction::triggered,this,&MainWindow::ShowUpdataLog);
 
 
     settingAct = new QAction("&设置", this);
@@ -553,10 +560,10 @@ void MainWindow::SetStyles()
 
     m_Theme=Theme;
     if(Theme=="dark"){
-        settingAct->setIcon(QIcon(":/img/setting_light.jpg"));
+        settingAct->setIcon(QIcon(":/img/setting_light.png"));
         terminal->setTheme(Qt::yellow,QColor(116, 185, 255),Qt::white);
     }else{
-        settingAct->setIcon(QIcon(":/img/setting_dark.jpg"));
+        settingAct->setIcon(QIcon(":/img/setting_dark.png"));
         terminal->setTheme(QColor(214, 149, 62),QColor(116, 185, 255),Qt::black);
     }
 
@@ -821,25 +828,70 @@ void MainWindow::toggleTerminal(bool show)
 
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("关于软件"),
-                       tr("<h3>ByteIDE</h3>"
-                          "<div style='font-size: 14px;'>"
-                          "<p>ByteIDE 是一个基于 <b>Qt</b> 开发的简易文本编辑器和简单的集成开发环境 (IDE)。"
-                          "它使用了 <b>QScintilla</b> 库来实现编辑器功能，提供了基本的文本编辑功能和常用的快捷键以及查找替换功能。</p>"
-                          "<p>该软件集成了文件资源管理器和终端界面并且嵌入了Python解释器和C/C++编译器，能够识别并运行 <b>Python</b> 和 <b>C++</b> 文件。"
-                          "此外，ByteIDE 还支持 <b>Python</b> 和 <b>C++</b> 的语法高亮和自动补全功能，"
-                          "使用户无需进行复杂的安装和配置，开箱即用，非常适合 <b>Python</b> 和 <b>C/C++</b> 初学者使用。</p>"
-                          "<p>项目已上传<a href= \"https://github.com/totrytakeoff/IDE-based-on-Qt\" >github仓库</a>,欢迎大家点点star或者提提issue。</p>"
-                          "<p>可在项目github主页或者<a href=\" https://www.byteoj.com/posts/257\">ByteOJ网站</a>获取最新软件</p>"
+    QMessageBox::about(this, tr("关于 ByteIDE"),
+                       tr("<style>"
+                          "body { font-family: 'Microsoft YaHei', sans-serif; }"
+                          "h3 { color: #2c3e50; margin: 8px 0; }"
+                          ".feature {"
+                          "  font-size: 13px;"
+                          "  line-height: 1.6;"
+                          "  color: #34495e;"
+                          "  margin: 8px 0;"
+                          "}"
+                          "a {"
+                          "  color: #3498db;"
+                          "  text-decoration: none;"
+                          "  font-weight: 500;"
+                          "}"
+                          "a:hover { color: #2980b9; }"
+                          ".divider {"
+                          "  height: 1px;"
+                          "  background: #ecf0f1;"
+                          "  margin: 12px 0;"
+                          "}"
+                          ".footer {"
+                          "  font-size: 10px;"
+                          "  color: #7f8c8d;"
+                          "  margin-top: 20px;"
+                          "}"
+                          "</style>"
+
+                          "<div style='max-width: 500px;'>"
+                          "<h3>ByteIDE</h3>"
+
+                          "<div class='divider'></div>"
+
+                          "<div class='feature'>"
+                          "<p>基于 <b>Qt</b> 和 <b>QScintilla</b> 开发的集成开发环境，</p>"
+                          "<p>✨ 核心功能：</p>"
+                          "<ul style='margin: 5px 0; padding-left: 20px;'>"
+                          "<li>基本的文本编辑与代码运行功能</li>"
+                          "<li>Python/C++ 语法高亮与自动补全</li>"
+                          "<li>内置 Python 解释器与 C/C++ 编译器，无需配置环境即可一键运行</li>"
+                          "<li>集成文件浏览器与终端，方便运行指令与文件管理</li>"
+                          "<li>提供常用的快捷键以及查找替换功能</li>"
+                          "</ul>"
                           "</div>"
-                          "</br></br></br></br></br></br></br></br></br></br></br></br></br>"
-                          "<div width=100px; height=100px;></div>"
-                          "<div style='font-size: 8px; color: gray;'>"
-                          "<p>版本: 1.2.0</p>"
-                          "<p>反馈邮箱: 2467315534@qq.com</p>"
-                          "<p>Copyright © 2025 Myself . All rights reserved.</p>"
+
+                          "<div class='divider'></div>"
+
+                          "<div class='feature'>"
+                          "<p>获取与支持：</p>"
+                          "<ul style='margin: 5px 0; padding-left: 20px;'>"
+                          "<li>📂 项目仓库：<a href='https://github.com/totrytakeoff/IDE-based-on-Qt'>GitHub</a></li>"
+                          "<li>🌐 最新版本：<a href='https://www.byteoj.com/posts/257'>ByteOJ 网站</a></li>"
+                          "<li>📧 问题反馈：<a href='mailto:2467315534@qq.com'>2467315534@qq.com</a></li>"
+                          "</ul>"
                           "</div>"
-                          ));
+
+                          "<div class='divider'></div>"
+
+                          "<div class='footer'>"
+                          "<p>版本 1.2.0 | © 2025 Myself</p>"
+                          "<p>基于 Qt %1 | 遵循 MIT 开源协议</p>"  // 自动显示 Qt 版本
+                          "</div>"
+                          "</div>"
+                          ).arg(QT_VERSION_STR));
 }
 
 
@@ -930,6 +982,13 @@ void MainWindow::updateStatusBar(int line,int index)
         curLineLabel->setText(QString("行:%1").arg(curLineIndex));
         curCharLabel->setText(QString("字符:%1").arg(curCharIndex));
     }
+}
+
+void MainWindow::ShowUpdataLog()
+{
+    UpdateLogWidget *showlog=new UpdateLogWidget();
+    showlog->setWindowModality(Qt::ApplicationModal); // 应用级模;
+    showlog->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include <QTextBrowser>
 #include <QPalette>
+#include <QSettings>
 
 UpdateLogWidget::UpdateLogWidget(QWidget *parent)
     : QWidget(parent)
@@ -17,11 +18,9 @@ UpdateLogWidget::UpdateLogWidget(QWidget *parent)
     QTextBrowser *textBrowser = new QTextBrowser(this);
     textBrowser->setOpenExternalLinks(true);
 
-    // 适配暗色主题的配色方案
-    QPalette palette = textBrowser->palette();
-    palette.setColor(QPalette::Base, QColor(53, 53, 53));
-    palette.setColor(QPalette::Text, Qt::white);
-    textBrowser->setPalette(palette);
+    QSettings settings;
+    QString Theme=settings.value("UI/Theme","dark").toString();
+
 
     // 构建带格式的更新日志内容
     QString htmlContent =
@@ -29,7 +28,7 @@ UpdateLogWidget::UpdateLogWidget(QWidget *parent)
 
         "<h2 style='color: #98FB98;'>版本 1.2.0 - 2025年3月1日</h2>"
         "<ul>"
-        "<li>🎉 新增设置页面，支持亮/暗双主题切换</li>"
+        "<li>🎉 新增设置页面，支持亮/暗双主题切换,与字体设置</li>"
         "<li>🔄 新增终端重启功能，增强稳定性</li>"
         "<li>⌨️ 新增注释快捷键 (Ctrl+Shift+/)  支持多行注释</li>"
         "</ul>"
@@ -49,6 +48,36 @@ UpdateLogWidget::UpdateLogWidget(QWidget *parent)
     textBrowser->setHtml(htmlContent);
     mainLayout->addWidget(textBrowser);
 
+    applyTheme(Theme);
 
     setLayout(mainLayout);
 }
+
+
+
+void UpdateLogWidget::applyTheme(const QString &theme) {
+    if (theme == "dark") {
+        this->setStyleSheet(
+            "QWidget, QTextBrowser {"
+            "  background-color: rgb(53, 53, 53);"
+            "  color: white;"
+            "  border: none;"
+            "}"
+            "QTextBrowser a {"
+            "  color: #00BFFF;"
+            "}"
+            );
+    } else {
+        this->setStyleSheet(
+            "QWidget ,QTextBrowser {"
+            "  background-color: white;"
+            "  color: black;"
+            "  border: none;"
+            "}"
+            "QTextBrowser a {"
+            "  color: #1E90FF;" // 使用不同的颜色以区分链接
+            "}"
+            );
+    }
+}
+

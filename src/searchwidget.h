@@ -24,8 +24,7 @@ signals:
     void replace(const QString &origin,const QString &replaced);
     void replaceAll(const QString &origin,const QString &replaced);
 
-private:
-    void setStyle();
+
 
 private:
 

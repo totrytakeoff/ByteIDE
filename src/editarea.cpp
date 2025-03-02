@@ -31,7 +31,7 @@ EditArea::EditArea(QWidget* parent)
     ///设置主题
     if(m_Theme=="dark"){
         ColorsList=darkColorList;
-        Lexer_Color=lightColorMap;
+        Lexer_Color=darkColorMap;
     }else{
         ColorsList=lightColorList;
         Lexer_Color=lightColorMap;
@@ -79,7 +79,7 @@ void EditArea::InitLexer()
     CppLexer->setDefaultPaper(ColorsList[ColorType::EditorDefaultBackgroundColor]);///默认背景色
     CppLexer->setPaper(ColorsList[ColorType::EditorDefaultBackgroundColor]);
 
-    CppLexer->setFont(QFont("Consolas",14));///默认字体
+    CppLexer->setFont(settings.value("UI/Font",QFont("Consolas",14)).value<QFont>());///默认字体
 
     CppLexer->setFoldAtElse(true);       // 在 else 处折叠代码块
     CppLexer->setFoldCompact(true);      // 折叠时隐藏空行
@@ -155,7 +155,7 @@ void EditArea::InitLexer()
     PythonLexer->setDefaultPaper(ColorsList[EditorDefaultBackgroundColor]);///默认背景色
     PythonLexer->setPaper(ColorsList[EditorDefaultBackgroundColor]);///默认背景色
     PythonLexer->setDefaultColor(ColorsList[FontDefaultColor]);///默认字体颜色
-    PythonLexer->setFont(QFont("Consolas",14));///默认字体
+    PythonLexer->setFont(settings.value("UI/Font",QFont("Consolas",14)).value<QFont>());///默认字体
 
     PythonLexer->setFoldCompact(true);      // 折叠时隐藏空行
 
@@ -200,7 +200,7 @@ void EditArea::InitLexer()
 
     DefaultLexer->setDefaultColor(DefaultTextColor);///默认字体颜色
     DefaultLexer->setDefaultPaper(ColorsList[EditorDefaultBackgroundColor]);///默认背景色
-    DefaultLexer->setFont(QFont("Consolas",14));///默认字体
+    DefaultLexer->setFont(settings.value("UI/Font",QFont("Consolas",14)).value<QFont>());///默认字体
 
     // 设置默认 Lexer
     // 设置默认文本颜色为白色
@@ -324,7 +324,6 @@ void EditArea::InitTextEdit()
     textEdit->setAutoCompletionWordSeparators(customSeparators);
 
 
-
     // textEdit->setStyleSheet(StyleSheet); //使用全局样式
 
 }
@@ -353,7 +352,7 @@ void EditArea::CloseLineTag(bool flag)
 
 void EditArea::setCurLexer(QString &type)
 {
-
+    curFileType=type;
     qDebug()<<"type:"<<type;
     if(type=="py"){
         qDebug()<<"change to pylexer";
@@ -435,9 +434,7 @@ void EditArea::setTheme(QString theme)
     ///注意修改了lexer属性后要重新setlexer才会生效
     InitLexer();
 
-    textEdit->setLexer(nullptr);
-    textEdit->setLexer(PythonLexer);
-    InitTextEdit();
+    setCurLexer(curFileType);
 
 }
 

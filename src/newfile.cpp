@@ -39,22 +39,6 @@ NewFile::NewFile(QWidget *parent,QString path)
     connect(lineEdit,&QLineEdit::cursorPositionChanged,this,&NewFile::onInputFileName);
 
 
-    // setStyleSheet(R"(
-    //         QLineEdit {
-    //             color: white;
-    //             background-color: rgb(56, 56, 56);
-    //             border:1px solid rgb(153,153,153);
-    //         }
-    //         QPushButton {
-    //             color: white;
-    //             background-color: rgb(61, 61, 61);
-    //         }
-    //         QLabel{
-    //             color: white;
-    //         }
-    //     )");
-
-
 }
 
 NewFile::~NewFile()
