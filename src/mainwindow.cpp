@@ -698,6 +698,9 @@ void MainWindow::saveFile(QString fileName)
         curFilePath=fileName;
         if(curEditArea){
             curEditArea->curEditFile=fileName;
+            QString type=QFileInfo(fileName).suffix();
+            qDebug()<<"the file suffix:"<<type;
+            curEditArea->setCurLexer(type);
         }
         codeTabWidget->setTabText(codeTabWidget->currentIndex(),QFileInfo(fileName).fileName());
     }

@@ -61,7 +61,7 @@ EditArea::EditArea(QWidget* parent)
     textEdit->installEventFilter(this);
 
 
-    // textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, (QsciScintillaBase::SCMOD_CTRL << 16) | ('/' & 0xFF));
+    textEdit->SendScintilla(QsciScintillaBase::SCI_CLEARCMDKEY, (QsciScintillaBase::SCMOD_CTRL << 16) | ('/' & 0xFF));
 
 }
 
