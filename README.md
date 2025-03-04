@@ -1,6 +1,10 @@
 # ByteIDE
 
 ByteIDE 是一个基于 Qt 开发的简易文本编辑器和集成开发环境 (IDE)。它使用了 QScintilla 库来实现编辑器功能，提供了基本的文本编辑功能和常用的快捷键以及查找替换功能,并且支持内嵌了C/Cpp编译器和Python解释器,支持一键运行代码。
+![image](https://github.com/user-attachments/assets/1f802188-bfb0-4df5-b38f-eaa8255c7d7e)
+
+![image](https://github.com/user-attachments/assets/e0cf7544-4010-45c0-9541-28f6de206134)
+
 
 ## 功能介绍
 
