@@ -130,7 +130,7 @@ void CodeRunner::runPythonCode()
     env.insert("PYTHONUNBUFFERED", "1");  // 设置PYTHONUNBUFFERED环境变量
 
     process->setProcessEnvironment(env);  // 应用环境变量到QProcess
-
+    process->setWorkingDirectory(workDir_);
     process->start(PythonRunner,QStringList()<<runFile);
     emit startRunningCode();
 
@@ -240,6 +240,11 @@ BOOL CodeRunner::WinStartProcess(TCHAR* lpApplicationName, TCHAR* lpCommandLine)
         }
 
         return TRUE;
+}
+
+void CodeRunner::setWorkDir(QString &dir)
+{
+    workDir_= dir;
 }
 
 

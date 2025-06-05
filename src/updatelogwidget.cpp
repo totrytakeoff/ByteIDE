@@ -25,7 +25,10 @@ UpdateLogWidget::UpdateLogWidget(QWidget *parent)
     // 构建带格式的更新日志内容
     QString htmlContent =
         "<h1 style='color: #87CEEB;'>ByteOJ IDE 更新日志</h1>"
-
+        "<h2 style='color: #98FB98;'>版本 1.2.5 - 2025年6月5日</h2>"
+          "<ul>"
+          "<li>⌨️ 修复了打开文件夹未切换工作导致的目录、文件操作时工作目录错误问题</li>"
+          "</ul>"
         "<h2 style='color: #98FB98;'>版本 1.2.0 - 2025年3月1日</h2>"
         "<ul>"
         "<li>🎉 新增设置页面，支持亮/暗双主题切换,与字体设置</li>"
@@ -38,6 +41,7 @@ UpdateLogWidget::UpdateLogWidget(QWidget *parent)
         "<li>🐛 修复Python连续input读取错误问题</li>"
         "<li>🔧 优化终端输出缓冲机制</li>"
         "</ul>"
+
 
         "<div style='margin-top: 20px;'>"
         "📢 更多信息请访问：<br>"

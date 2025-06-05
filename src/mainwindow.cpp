@@ -736,6 +736,8 @@ void MainWindow::openFolder()
         return;
     }
     curFolderPath=path;
+    runner->setWorkDir(curFolderPath);
+    QDir::setCurrent(curFolderPath);
     ShowFileDock();
 
 }

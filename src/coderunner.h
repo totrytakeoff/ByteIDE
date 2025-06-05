@@ -42,6 +42,8 @@ public:
 
     BOOL WinStartProcess(TCHAR* lpApplicationName, TCHAR* lpCommandLine);
 
+    void setWorkDir(QString &dir);
+
 protected:
     void keyPressEvent(QKeyEvent *e) override;
 
@@ -60,6 +62,8 @@ private:
     QString FileType;
     QString runFile;
     QStringList runFileList;
+
+    QString workDir_;
 
     Mode RunMode=Mode::UnKown;
 
